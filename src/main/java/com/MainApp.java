@@ -1,5 +1,7 @@
+package com;
+
 import com.codahale.metrics.health.HealthCheck;
-import configurations.AppConfig;
+import com.configurations.AppConfig;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -14,8 +16,15 @@ public class MainApp extends Application<MainConfig> {
 
     @Override
     public void run(MainConfig mainConfig, Environment environment) throws Exception {
+        AnnotationConfigWebApplicationContext parent = new AnnotationConfigWebApplicationContext();
         AnnotationConfigWebApplicationContext ctx=new AnnotationConfigWebApplicationContext();
 
+        parent.refresh();
+        parent.getBeanFactory().registerSingleton("configuration", mainConfig);
+        parent.registerShutdownHook();
+        parent.start();
+
+        ctx.setParent(parent);
         ctx.register(AppConfig.class);
         ctx.refresh();
         ctx.registerShutdownHook();
@@ -27,7 +36,7 @@ public class MainApp extends Application<MainConfig> {
             environment.healthChecks().register("template", entry.getValue());
         }
 
-        //resources
+        //com.resources
         Map<String,Object> resources = ctx.getBeansWithAnnotation(Path.class);
         for(Map.Entry<String,Object> entry : resources.entrySet()) {
             environment.jersey().register(entry.getValue());
