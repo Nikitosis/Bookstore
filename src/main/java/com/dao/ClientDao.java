@@ -1,9 +1,7 @@
 package com.dao;
 
 import com.models.Client;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -11,8 +9,26 @@ public interface ClientDao {
     @Select("SELECT * FROM clients")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "fname",column = "first_name"),
-            @Result(property = "lname",column = "last_name")
+            @Result(property = "fName",column = "first_name"),
+            @Result(property = "lName",column = "last_name")
     })
-    List<Client> getAll();
+    List<Client> findAll();
+
+    @Select("SELECT * FROM clients WHERE id=#{id}")
+    @Results(value = {
+            @Result(property = "id",column = "id"),
+            @Result(property = "fName",column = "first_name"),
+            @Result(property = "lName",column = "last_name")
+    })
+    Client findById(Long id);
+
+    @Insert("INSERT INTO clients (first_name,last_name) VALUES(#{fName},#{lName})")
+    @Options(useGeneratedKeys = true,keyProperty = "id")
+    void save(Client client);
+
+    @Update("UPDATE clients SET first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
+    void update(Client client);
+
+    @Delete("DELETE FROM clients WHERE id=#{id}")
+    void delete(Long id);
 }

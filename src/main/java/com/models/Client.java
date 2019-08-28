@@ -2,17 +2,17 @@ package com.models;
 
 public class Client {
     private Long id;
-    private String fname;
-    private String lname;
+    private String fName;
+    private String lName;
 
     public Client(){
 
     }
 
-    public Client(Long id, String fname, String lname) {
+    public Client(Long id, String fName, String lName) {
         this.id = id;
-        this.fname = fname;
-        this.lname = lname;
+        this.fName = fName;
+        this.lName = lName;
     }
 
     public Long getId() {
@@ -23,19 +23,19 @@ public class Client {
         this.id = id;
     }
 
-    public String getFname() {
-        return fname;
+    public String getfName() {
+        return fName;
     }
 
-    public void setFname(String fname) {
-        this.fname = fname;
+    public void setfName(String fName) {
+        this.fName = fName;
     }
 
-    public String getLname() {
-        return lname;
+    public String getlName() {
+        return lName;
     }
 
-    public void setLname(String lname) {
-        this.lname = lname;
+    public void setlName(String lName) {
+        this.lName = lName;
     }
 }

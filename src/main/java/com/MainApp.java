@@ -19,6 +19,7 @@ public class MainApp extends Application<MainConfig> {
         AnnotationConfigWebApplicationContext parent = new AnnotationConfigWebApplicationContext();
         AnnotationConfigWebApplicationContext ctx=new AnnotationConfigWebApplicationContext();
 
+        //first, register MainConfig in application context(to inject it into other @Configuration-s later on)
         parent.refresh();
         parent.getBeanFactory().registerSingleton("configuration", mainConfig);
         parent.registerShutdownHook();
@@ -30,13 +31,13 @@ public class MainApp extends Application<MainConfig> {
         ctx.registerShutdownHook();
         ctx.start();
 
-        //healthchecks
+        //register healthchecks
         Map<String,HealthCheck> healthChecks = ctx.getBeansOfType(HealthCheck.class);
         for(Map.Entry<String,HealthCheck> entry : healthChecks.entrySet()) {
             environment.healthChecks().register("template", entry.getValue());
         }
 
-        //com.resources
+        //register resources
         Map<String,Object> resources = ctx.getBeansWithAnnotation(Path.class);
         for(Map.Entry<String,Object> entry : resources.entrySet()) {
             environment.jersey().register(entry.getValue());
