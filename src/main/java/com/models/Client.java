@@ -1,8 +1,18 @@
 package com.models;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
+
 public class Client {
     private Long id;
+
+    @NotNull
+    @Length(max = 255)
     private String fName;
+
+    @NotNull
+    @Length(max = 255)
     private String lName;
 
     public Client(){

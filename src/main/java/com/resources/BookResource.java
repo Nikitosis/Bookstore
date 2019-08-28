@@ -1,7 +1,7 @@
 package com.resources;
 
-import com.dao.ClientDao;
-import com.models.Client;
+import com.dao.BookDao;
+import com.models.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,28 +11,29 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Service
-@Path("/clients")
+@Path("/books")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ClientResource {
-    private ClientDao clientDao;
+public class BookResource {
+
+    private BookDao bookDao;
 
     @Autowired
-    public ClientResource(ClientDao clientDao) {
-        this.clientDao = clientDao;
+    public BookResource(BookDao bookDao) {
+        this.bookDao = bookDao;
     }
 
     @GET
-    public Response getClients(){
-        return Response.ok(clientDao.findAll()).build();
+    public Response getBooks(){
+        return Response.ok(bookDao.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response getClientById(@PathParam("id") Long id){
-        Client client=clientDao.findById(id);
-        if(clientDao.findById(id)!=null){
-            return Response.ok(clientDao.findById(id)).build();
+    public Response getBookById(@PathParam("id") Long id){
+        Book book=bookDao.findById(id);
+        if(bookDao.findById(id)!=null){
+            return Response.ok(bookDao.findById(id)).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -40,15 +41,15 @@ public class ClientResource {
     }
 
     @POST
-    public Response addClient(@Valid Client client){
-        clientDao.save(client);
+    public Response addBook(@Valid Book book){
+        bookDao.save(book);
         return Response.status(Response.Status.CREATED).build();
     }
 
     @PUT
-    public Response updateClient(@Valid Client client){
-        if(clientDao.findById(client.getId())!=null){
-            clientDao.update(client);
+    public Response updateBook(@Valid Book book){
+        if(bookDao.findById(book.getId())!=null){
+            bookDao.update(book);
             return Response.ok().build();
         }
         else{
@@ -59,8 +60,8 @@ public class ClientResource {
     @DELETE
     @Path("/{id}")
     public Response deleteClient(@PathParam("id") Long id){
-        if(clientDao.findById(id)!=null){
-            clientDao.delete(id);
+        if(bookDao.findById(id)!=null){
+            bookDao.delete(id);
             return Response.ok().build();
         }
         else{
