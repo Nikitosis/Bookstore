@@ -1,18 +1,19 @@
 package com;
 
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 
 import java.util.Map;
 
 public class MainConfig extends Configuration {
 
-    private Map<String,String> database;
+    private DataSourceFactory database;
 
-    public Map<String, String> getDatabase() {
+    public DataSourceFactory getDatabase() {
         return database;
     }
 
-    public void setDatabase(Map<String, String> database) {
+    public void setDatabase(DataSourceFactory database) {
         this.database = database;
     }
 }

@@ -28,10 +28,10 @@ public class DatabaseConfig {
     @Bean
     public DataSource dataSource(){
         BasicDataSource dataSource=new BasicDataSource();
-        dataSource.setDriverClassName(mainConfig.getDatabase().get("driver"));
-        dataSource.setUrl(mainConfig.getDatabase().get("url"));
-        dataSource.setUsername(mainConfig.getDatabase().get("username"));
-        dataSource.setPassword(mainConfig.getDatabase().get("password"));
+        dataSource.setDriverClassName(mainConfig.getDatabase().getDriverClass());
+        dataSource.setUrl(mainConfig.getDatabase().getUrl());
+        dataSource.setUsername(mainConfig.getDatabase().getUser());
+        dataSource.setPassword(mainConfig.getDatabase().getPassword());
         return dataSource;
     }
 }

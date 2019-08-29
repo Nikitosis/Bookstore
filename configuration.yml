@@ -8,6 +8,6 @@ server:
 
 database:
   url: jdbc:mysql://localhost:3306/bookstore
-  username: root
+  user: root
   password: 1234
-  driver: com.mysql.cj.jdbc.Driver
+  driverClass: com.mysql.cj.jdbc.Driver

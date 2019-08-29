@@ -3,7 +3,15 @@ package com;
 import com.codahale.metrics.health.HealthCheck;
 import com.configurations.AppConfig;
 import io.dropwizard.Application;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.migrations.CloseableLiquibase;
+import io.dropwizard.migrations.CloseableLiquibaseWithClassPathMigrationsFile;
+import io.dropwizard.migrations.MigrationsBundle;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import liquibase.Liquibase;
+import liquibase.resource.ClassLoaderResourceAccessor;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import javax.ws.rs.Path;
@@ -12,6 +20,16 @@ import java.util.Map;
 public class MainApp extends Application<MainConfig> {
     public static void main(String[] args) throws Exception {
         new MainApp().run(args);
+    }
+
+    @Override
+    public void initialize(Bootstrap<MainConfig> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<MainConfig>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(MainConfig configuration) {
+                return configuration.getDatabase();
+            }
+        });
     }
 
     @Override
@@ -41,6 +59,12 @@ public class MainApp extends Application<MainConfig> {
         Map<String,Object> resources = ctx.getBeansWithAnnotation(Path.class);
         for(Map.Entry<String,Object> entry : resources.entrySet()) {
             environment.jersey().register(entry.getValue());
+        }
+
+        //db migration
+        ManagedDataSource dataSource=mainConfig.getDatabase().build(environment.metrics(),"liquibase");
+        try(CloseableLiquibase liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "db/migrations.xml")) {
+            liquibase.update("migrations");
         }
     }
 }
