@@ -1,0 +1,2 @@
+ALTER TABLE bookstore.books
+ADD COLUMN is_taken BOOLEAN NOT NULL DEFAULT 0;
