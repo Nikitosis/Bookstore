@@ -4,8 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <include file="db/2019-08-29-01-initial-schema-import.xml"/>
-    <include file="db/2019-08-29-02-isTaken-book-field.xml"/>
-    <include file="db/2019-08-29-03-take-return-book-procedures.xml"/>
-
+    <changeSet id="3" author="Pupov Nikita">
+        <sqlFile endDelimiter="//" path="db/sqlFile/2019-08-29-03-take-return-book-procedures.sql"/>
+    </changeSet>
 </databaseChangeLog>
