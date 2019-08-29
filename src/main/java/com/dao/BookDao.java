@@ -20,7 +20,7 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isTaken",column = "is_taken")
     })
-    Book findById(Long id);
+    Book findById(@Param("id") Long id);
 
     @Insert("INSERT INTO books (name) VALUES(#{name})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
@@ -30,21 +30,35 @@ public interface BookDao {
     void update(Book client);
 
     @Delete("DELETE FROM books WHERE id=#{id}")
-    void delete(Long id);
+    void delete(@Param("id") Long id);
 
     @Select("SELECT books.* FROM client_book_log " +
-            "INNER JOIN books ON client_book_log.book_id=books.id" +
-            "WHERE books.is_taken=TRUE AND client_book_log.client_id=#{clientId}")
+            "INNER JOIN books ON client_book_log.book_id=books.id " +
+            "WHERE " +
+            "books.is_taken=TRUE AND " +
+            "client_book_log.client_id=#{clientId} AND " +
+            "client_book_log.end_date IS NULL ")
     @Results(value = {
             @Result(property = "id",column = "id"),
             @Result(property = "name",column = "name"),
             @Result(property = "isTaken",column = "is_taken")
     })
-    List<Book> findTakenByClientId(Long clientId);
+    List<Book> findTakenByClientId(@Param("clientId") Long clientId);
 
-    //TODO: use stored procedure for this methods
-    void takeBook(Long clientId,Long bookId);
+    @Select("SELECT EXISTS " +
+            "(SELECT 1 FROM client_book_log " +
+            "INNER JOIN books ON client_book_log.book_id=books.id " +
+            "WHERE " +
+            "books.is_taken=TRUE AND " +
+            "client_book_log.client_id=#{clientId} AND " +
+            "client_book_log.book_id=#{bookId} AND " +
+            "client_book_log.end_date IS NULL) ")
+    boolean isTaken(@Param("clientId") Long clientId,@Param("bookId") Long bookId);
 
-    void returnBook(Long clientId,Long bookId);
+    @Select("CALL takeBook(#{clientId},#{bookId})")
+    void takeBook(@Param("clientId") Long clientId,@Param("bookId") Long bookId);
+
+    @Select("CALL returnBook(#{clientId},#{bookId})")
+    void returnBook(@Param("clientId") Long clientId,@Param("bookId") Long bookId);
 
 }

@@ -1,6 +1,7 @@
 package com.dao;
 
 import com.models.ClientBookLog;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -17,7 +18,7 @@ public interface ClientBookLogDao {
             @Result(property = "startDate",column = "start_date"),
             @Result(property = "endDate",column = "end_date")
     })
-    List<ClientBookLog> findByClientId(Long clientId);
+    List<ClientBookLog> findByClientId(@Param("clientId") Long clientId);
 
     @Select("SELECT * FROM client_book_log WHERE book=#{bookId}")
     @Results(value = {
@@ -27,5 +28,5 @@ public interface ClientBookLogDao {
             @Result(property = "startDate",column = "start_date"),
             @Result(property = "endDate",column = "end_date")
     })
-    List<ClientBookLog> findByBookId(Long bookId);
+    List<ClientBookLog> findByBookId(@Param("bookId") Long bookId);
 }

@@ -20,7 +20,7 @@ public interface ClientDao {
             @Result(property = "fName",column = "first_name"),
             @Result(property = "lName",column = "last_name")
     })
-    Client findById(Long id);
+    Client findById(@Param("id") Long id);
 
     @Insert("INSERT INTO clients (first_name,last_name) VALUES(#{fName},#{lName})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
@@ -30,5 +30,5 @@ public interface ClientDao {
     void update(Client client);
 
     @Delete("DELETE FROM clients WHERE id=#{id}")
-    void delete(Long id);
+    void delete(@Param("id") Long id);
 }

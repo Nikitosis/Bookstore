@@ -6,7 +6,7 @@ CREATE PROCEDURE takeBook(IN clientId INT, IN bookId INT)
 
 CREATE PROCEDURE returnBook(IN clientId INT, IN bookId INT)
     BEGIN
-        UPDATE bookstore.books SET is_taken=1
+        UPDATE bookstore.books SET is_taken=0
             WHERE id=bookId;
         UPDATE bookstore.client_book_log SET end_date=NOW()
             WHERE client_id=clientId AND book_id=bookId AND end_date IS NULL;
