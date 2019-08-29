@@ -14,7 +14,7 @@ public interface BookDao {
 
     @Insert("INSERT INTO books (name) VALUES(#{name})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
-    void save(Book client);
+    Long save(Book client);
 
     @Update("UPDATE books SET name=#{name} WHERE id=#{id}")
     void update(Book client);

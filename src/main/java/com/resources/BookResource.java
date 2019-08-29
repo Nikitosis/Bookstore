@@ -43,14 +43,14 @@ public class BookResource {
     @POST
     public Response addBook(@Valid Book book){
         bookDao.save(book);
-        return Response.status(Response.Status.CREATED).build();
+        return Response.status(Response.Status.CREATED).entity(book).build();
     }
 
     @PUT
     public Response updateBook(@Valid Book book){
         if(bookDao.findById(book.getId())!=null){
             bookDao.update(book);
-            return Response.ok().build();
+            return Response.ok(book).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).build();

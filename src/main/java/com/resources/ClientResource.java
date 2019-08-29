@@ -42,14 +42,14 @@ public class ClientResource {
     @POST
     public Response addClient(@Valid Client client){
         clientDao.save(client);
-        return Response.status(Response.Status.CREATED).build();
+        return Response.status(Response.Status.CREATED).entity(client).build();
     }
 
     @PUT
     public Response updateClient(@Valid Client client){
         if(clientDao.findById(client.getId())!=null){
             clientDao.update(client);
-            return Response.ok().build();
+            return Response.ok(client).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).build();

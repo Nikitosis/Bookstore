@@ -24,7 +24,7 @@ public interface ClientDao {
 
     @Insert("INSERT INTO clients (first_name,last_name) VALUES(#{fName},#{lName})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
-    void save(Client client);
+    Long save(Client client);
 
     @Update("UPDATE clients SET first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
     void update(Client client);
