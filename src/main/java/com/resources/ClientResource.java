@@ -23,13 +23,11 @@ public class ClientResource {
 
     private BookDao bookDao;
 
+    @Autowired
     public ClientResource(ClientDao clientDao, BookDao bookDao) {
         this.clientDao = clientDao;
         this.bookDao = bookDao;
     }
-
-    @Autowired
-
 
     @GET
     public Response getClients(){
@@ -44,7 +42,7 @@ public class ClientResource {
             return Response.ok(clientDao.findById(id)).build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
         }
     }
 
@@ -61,7 +59,7 @@ public class ClientResource {
             return Response.ok(client).build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
         }
     }
 
@@ -73,7 +71,7 @@ public class ClientResource {
             return Response.ok().build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
         }
     }
 
@@ -85,11 +83,11 @@ public class ClientResource {
             return Response.ok().entity(bookDao.findTakenByClientId(clientId)).build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
         }
     }
 
-    @POST
+    @PUT
     @Path("/{clientId}/books")
     public Response takeBook(@PathParam("clientId") Long clientId,
                              @QueryParam("bookId") Long bookId){
@@ -100,12 +98,12 @@ public class ClientResource {
             }
             else{
                 //if book is already taken
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
             }
         }
         else{
             //if book or client cannot be found
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Book or client cannot be found").build();
         }
     }
 
@@ -120,12 +118,12 @@ public class ClientResource {
             }
             else{
                 //if book is not taken by this client
-                return Response.status(Response.Status.BAD_REQUEST).build();
+                return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this client").build();
             }
         }
         else{
             //if book or client cannot be found
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Book or client cannot be found").build();
         }
     }
 }

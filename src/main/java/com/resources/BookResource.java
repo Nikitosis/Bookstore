@@ -38,7 +38,7 @@ public class BookResource {
             return Response.ok(bookDao.findById(id)).build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
 
@@ -55,7 +55,7 @@ public class BookResource {
             return Response.ok(book).build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
 
@@ -67,7 +67,7 @@ public class BookResource {
             return Response.ok().build();
         }
         else{
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
 }
