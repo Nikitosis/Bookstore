@@ -29,6 +29,6 @@ public interface ClientDao {
     @Update("UPDATE clients SET first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
     void update(Client client);
 
-    @Delete("DELETE FROM clients WHERE id=#{id}")
+    @Delete("CALL deleteClient(#{id})")
     void delete(@Param("id") Long id);
 }

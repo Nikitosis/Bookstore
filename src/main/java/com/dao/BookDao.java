@@ -29,7 +29,7 @@ public interface BookDao {
     @Update("UPDATE books SET name=#{name},is-taken=#{isTaken} WHERE id=#{id}")
     void update(Book client);
 
-    @Delete("DELETE FROM books WHERE id=#{id}")
+    @Delete("CALL deleteBook(#{id})")
     void delete(@Param("id") Long id);
 
     @Select("SELECT books.* FROM client_book_log " +
