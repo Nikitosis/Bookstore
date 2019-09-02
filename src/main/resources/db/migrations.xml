@@ -8,5 +8,6 @@
     <include file="db/2019-08-29-02-isTaken-book-field.xml"/>
     <include file="db/2019-08-29-03-take-return-book-procedures.xml"/>
     <include file="db/2019-08-30-01-delete-procedures.xml"/>
+    <include file="db/2019-09-02-01-added-transactions-to-procedures.xml"/>
 
 </databaseChangeLog>
