@@ -1,4 +1,4 @@
-package com;
+package com.resources;
 
 import com.dao.ClientBookLogDao;
 import com.models.ClientBookLog;

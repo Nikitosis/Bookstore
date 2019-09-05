@@ -25,16 +25,6 @@ public class MainApp extends Application<MainConfig> {
     }
 
     @Override
-    public void initialize(Bootstrap<MainConfig> bootstrap) {
-        bootstrap.addBundle(new MigrationsBundle<MainConfig>() {
-            @Override
-            public DataSourceFactory getDataSourceFactory(MainConfig configuration) {
-                return configuration.getDatabase();
-            }
-        });
-    }
-
-    @Override
     public void run(MainConfig mainConfig, Environment environment) throws Exception {
         AnnotationConfigWebApplicationContext parent = new AnnotationConfigWebApplicationContext();
         AnnotationConfigWebApplicationContext ctx=new AnnotationConfigWebApplicationContext();
