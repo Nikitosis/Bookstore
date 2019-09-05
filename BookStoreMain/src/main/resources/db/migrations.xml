@@ -11,5 +11,6 @@
     <include file="db/2019-09-02-01-added-transactions-to-procedures.xml"/>
     <include file="db/2019-09-05-01-added-bookClient-table.xml"/>
     <include file="db/2019-09-05-02-removed-isTaken.xml"/>
+    <include file="db/2019-09-05-03-changed procedures.xml"/>
 
 </databaseChangeLog>
