@@ -16,7 +16,6 @@ public class Client {
     private String lName;
 
     public Client(){
-
     }
 
     public Client(Long id, String fName, String lName) {
