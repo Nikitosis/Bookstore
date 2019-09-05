@@ -1,24 +1,29 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Date;
 
 public class ClientBookLog {
+
     private Long id;
     private Long clientId;
     private Long bookId;
-    private Date startDate;
-    private Date endDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private Date actionDate;
+    private Action action;
 
     public ClientBookLog(){
-        
+
     }
 
-    public ClientBookLog(Long id, Long clientId, Long bookId, Date startDate, Date endDate) {
+    public ClientBookLog(Long id, Long clientId, Long bookId, Date actionDate, Action action) {
         this.id = id;
         this.clientId = clientId;
         this.bookId = bookId;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.actionDate = actionDate;
+        this.action = action;
     }
 
     public Long getId() {
@@ -45,19 +50,19 @@ public class ClientBookLog {
         this.bookId = bookId;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getActionDate() {
+        return actionDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setActionDate(Date actionDate) {
+        this.actionDate = actionDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Action getAction() {
+        return action;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setAction(Action action) {
+        this.action = action;
     }
 }
