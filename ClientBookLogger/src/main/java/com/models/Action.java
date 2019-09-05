@@ -1,17 +1,13 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Action {
-    TAKE("take"),
-    RETURN("return");
+    @JsonProperty("take")
+    TAKE,
 
-    private String action;
-
-    Action(String action) {
-        this.action = action;
-    }
-
-    @Override
-    public String toString() {
-        return action;
-    }
+    @JsonProperty("return")
+    RETURN;
 }
