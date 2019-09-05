@@ -11,3 +11,6 @@ database:
   user: root
   password: 1234
   driverClass: com.mysql.cj.jdbc.Driver
+
+clientBookLoggerService:
+  url: http://localhost:8000
