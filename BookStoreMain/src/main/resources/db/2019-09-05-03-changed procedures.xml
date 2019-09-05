@@ -5,6 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <changeSet id="8" author="Pupov Nikita">
-        <sqlFile path="db/sqlFile/2019-09-05-03-changed procedures.sql"/>
+        <sqlFile endDelimiter="//" path="db/sqlFile/2019-09-05-03-changed procedures.sql"/>
     </changeSet>
 </databaseChangeLog>

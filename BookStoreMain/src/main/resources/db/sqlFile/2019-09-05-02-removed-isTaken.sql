@@ -1,3 +1,2 @@
-ALTER TABLE bookstore.books{
-    DROP COLUMN is_taken
-};
+ALTER TABLE bookstore.books
+    DROP COLUMN is_taken;

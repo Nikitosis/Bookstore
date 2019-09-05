@@ -12,8 +12,6 @@ public class Book {
     @Length(max = 255)
     private String name;
 
-    private boolean isTaken;
-
     public Long getId() {
         return id;
     }
@@ -28,13 +26,5 @@ public class Book {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public boolean isTaken() {
-        return isTaken;
-    }
-
-    public void setTaken(boolean taken) {
-        isTaken = taken;
     }
 }

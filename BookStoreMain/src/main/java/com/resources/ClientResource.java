@@ -6,7 +6,6 @@ import com.models.Book;
 import com.models.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -92,7 +91,7 @@ public class ClientResource {
     public Response takeBook(@PathParam("clientId") Long clientId,
                              @QueryParam("bookId") Long bookId){
         if(bookDao.findById(bookId)!=null && clientDao.findById(clientId)!=null){
-            if(!bookDao.findById(bookId).isTaken()){
+            if(!bookDao.isTaken(bookId)){
                 bookDao.takeBook(clientId,bookId);
                 return Response.ok().build();
             }
@@ -112,7 +111,7 @@ public class ClientResource {
     public Response returnBook(@PathParam("clientId") Long clientId,
                                @QueryParam("bookId") Long bookId){
         if(bookDao.findById(bookId)!=null && clientDao.findById(clientId)!=null){
-            if(bookDao.isTaken(clientId,bookId)){
+            if(bookDao.isTakenByClient(clientId,bookId)){
                 bookDao.returnBook(clientId,bookId);
                 return Response.ok().build();
             }
