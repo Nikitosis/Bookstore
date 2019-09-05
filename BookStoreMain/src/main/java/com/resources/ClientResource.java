@@ -4,6 +4,8 @@ import com.dao.BookDao;
 import com.dao.ClientDao;
 import com.models.Book;
 import com.models.Client;
+import com.services.BookService;
+import com.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,27 +20,27 @@ import java.util.List;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ClientResource {
-    private ClientDao clientDao;
+    private ClientService clientService;
 
-    private BookDao bookDao;
+    private BookService bookService;
 
     @Autowired
-    public ClientResource(ClientDao clientDao, BookDao bookDao) {
-        this.clientDao = clientDao;
-        this.bookDao = bookDao;
+    public ClientResource(ClientService clientService, BookService bookService) {
+        this.clientService = clientService;
+        this.bookService = bookService;
     }
 
     @GET
     public Response getClients(){
-        return Response.ok(clientDao.findAll()).build();
+        return Response.ok(bookService.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getClientById(@PathParam("id") Long id){
-        Client client=clientDao.findById(id);
-        if(clientDao.findById(id)!=null){
-            return Response.ok(clientDao.findById(id)).build();
+        Client client=clientService.findById(id);
+        if(client!=null){
+            return Response.ok(client).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
@@ -47,15 +49,15 @@ public class ClientResource {
 
     @POST
     public Response addClient(@Valid Client client){
-        clientDao.save(client);
+        clientService.save(client);
         return Response.status(Response.Status.CREATED).entity(client).build();
     }
 
     @PUT
     public Response updateClient(@Valid Client client){
-        if(clientDao.findById(client.getId())!=null){
-            clientDao.update(client);
-            return Response.ok(client).build();
+        if(clientService.findById(client.getId())!=null){
+            clientService.update(client);
+            return Response.ok(clientService.findById(client.getId())).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
@@ -65,8 +67,8 @@ public class ClientResource {
     @DELETE
     @Path("/{id}")
     public Response deleteClient(@PathParam("id") Long id){
-        if(clientDao.findById(id)!=null){
-            clientDao.delete(id);
+        if(clientService.findById(id)!=null){
+            clientService.delete(id);
             return Response.ok().build();
         }
         else{
@@ -77,9 +79,9 @@ public class ClientResource {
     @GET
     @Path("/{clientId}/books")
     public Response getTakenClientBooks(@PathParam("clientId") Long clientId){
-        if(clientDao.findById(clientId)!=null){
-            List<Book> books=bookDao.findTakenByClientId(clientId);
-            return Response.ok().entity(bookDao.findTakenByClientId(clientId)).build();
+        if(clientService.findById(clientId)!=null){
+            List<Book> takenBooks=bookService.findTakenByClientId(clientId);
+            return Response.ok().entity(takenBooks).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Client cannot be found").build();
@@ -90,9 +92,9 @@ public class ClientResource {
     @Path("/{clientId}/books")
     public Response takeBook(@PathParam("clientId") Long clientId,
                              @QueryParam("bookId") Long bookId){
-        if(bookDao.findById(bookId)!=null && clientDao.findById(clientId)!=null){
-            if(!bookDao.isTaken(bookId)){
-                bookDao.takeBook(clientId,bookId);
+        if(bookService.findById(bookId)!=null && clientService.findById(clientId)!=null){
+            if(!bookService.isTaken(bookId)){
+                bookService.takeBook(clientId,bookId);
                 return Response.ok().build();
             }
             else{
@@ -110,9 +112,9 @@ public class ClientResource {
     @Path("/{clientId}/books")
     public Response returnBook(@PathParam("clientId") Long clientId,
                                @QueryParam("bookId") Long bookId){
-        if(bookDao.findById(bookId)!=null && clientDao.findById(clientId)!=null){
-            if(bookDao.isTakenByClient(clientId,bookId)){
-                bookDao.returnBook(clientId,bookId);
+        if(bookService.findById(bookId)!=null && clientService.findById(clientId)!=null){
+            if(bookService.isTakenByClient(clientId,bookId)){
+                bookService.returnBook(clientId,bookId);
                 return Response.ok().build();
             }
             else{

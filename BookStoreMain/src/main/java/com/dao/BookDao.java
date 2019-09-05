@@ -22,10 +22,10 @@ public interface BookDao {
 
     @Insert("INSERT INTO books (name) VALUES(#{name})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
-    Long save(Book client);
+    Long save(Book book);
 
     @Update("UPDATE books SET name=#{name} WHERE id=#{id}")
-    void update(Book client);
+    void update(Book book);
 
     @Delete("CALL deleteBook(#{id})")
     void delete(@Param("id") Long id);

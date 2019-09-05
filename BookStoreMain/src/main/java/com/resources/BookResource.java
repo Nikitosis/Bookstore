@@ -3,6 +3,7 @@ package com.resources;
 import com.dao.BookDao;
 import com.dao.ClientDao;
 import com.models.Book;
+import com.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,24 +19,24 @@ import javax.ws.rs.core.Response;
 @Produces(MediaType.APPLICATION_JSON)
 public class BookResource {
 
-    private BookDao bookDao;
+    private BookService bookService;
 
     @Autowired
-    public BookResource(BookDao bookDao) {
-        this.bookDao = bookDao;
+    public BookResource(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @GET
     public Response getBooks(){
-        return Response.ok(bookDao.findAll()).build();
+        return Response.ok(bookService.findAll()).build();
     }
 
     @GET
     @Path("/{id}")
     public Response getBookById(@PathParam("id") Long id){
-        Book book=bookDao.findById(id);
-        if(bookDao.findById(id)!=null){
-            return Response.ok(bookDao.findById(id)).build();
+        Book book=bookService.findById(id);
+        if(book!=null){
+            return Response.ok(book).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
@@ -44,15 +45,15 @@ public class BookResource {
 
     @POST
     public Response addBook(@Valid Book book){
-        bookDao.save(book);
+        bookService.save(book);
         return Response.status(Response.Status.CREATED).entity(book).build();
     }
 
     @PUT
     public Response updateBook(@Valid Book book){
-        if(bookDao.findById(book.getId())!=null){
-            bookDao.update(book);
-            return Response.ok(book).build();
+        if(bookService.findById(book.getId())!=null){
+            bookService.update(book);
+            return Response.ok(bookService.findById(book.getId())).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
@@ -61,9 +62,9 @@ public class BookResource {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteClient(@PathParam("id") Long id){
-        if(bookDao.findById(id)!=null){
-            bookDao.delete(id);
+    public Response deleteBook(@PathParam("id") Long id){
+        if(bookService.findById(id)!=null){
+            bookService.delete(id);
             return Response.ok().build();
         }
         else{
