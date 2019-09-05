@@ -11,6 +11,9 @@
 
     <modules>
         <module>BookStoreMain</module>
+        <module>ClientBookLogger</module>
     </modules>
+
+
 
 </project>
