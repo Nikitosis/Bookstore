@@ -1,6 +1,6 @@
 package com.dao;
 
-import com.models.ClientBookLog;
+import com.api.ClientBookLog;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

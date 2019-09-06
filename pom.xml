@@ -12,6 +12,7 @@
     <modules>
         <module>BookStoreMain</module>
         <module>ClientBookLogger</module>
+        <module>CrossApiObjects</module>
     </modules>
 
 

@@ -1,7 +1,7 @@
 package com.resources;
 
+import com.api.ClientBookLog;
 import com.dao.ClientBookLogDao;
-import com.models.ClientBookLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
