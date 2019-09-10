@@ -3,6 +3,8 @@ package com;
 import com.codahale.metrics.health.HealthCheck;
 import com.configurations.AppConfig;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.migrations.CloseableLiquibase;
@@ -26,12 +28,19 @@ public class MainApp extends Application<MainConfig> {
 
     @Override
     public void initialize(Bootstrap<MainConfig> bootstrap) {
+        //to initiate db migration when app starts
         bootstrap.addBundle(new MigrationsBundle<MainConfig>() {
             @Override
             public DataSourceFactory getDataSourceFactory(MainConfig configuration) {
                 return configuration.getDatabase();
             }
         });
+        //to use environment variables inside configuration.yml
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                )
+        );
     }
 
     @Override

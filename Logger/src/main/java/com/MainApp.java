@@ -3,6 +3,8 @@ package com;
 import com.codahale.metrics.health.HealthCheck;
 import com.configurations.AppConfig;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.migrations.CloseableLiquibase;
@@ -22,6 +24,16 @@ import java.util.Map;
 public class MainApp extends Application<MainConfig> {
     public static void main(String[] args) throws Exception {
         new MainApp().run(args);
+    }
+
+    @Override
+    public void initialize(Bootstrap<MainConfig> bootstrap) {
+        //to use environment variables inside configuration.yml
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                        new EnvironmentVariableSubstitutor(false)
+                )
+        );
     }
 
     @Override
