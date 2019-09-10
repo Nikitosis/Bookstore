@@ -39,6 +39,13 @@ public interface ClientBookLogDao {
                                             @Param("bookId") Long bookId);
 
     @Select("Select * FROM client_book_log")
+    @Results(value = {
+            @Result(property = "id",column = "id"),
+            @Result(property = "clientId",column = "client_id"),
+            @Result(property = "bookId",column = "book_id"),
+            @Result(property = "actionDate",column = "log_date"),
+            @Result(property = "action",column = "log_action")
+    })
     List<ClientBookLog> findAll();
 
     @Insert("INSERT INTO client_book_log VALUES(NULL,#{clientId},#{bookId},#{actionDate},#{action})")

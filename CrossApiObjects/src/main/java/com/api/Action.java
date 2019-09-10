@@ -3,9 +3,9 @@ package com.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum Action {
-    @JsonProperty("take")
+    @JsonProperty("TAKE")
     TAKE,
 
-    @JsonProperty("return")
+    @JsonProperty("RETURN")
     RETURN;
 }
