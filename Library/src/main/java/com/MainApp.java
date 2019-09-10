@@ -10,8 +10,6 @@ import io.dropwizard.migrations.CloseableLiquibaseWithClassPathMigrationsFile;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import liquibase.Liquibase;
-import liquibase.resource.ClassLoaderResourceAccessor;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
@@ -67,7 +65,7 @@ public class MainApp extends Application<MainConfig> {
 
         //db migration
         ManagedDataSource dataSource=mainConfig.getDatabase().build(environment.metrics(),"liquibase");
-        try(CloseableLiquibase liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "db/migrations.xml")) {
+        try(CloseableLiquibase liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "migrations.xml")) {
             liquibase.update("migrations");
         }
 
