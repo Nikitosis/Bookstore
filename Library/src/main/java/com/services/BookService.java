@@ -70,11 +70,7 @@ public class BookService {
         clientBookLog.setActionDate(new Date(Calendar.getInstance().getTime().getTime()));
 
         try {
-            Client client = ClientBuilder.newClient();
-            client.target(mainConfig.getClientBookLoggerService().getUrl())
-                    .path("/actions")
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(clientBookLog, MediaType.APPLICATION_JSON));
+            postClientBookLog(clientBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -91,14 +87,18 @@ public class BookService {
         clientBookLog.setActionDate(new Date(Calendar.getInstance().getTime().getTime()));
 
         try {
-            Client client = ClientBuilder.newClient();
-            client.target(mainConfig.getClientBookLoggerService().getUrl())
-                    .path("/actions")
-                    .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(clientBookLog, MediaType.APPLICATION_JSON));
+           postClientBookLog(clientBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void postClientBookLog(ClientBookLog clientBookLog){
+        Client client = ClientBuilder.newClient();
+        client.target(mainConfig.getClientBookLoggerService().getUrl())
+                    .path("/actions")
+                    .request(MediaType.APPLICATION_JSON)
+                    .post(Entity.entity(clientBookLog, MediaType.APPLICATION_JSON));
     }
 }
