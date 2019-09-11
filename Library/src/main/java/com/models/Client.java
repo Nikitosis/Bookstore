@@ -3,6 +3,7 @@ package com.models;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class Client {
     private Long id;
@@ -46,5 +47,21 @@ public class Client {
 
     public void setlName(String lName) {
         this.lName = lName;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+
+        if(obj == null || obj.getClass()!= this.getClass())
+            return false;
+
+        Client client = (Client) obj;
+
+        return Objects.equals(client.fName,this.fName) &&
+                Objects.equals(client.lName,this.lName) &&
+                Objects.equals(client.id,this.id);
     }
 }

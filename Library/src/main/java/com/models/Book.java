@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
+import java.util.Objects;
 
 public class Book {
     private Long id;
@@ -26,5 +27,20 @@ public class Book {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(this == obj)
+            return true;
+
+        if(obj == null || obj.getClass()!= this.getClass())
+            return false;
+
+        Book book = (Book) obj;
+
+        return Objects.equals(book.name,this.name) &&
+                Objects.equals(book.id,this.id);
     }
 }
