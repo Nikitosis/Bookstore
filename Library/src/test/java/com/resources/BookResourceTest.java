@@ -34,112 +34,111 @@ public class BookResourceTest {
             .addResource(new BookResource(bookService))
             .build();
 
+    private Book testBook;
+
+    @Before
+    public void init(){
+        testBook=new Book();
+        testBook.setId(12L);
+        testBook.setName("Name");
+    }
+
 
     @Test
     public void getBooksTest(){
-        Book book=new Book();
-        book.setId(12L);
-        book.setName("Name");
-        List<Book> books=Arrays.asList(book);
+        List<Book> books=Arrays.asList(testBook);
         when(bookService.findAll()).thenReturn(books);
 
-       List<Book> responseBooks=resources.target("/books").request().get(new GenericType<List<Book>>(){});
+       List<Book> responseBooks=resources.target("/books")
+               .request()
+               .get(new GenericType<List<Book>>(){});
 
-       Assert.assertEquals(books.size(),responseBooks.size());
-       Assert.assertEquals(books.get(0).getId(),responseBooks.get(0).getId());
-       Assert.assertEquals(books.get(0).getName(),responseBooks.get(0).getName());
+       Assert.assertArrayEquals(books.toArray(),responseBooks.toArray());
     }
 
     @Test
     public void getBookByIdTest(){
-        Book book=new Book();
-        book.setId(12L);
-        book.setName("Name");
-        when(bookService.findById(eq(book.getId()))).thenReturn(book);
+        when(bookService.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        Book responseBook=resources.target("/books/"+book.getId()).request().get(Book.class);
+        Book responseBook=resources.target("/books/"+testBook.getId())
+                .request()
+                .get(Book.class);
 
-        Assert.assertEquals(book.getId(),responseBook.getId());
-        Assert.assertEquals(book.getName(),responseBook.getName());
+        Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
     public void getBookByIdTest_bookNotFound(){
         when(bookService.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/books/2").request().get().getStatusInfo();
+        Response.StatusType responseStatus=resources.target("/books/2")
+                .request()
+                .get()
+                .getStatusInfo();
 
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void addBookTest(){
-        Book sendBook=new Book();
-        sendBook.setId(12L);
-        sendBook.setName("Name");
-        ArgumentCaptor<Book> bookCaptor=new ArgumentCaptor<Book>();
-        when(bookService.save(bookCaptor.capture())).thenReturn(1L);
+        when(bookService.save(any(Book.class))).thenReturn(1L);
 
-        resources.target("/books").request().post(Entity.entity(sendBook,MediaType.APPLICATION_JSON));
+        Book responseBook=resources.target("/books")
+                .request()
+                .post(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
 
-        verify(bookService).save(any(Book.class));
-        Assert.assertEquals(bookCaptor.getValue().getId(),sendBook.getId());
-        Assert.assertEquals(bookCaptor.getValue().getName(),sendBook.getName());
+        verify(bookService).save(eq(testBook));
+        Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
     public void updateBookTest(){
-        Book sendBook=new Book();
-        sendBook.setId(12L);
-        sendBook.setName("Name");
+        when(bookService.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        when(bookService.findById(eq(sendBook.getId()))).thenReturn(sendBook);
+        Book responseBook=resources.target("/books")
+                .request()
+                .put(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
 
-        Book returnBook=resources.target("/books").request().put(Entity.entity(sendBook,MediaType.APPLICATION_JSON),Book.class);
-
-        verify(bookService).update(any(Book.class));
-        Assert.assertEquals(sendBook.getId(),returnBook.getId());
-        Assert.assertEquals(sendBook.getName(),returnBook.getName());
+        verify(bookService).update(eq(testBook));
+        Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
     public void updateBookTest_bookNotFound(){
-        Book sendBook=new Book();
-        sendBook.setId(12L);
-        sendBook.setName("Name");
         when(bookService.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus= resources.target("/books").request().put(Entity.entity(sendBook,MediaType.APPLICATION_JSON)).getStatusInfo();
+        Response.StatusType responseStatus= resources.target("/books")
+                .request()
+                .put(Entity.entity(testBook,MediaType.APPLICATION_JSON)).getStatusInfo();
 
-        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
         verify(bookService,times(0)).update(any());
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void deleteBookTest(){
-        Book deleteBook=new Book();
-        deleteBook.setId(12L);
-        deleteBook.setName("Name");
+        when(bookService.findById(anyLong())).thenReturn(testBook);
 
-        when(bookService.findById(anyLong())).thenReturn(deleteBook);
+        Response.StatusType responseStatus= resources.target("/books/"+testBook.getId())
+                .request()
+                .delete()
+                .getStatusInfo();
 
-        Response.StatusType responseStatus= resources.target("/books/"+deleteBook.getId()).request().delete().getStatusInfo();
-
+        verify(bookService).delete(eq(testBook.getId()));
         Assert.assertEquals(Response.Status.OK,responseStatus);
-        verify(bookService).delete(eq(deleteBook.getId()));
     }
 
     @Test
     public void deleteBookTest_bookNotFound(){
-        Book deleteBook=new Book();
-        deleteBook.setId(12L);
-        deleteBook.setName("Name");
         when(bookService.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus= resources.target("/books/"+deleteBook.getId()).request().delete().getStatusInfo();
+        Response.StatusType responseStatus= resources.target("/books/"+testBook.getId())
+                .request()
+                .delete()
+                .getStatusInfo();
 
-        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
         verify(bookService,times(0)).delete(any());
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
 }
