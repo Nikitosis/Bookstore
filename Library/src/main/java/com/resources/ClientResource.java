@@ -32,7 +32,7 @@ public class ClientResource {
 
     @GET
     public Response getClients(){
-        return Response.ok(bookService.findAll()).build();
+        return Response.ok(clientService.findAll()).build();
     }
 
     @GET
