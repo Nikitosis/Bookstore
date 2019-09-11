@@ -4,7 +4,12 @@ import com.MainConfig;
 import com.api.Action;
 import com.api.ClientBookLog;
 import com.dao.BookDao;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.models.Book;
+import jdk.nashorn.internal.objects.NativeJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +18,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Calendar;
 
@@ -67,7 +74,7 @@ public class BookService {
         clientBookLog.setClientId(clientId);
         clientBookLog.setBookId(bookId);
         clientBookLog.setAction(Action.TAKE);
-        clientBookLog.setActionDate(new Date(Calendar.getInstance().getTime().getTime()));
+        clientBookLog.setActionDate(LocalDateTime.now());
 
         try {
             postClientBookLog(clientBookLog);
@@ -84,7 +91,9 @@ public class BookService {
         clientBookLog.setClientId(clientId);
         clientBookLog.setBookId(bookId);
         clientBookLog.setAction(Action.RETURN);
-        clientBookLog.setActionDate(new Date(Calendar.getInstance().getTime().getTime()));
+        clientBookLog.setActionDate(LocalDateTime.now());
+
+        System.out.println(Entity.entity(clientBookLog,MediaType.APPLICATION_JSON).toString());
 
         try {
            postClientBookLog(clientBookLog);
