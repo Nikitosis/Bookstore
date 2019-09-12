@@ -50,7 +50,7 @@ public class BookServiceTest {
         Assert.assertEquals(testClient.getId(),logCaptor.getValue().getClientId());
         Assert.assertEquals(testBook.getId(),logCaptor.getValue().getClientId());
         Assert.assertEquals(Action.RETURN,logCaptor.getValue().getAction());
-        verify(bookDao).returnBook(testClient.getId(),testBook.getId());
+        verify(bookDao).returnBook(eq(testClient.getId()),eq(testBook.getId()));
     }
 
     @Test
@@ -64,6 +64,6 @@ public class BookServiceTest {
         Assert.assertEquals(testClient.getId(),logCaptor.getValue().getClientId());
         Assert.assertEquals(testBook.getId(),logCaptor.getValue().getClientId());
         Assert.assertEquals(Action.TAKE,logCaptor.getValue().getAction());
-        verify(bookDao).takeBook(testClient.getId(),testBook.getId());
+        verify(bookDao).takeBook(eq(testClient.getId()),eq(testBook.getId()));
     }
 }
