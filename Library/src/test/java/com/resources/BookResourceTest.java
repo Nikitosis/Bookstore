@@ -1,8 +1,16 @@
 package com.resources;
 
+import com.MainConfig;
+import com.dao.BookDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.models.Book;
 import com.services.BookService;
+import io.dropwizard.Configuration;
+import io.dropwizard.configuration.ConfigurationException;
+import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import net.sourceforge.argparse4j.inf.Argument;
 import org.apache.commons.lang3.builder.ToStringExclude;
@@ -13,31 +21,61 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
+import sun.applet.Main;
 
+import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Integration test for BookResource
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class BookResourceTest {
-    private BookService bookService=mock(BookService.class);
 
+    final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    final Validator validator = Validators.newValidator();
+    final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
+    final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
+    final MainConfig configuration=factory.build(yaml);
+
+    private BookDao bookDao=mock(BookDao.class);
+    private BookService bookService=new BookService(bookDao,configuration);
     @Rule
-    public ResourceTestRule  resources = ResourceTestRule.builder()
+    public ResourceTestRule resources=ResourceTestRule.builder()
             .addResource(new BookResource(bookService))
-            .build();
+            .build();;
 
     private Book testBook;
 
+    public BookResourceTest() throws IOException, ConfigurationException {
+    }
+
     @Before
-    public void init(){
+    public void init() throws IOException, ConfigurationException {
+        /*final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        final Validator validator = Validators.newValidator();
+        final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
+        final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
+        final MainConfig configuration=factory.build(yaml);
+
+        bookDao=mock(BookDao.class);
+        bookService=mock(BookService.class);
+        resources = ResourceTestRule.builder()
+                .addResource(new BookResource(bookService))
+                .build();
+*/
+
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
@@ -47,7 +85,7 @@ public class BookResourceTest {
     @Test
     public void getBooksTest(){
         List<Book> books=Arrays.asList(testBook);
-        when(bookService.findAll()).thenReturn(books);
+        when(bookDao.findAll()).thenReturn(books);
 
        List<Book> responseBooks=resources.target("/books")
                .request()
@@ -58,7 +96,7 @@ public class BookResourceTest {
 
     @Test
     public void getBookByIdTest(){
-        when(bookService.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
         Book responseBook=resources.target("/books/"+testBook.getId())
                 .request()
@@ -69,7 +107,7 @@ public class BookResourceTest {
 
     @Test
     public void getBookByIdTest_bookNotFound(){
-        when(bookService.findById(anyLong())).thenReturn(null);
+        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/books/2")
                 .request()
@@ -81,63 +119,63 @@ public class BookResourceTest {
 
     @Test
     public void addBookTest(){
-        when(bookService.save(any(Book.class))).thenReturn(1L);
+        when(bookDao.save(any(Book.class))).thenReturn(1L);
 
         Book responseBook=resources.target("/books")
                 .request()
                 .post(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
 
-        verify(bookService).save(eq(testBook));
+        verify(bookDao).save(eq(testBook));
         Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
     public void updateBookTest(){
-        when(bookService.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
         Book responseBook=resources.target("/books")
                 .request()
                 .put(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
 
-        verify(bookService).update(eq(testBook));
+        verify(bookDao).update(eq(testBook));
         Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
     public void updateBookTest_bookNotFound(){
-        when(bookService.findById(anyLong())).thenReturn(null);
+        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus= resources.target("/books")
                 .request()
                 .put(Entity.entity(testBook,MediaType.APPLICATION_JSON)).getStatusInfo();
 
-        verify(bookService,times(0)).update(any());
+        verify(bookDao,times(0)).update(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void deleteBookTest(){
-        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(bookDao.findById(anyLong())).thenReturn(testBook);
 
         Response.StatusType responseStatus= resources.target("/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(bookService).delete(eq(testBook.getId()));
+        verify(bookDao).delete(eq(testBook.getId()));
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
 
     @Test
     public void deleteBookTest_bookNotFound(){
-        when(bookService.findById(anyLong())).thenReturn(null);
+        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus= resources.target("/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(bookService,times(0)).delete(any());
+        verify(bookDao,times(0)).delete(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
