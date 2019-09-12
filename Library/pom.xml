@@ -17,7 +17,7 @@
 
     <properties>
         <dropwizard.version>1.3.14</dropwizard.version>
-        <spring.version>5.1.9.RELEASE</spring.version>
+        <spring.version>5.1.6.RELEASE</spring.version>
         <mybatis-spring.version>2.0.2</mybatis-spring.version>
         <mybatis.version>3.5.2</mybatis.version>
 
@@ -34,6 +34,12 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
         </dependency>
@@ -42,16 +48,25 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
             <version>${spring.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-config -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
