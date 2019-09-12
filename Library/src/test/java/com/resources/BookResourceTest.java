@@ -42,40 +42,33 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class BookResourceTest {
-
+    //Building MainConfig
     final ObjectMapper objectMapper = Jackson.newObjectMapper();
     final Validator validator = Validators.newValidator();
     final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
     final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
     final MainConfig configuration=factory.build(yaml);
 
+    //Creating mocks
     private BookDao bookDao=mock(BookDao.class);
+
+    //Creating dependencies
     private BookService bookService=new BookService(bookDao,configuration);
+
+    //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
             .addResource(new BookResource(bookService))
-            .build();;
+            .build();
 
+    //Test entities
     private Book testBook;
 
     public BookResourceTest() throws IOException, ConfigurationException {
     }
 
     @Before
-    public void init() throws IOException, ConfigurationException {
-        /*final ObjectMapper objectMapper = Jackson.newObjectMapper();
-        final Validator validator = Validators.newValidator();
-        final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
-        final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
-        final MainConfig configuration=factory.build(yaml);
-
-        bookDao=mock(BookDao.class);
-        bookService=mock(BookService.class);
-        resources = ResourceTestRule.builder()
-                .addResource(new BookResource(bookService))
-                .build();
-*/
-
+    public void init() {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
