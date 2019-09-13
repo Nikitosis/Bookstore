@@ -3,20 +3,16 @@ package com.api;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class ClientBookLog {
+public class UserBookLog {
 
     private Long id;
-    private Long clientId;
+    private String userId;
     private Long bookId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -25,13 +21,13 @@ public class ClientBookLog {
     private LocalDateTime actionDate;
     private Action action;
 
-    public ClientBookLog(){
+    public UserBookLog(){
 
     }
 
-    public ClientBookLog(Long id, Long clientId, Long bookId, LocalDateTime actionDate, Action action) {
+    public UserBookLog(Long id, String userId, Long bookId, LocalDateTime actionDate, Action action) {
         this.id = id;
-        this.clientId = clientId;
+        this.userId = userId;
         this.bookId = bookId;
         this.actionDate = actionDate;
         this.action = action;
@@ -45,12 +41,12 @@ public class ClientBookLog {
         this.id = id;
     }
 
-    public Long getClientId() {
-        return clientId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Long getBookId() {
@@ -86,10 +82,10 @@ public class ClientBookLog {
         if(obj == null || obj.getClass()!= this.getClass())
             return false;
 
-        ClientBookLog log = (ClientBookLog) obj;
+        UserBookLog log = (UserBookLog) obj;
 
         return Objects.equals(log.id,this.id) &&
-                Objects.equals(log.clientId,this.clientId) &&
+                Objects.equals(log.userId,this.userId) &&
                 Objects.equals(log.bookId,this.bookId) &&
                 Objects.equals(log.actionDate,this.actionDate) &&
                 Objects.equals(log.action,this.action);
