@@ -2,25 +2,22 @@ package com.resources;
 
 import com.MainConfig;
 import com.dao.BookDao;
-import com.dao.ClientDao;
+import com.dao.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
-import com.models.Client;
+import com.models.User;
 import com.services.BookService;
-import com.services.ClientService;
-import io.dropwizard.cli.Cli;
+import com.services.UserService;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.validation.Validator;
@@ -39,7 +36,7 @@ import static org.mockito.Mockito.*;
  * Integration test for BookResource
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ClientResourceTest {
+public class UserResourceTest {
     //Building MainConfig
     final ObjectMapper objectMapper = Jackson.newObjectMapper();
     final Validator validator = Validators.newValidator();
@@ -48,32 +45,33 @@ public class ClientResourceTest {
     final MainConfig configuration=factory.build(yaml);
 
     //Creating mocks
-    private ClientDao clientDao=mock(ClientDao.class);
+    private UserDao userDao =mock(UserDao.class);
     private BookDao bookDao=mock(BookDao.class);
 
     //Creating dependencies
-    private ClientService clientService=new ClientService(clientDao);
+    private UserService userService =new UserService(userDao);
     private BookService bookService=new BookService(bookDao,configuration);
 
     //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
-            .addResource(new ClientResource(clientService,bookService))
+            .addResource(new UserResource(userService,bookService))
             .build();
 
     //Test entities
-    private Client testClient;
+    private User testUser;
     private Book testBook;
 
-    public ClientResourceTest() throws IOException, ConfigurationException {
+    public UserResourceTest() throws IOException, ConfigurationException {
     }
 
     @Before
     public void init(){
-        testClient=new Client();
-        testClient.setId(12L);
-        testClient.setfName("FNAME");
-        testClient.setlName("LNAME");
+        testUser =new User();
+        testUser.setPassword("password");
+        testUser.setUsername("username");
+        testUser.setfName("FNAME");
+        testUser.setlName("LNAME");
 
         testBook=new Book();
         testBook.setId(12L);
@@ -81,33 +79,33 @@ public class ClientResourceTest {
     }
 
     @Test
-    public void getClientsTest(){
-        List<Client> clients= Arrays.asList(testClient);
-        when(clientDao.findAll()).thenReturn(clients);
+    public void getUsersTest(){
+        List<User> users= Arrays.asList(testUser);
+        when(userDao.findAll()).thenReturn(users);
 
-        List<Client> responseClients=resources.target("/clients")
+        List<User> responseUsers =resources.target("/users")
                 .request()
-                .get(new GenericType<List<Client>>(){});
+                .get(new GenericType<List<User>>(){});
 
-        Assert.assertArrayEquals(clients.toArray(),responseClients.toArray());
+        Assert.assertArrayEquals(users.toArray(), responseUsers.toArray());
     }
 
     @Test
-    public void getClientByIdTest(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+    public void getUserByIdTest(){
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        Client responseClient=resources.target("/clients/"+testClient.getId())
+        User responseUser =resources.target("/users/"+ testUser.getUsername())
                 .request()
-                .get(Client.class);
+                .get(User.class);
 
-        Assert.assertEquals(testClient,responseClient);
+        Assert.assertEquals(testUser, responseUser);
     }
 
     @Test
-    public void getClientByIdTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void getUserByIdTest_userNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients/2")
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getUsername())
                 .request()
                 .get()
                 .getStatusInfo();
@@ -116,76 +114,76 @@ public class ClientResourceTest {
     }
 
     @Test
-    public void addClientTest(){
-        when(clientDao.save(any(Client.class))).thenReturn(1L);
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+    public void addUserTest(){
+        when(userDao.save(any(User.class))).thenReturn(1L);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        Client responseClient=resources.target("/clients")
+        User responseUser =resources.target("/users")
                 .request()
-                .post(Entity.entity(testClient, MediaType.APPLICATION_JSON),Client.class);
+                .post(Entity.entity(testUser, MediaType.APPLICATION_JSON), User.class);
 
-        verify(clientDao).save(eq(testClient));
-        Assert.assertEquals(testClient,responseClient);
+        verify(userDao).save(eq(testUser));
+        Assert.assertEquals(testUser, responseUser);
     }
 
     @Test
-    public void updateClientTest(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+    public void updateUserTest(){
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        Client responseClient = resources.target("/clients")
+        User responseUser = resources.target("/users")
                 .request()
-                .put(Entity.entity(testClient,MediaType.APPLICATION_JSON),Client.class);
+                .put(Entity.entity(testUser,MediaType.APPLICATION_JSON), User.class);
 
-        verify(clientDao).update(eq(testClient));
-        Assert.assertEquals(testClient,responseClient);
+        verify(userDao).update(eq(testUser));
+        Assert.assertEquals(testUser, responseUser);
     }
 
     @Test
-    public void updateClientTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void updateUserTest_userNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients")
+        Response.StatusType responseStatus=resources.target("/users")
                 .request()
-                .put(Entity.entity(testClient,MediaType.APPLICATION_JSON))
+                .put(Entity.entity(testUser,MediaType.APPLICATION_JSON))
                 .getStatusInfo();
 
-        verify(clientDao,times(0)).update(any());
+        verify(userDao,times(0)).update(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
-    public void deleteClientTest(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+    public void deleteUserTest(){
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(clientDao).delete(eq(testClient.getId()));
+        verify(userDao).delete(eq(testUser.getUsername()));
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
 
     @Test
-    public void deleteClientTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void deleteUserTest_userNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients/2")
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getUsername())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(clientDao,times(0)).delete(any());
+        verify(userDao,times(0)).delete(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
-    public void getTakenClientBooksTest(){
+    public void getTakenUsersBooksTest(){
         List<Book> testBooks=Arrays.asList(testBook);
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
-        when(bookDao.findTakenByClientId(eq(testClient.getId()))).thenReturn(testBooks);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findTakenByUsername(eq(testUser.getUsername()))).thenReturn(testBooks);
 
-        List<Book> responseBooks=resources.target("/clients/"+testClient.getId()+"/books")
+        List<Book> responseBooks=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .request()
                 .get(new GenericType<List<Book>>(){});
 
@@ -193,10 +191,10 @@ public class ClientResourceTest {
     }
 
     @Test
-    public void getTakenClientBooksTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void getTakenUserBooksTest_cuserNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .request()
                 .get()
                 .getStatusInfo();
@@ -206,121 +204,121 @@ public class ClientResourceTest {
 
     @Test
     public void takeBookTest(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(false);
 
-        resources.target("/clients/"+testClient.getId()+"/books")
+        resources.target("/users/"+ testUser.getUsername()+"/books")
                .queryParam("bookId",testBook.getId())
                 .request()
                 .put(Entity.json(""));
 
-        verify(bookDao).takeBook(eq(testClient.getId()),eq(testBook.getId()));
+        verify(bookDao).takeBook(eq(testUser.getUsername()),eq(testBook.getId()));
     }
 
     @Test
-    public void takeBookTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void takeBookTest_userNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).takeBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void takeBookTest_bookNotFound(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).takeBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void takeBootTest_bookAlreadyTaken(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).takeBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test
     public void returnBookTest(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-        when(bookDao.isTakenByClient(eq(testClient.getId()),eq(testBook.getId()))).thenReturn(true);
+        when(bookDao.isTakenByUser(eq(testUser.getUsername()),eq(testBook.getId()))).thenReturn(true);
 
-        resources.target("/clients/"+testClient.getId()+"/books")
+        resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .delete();
 
-        verify(bookDao).returnBook(eq(testClient.getId()),eq(testBook.getId()));
+        verify(bookDao).returnBook(eq(testUser.getUsername()),eq(testBook.getId()));
     }
 
     @Test
-    public void returnBookTest_clientNotFound(){
-        when(clientDao.findById(anyLong())).thenReturn(null);
+    public void returnBookTest_userNotFound(){
+        when(userDao.findByUsername(anyString())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).returnBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void returnBookTest_bookNotFound(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).returnBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
     @Test
     public void returnBootTest_bookNotTaken(){
-        when(clientDao.findById(eq(testClient.getId()))).thenReturn(testClient);
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-        when(bookDao.isTakenByClient(eq(testClient.getId()),eq(testBook.getId()))).thenReturn(false);
+        when(bookDao.isTakenByUser(eq(testUser.getUsername()),eq(testBook.getId()))).thenReturn(false);
 
-        Response.StatusType responseStatus=resources.target("/clients/"+testClient.getId()+"/books")
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getUsername()+"/books")
                 .queryParam("bookId",testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookDao,times(0)).returnBook(anyString(),anyLong());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 }

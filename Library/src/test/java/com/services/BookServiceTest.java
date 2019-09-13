@@ -1,10 +1,10 @@
 package com.services;
 
 import com.api.Action;
-import com.api.ClientBookLog;
+import com.api.UserBookLog;
 import com.dao.BookDao;
 import com.models.Book;
-import com.models.Client;
+import com.models.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,15 +24,16 @@ public class BookServiceTest {
     @InjectMocks
     private BookService bookService;
 
-    private Client testClient;
+    private User testUser;
     private Book testBook;
 
     @Before
     public void init(){
-        testClient=new Client();
-        testClient.setId(12L);
-        testClient.setfName("FNAME");
-        testClient.setlName("LNAME");
+        testUser =new User();
+        testUser.setUsername("username");
+        testUser.setPassword("password");
+        testUser.setfName("FNAME");
+        testUser.setlName("LNAME");
 
         testBook=new Book();
         testBook.setId(12L);
@@ -41,29 +42,29 @@ public class BookServiceTest {
 
     @Test
     public void returnBookTest(){
-        ArgumentCaptor<ClientBookLog> logCaptor=new ArgumentCaptor<ClientBookLog>();
+        ArgumentCaptor<UserBookLog> logCaptor=new ArgumentCaptor<UserBookLog>();
         BookService spyBookService=spy(bookService);
-        doNothing().when(spyBookService).postClientBookLog(logCaptor.capture());
+        doNothing().when(spyBookService).postUserBookLog(logCaptor.capture());
 
-        spyBookService.returnBook(testClient.getId(),testBook.getId());
+        spyBookService.returnBook(testUser.getUsername(),testBook.getId());
 
-        Assert.assertEquals(testClient.getId(),logCaptor.getValue().getClientId());
-        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getClientId());
+        Assert.assertEquals(testUser.getUsername(),logCaptor.getValue().getUserId());
+        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
         Assert.assertEquals(Action.RETURN,logCaptor.getValue().getAction());
-        verify(bookDao).returnBook(eq(testClient.getId()),eq(testBook.getId()));
+        verify(bookDao).returnBook(eq(testUser.getUsername()),eq(testBook.getId()));
     }
 
     @Test
     public void takeBookTest(){
-        ArgumentCaptor<ClientBookLog> logCaptor=new ArgumentCaptor<ClientBookLog>();
+        ArgumentCaptor<UserBookLog> logCaptor=new ArgumentCaptor<UserBookLog>();
         BookService spyBookService=spy(bookService);
-        doNothing().when(spyBookService).postClientBookLog(logCaptor.capture());
+        doNothing().when(spyBookService).postUserBookLog(logCaptor.capture());
 
-        spyBookService.takeBook(testClient.getId(),testBook.getId());
+        spyBookService.takeBook(testUser.getUsername(),testBook.getId());
 
-        Assert.assertEquals(testClient.getId(),logCaptor.getValue().getClientId());
-        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getClientId());
+        Assert.assertEquals(testUser.getUsername(),logCaptor.getValue().getUserId());
+        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
         Assert.assertEquals(Action.TAKE,logCaptor.getValue().getAction());
-        verify(bookDao).takeBook(eq(testClient.getId()),eq(testBook.getId()));
+        verify(bookDao).takeBook(eq(testUser.getUsername()),eq(testBook.getId()));
     }
 }
