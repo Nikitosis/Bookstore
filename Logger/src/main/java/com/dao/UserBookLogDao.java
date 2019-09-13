@@ -1,54 +1,54 @@
 package com.dao;
 
-import com.api.ClientBookLog;
+import com.api.UserBookLog;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
-public interface ClientBookLogDao {
+public interface UserBookLogDao {
 
-    @Select("SELECT * FROM client_book_log WHERE client_id=#{clientId}")
+    @Select("SELECT * FROM user_book_log WHERE user_id=#{userId}")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "clientId",column = "client_id"),
+            @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<ClientBookLog> findByClientId(@Param("clientId") Long clientId);
+    List<UserBookLog> findByUser(@Param("userId") String userId);
 
-    @Select("SELECT * FROM client_book_log WHERE book=#{bookId}")
+    @Select("SELECT * FROM user_book_log WHERE book=#{bookId}")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "clientId",column = "client_id"),
+            @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<ClientBookLog> findByBookId(@Param("bookId") Long bookId);
+    List<UserBookLog> findByBookId(@Param("bookId") Long bookId);
 
-    @Select("SELECT * FROM client_book_log WHERE client_id=#{clientId} AND book_id=#{bookId}")
+    @Select("SELECT * FROM user_book_log WHERE user_id=#{userId} AND book_id=#{bookId}")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "clientId",column = "client_id"),
+            @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<ClientBookLog> findByBookAndClient(@Param("clientId")Long clientId,
-                                            @Param("bookId") Long bookId);
+    List<UserBookLog> findByBookAndUser(@Param("userId") String userId,
+                                        @Param("bookId") Long bookId);
 
-    @Select("Select * FROM client_book_log")
+    @Select("Select * FROM user_book_log")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "clientId",column = "client_id"),
+            @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<ClientBookLog> findAll();
+    List<UserBookLog> findAll();
 
-    @Insert("INSERT INTO client_book_log VALUES(NULL,#{clientId},#{bookId},#{actionDate},#{action})")
+    @Insert("INSERT INTO user_book_log VALUES(NULL,#{userId},#{bookId},#{actionDate},#{action})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
-    Long save(ClientBookLog clientBookLog);
+    Long save(UserBookLog userBookLog);
 }

@@ -2,14 +2,9 @@ package com.services;
 
 import com.MainConfig;
 import com.api.Action;
-import com.api.ClientBookLog;
+import com.api.UserBookLog;
 import com.dao.BookDao;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.models.Book;
-import jdk.nashorn.internal.objects.NativeJSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +12,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Calendar;
 
 @Service
 public class BookService {
@@ -55,59 +47,59 @@ public class BookService {
         bookDao.delete(id);
     }
 
-    public List<Book> findTakenByClientId(Long clientId){
-        return bookDao.findTakenByClientId(clientId);
+    public List<Book> findTakenByUsername(String username){
+        return bookDao.findTakenByUsername(username);
     }
 
-    public boolean isTakenByClient(Long clientId,Long bookId){
-        return bookDao.isTakenByClient(clientId,bookId);
+    public boolean isTakenByUser(String username, Long bookId){
+        return bookDao.isTakenByUser(username,bookId);
     }
 
     public boolean isTaken(Long bookId){
         return bookDao.isTaken(bookId);
     }
 
-    public void takeBook(Long clientId,Long bookId){
-        bookDao.takeBook(clientId,bookId);
+    public void takeBook(String username,Long bookId){
+        bookDao.takeBook(username,bookId);
 
-        ClientBookLog clientBookLog=new ClientBookLog();
-        clientBookLog.setClientId(clientId);
-        clientBookLog.setBookId(bookId);
-        clientBookLog.setAction(Action.TAKE);
-        clientBookLog.setActionDate(LocalDateTime.now());
+        UserBookLog userBookLog =new UserBookLog();
+        userBookLog.setUserId(username);
+        userBookLog.setBookId(bookId);
+        userBookLog.setAction(Action.TAKE);
+        userBookLog.setActionDate(LocalDateTime.now());
 
         try {
-            postClientBookLog(clientBookLog);
+            postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void returnBook(Long clientId,Long bookId){
-        bookDao.returnBook(clientId,bookId);
+    public void returnBook(String username,Long bookId){
+        bookDao.returnBook(username,bookId);
 
-        ClientBookLog clientBookLog=new ClientBookLog();
-        clientBookLog.setClientId(clientId);
-        clientBookLog.setBookId(bookId);
-        clientBookLog.setAction(Action.RETURN);
-        clientBookLog.setActionDate(LocalDateTime.now());
+        UserBookLog userBookLog =new UserBookLog();
+        userBookLog.setUserId(username);
+        userBookLog.setBookId(bookId);
+        userBookLog.setAction(Action.RETURN);
+        userBookLog.setActionDate(LocalDateTime.now());
 
-        System.out.println(Entity.entity(clientBookLog,MediaType.APPLICATION_JSON).toString());
+        System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
 
         try {
-           postClientBookLog(clientBookLog);
+           postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    public void postClientBookLog(ClientBookLog clientBookLog){
+    public void postUserBookLog(UserBookLog userBookLog){
         Client client = ClientBuilder.newClient();
         client.target(mainConfig.getClientBookLoggerService().getUrl())
                     .path("/actions")
                     .request(MediaType.APPLICATION_JSON)
-                    .post(Entity.entity(clientBookLog, MediaType.APPLICATION_JSON));
+                    .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
     }
 }

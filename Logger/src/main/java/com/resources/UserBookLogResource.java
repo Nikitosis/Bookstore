@@ -1,10 +1,9 @@
 package com.resources;
 
-import com.api.ClientBookLog;
-import com.dao.ClientBookLogDao;
+import com.api.UserBookLog;
+import com.dao.UserBookLogDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -14,43 +13,43 @@ import javax.ws.rs.core.Response;
 @Path("/actions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class ClientBookLogResource {
+public class UserBookLogResource {
 
-    private ClientBookLogDao clientBookLogDao;
+    private UserBookLogDao userBookLogDao;
 
     @Autowired
-    public ClientBookLogResource(ClientBookLogDao clientBookLogDao) {
-        this.clientBookLogDao = clientBookLogDao;
+    public UserBookLogResource(UserBookLogDao userBookLogDao) {
+        this.userBookLogDao = userBookLogDao;
     }
 
     @GET
     public Response getLogs(@QueryParam("bookId") Long bookId,
-                            @QueryParam("clientId") Long clientId) {
-        if (bookId != null && clientId != null) {
+                            @QueryParam("userId") String userId) {
+        if (bookId != null && userId != null) {
             return Response.status(Response.Status.OK)
-                    .entity(clientBookLogDao.findByBookAndClient(clientId,bookId))
+                    .entity(userBookLogDao.findByBookAndUser(userId,bookId))
                     .build();
         }
         if (bookId != null) {
             return Response.status(Response.Status.OK).
-                    entity(clientBookLogDao.findByBookId(bookId)).
+                    entity(userBookLogDao.findByBookId(bookId)).
                     build();
         }
-        if (clientId != null) {
+        if (userId != null) {
             return Response.status(Response.Status.OK).
-                    entity(clientBookLogDao.findByClientId(clientId)).
+                    entity(userBookLogDao.findByUser(userId)).
                     build();
         }
         return Response.status(Response.Status.OK).
-                entity(clientBookLogDao.findAll()).
+                entity(userBookLogDao.findAll()).
                 build();
     }
 
     @POST
-    public Response create(ClientBookLog clientBookLog) {
-        clientBookLogDao.save(clientBookLog);
+    public Response create(UserBookLog userBookLog) {
+        userBookLogDao.save(userBookLog);
         return Response.status(Response.Status.OK).
-                entity(clientBookLog).
+                entity(userBookLog).
                 build();
     }
 }

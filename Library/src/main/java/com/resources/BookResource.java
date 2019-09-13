@@ -1,12 +1,9 @@
 package com.resources;
 
-import com.dao.BookDao;
-import com.dao.ClientDao;
 import com.models.Book;
 import com.services.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;

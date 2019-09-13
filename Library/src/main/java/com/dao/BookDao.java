@@ -30,33 +30,33 @@ public interface BookDao {
     @Delete("CALL deleteBook(#{id})")
     void delete(@Param("id") Long id);
 
-    @Select("SELECT books.* FROM client_book " +
-            "INNER JOIN books ON client_book.book_id=books.id " +
+    @Select("SELECT books.* FROM user_book " +
+            "INNER JOIN books ON user_book.book_id=books.id " +
             "WHERE " +
-            "client_book.client_id=#{clientId} ")
+            "user_book.user_id=#{userId} ")
     @Results(value = {
             @Result(property = "id",column = "id"),
             @Result(property = "name",column = "name")
     })
-    List<Book> findTakenByClientId(@Param("clientId") Long clientId);
+    List<Book> findTakenByUsername(@Param("userId") String userId);
 
     @Select("SELECT EXISTS " +
-            "(SELECT 1 FROM client_book " +
+            "(SELECT 1 FROM user_book " +
             "WHERE " +
-            "client_book.client_id=#{clientId} AND " +
-            "client_book.book_id=#{bookId} )")
-    boolean isTakenByClient(@Param("clientId") Long clientId, @Param("bookId") Long bookId);
+            "user_book.user_id=#{userId} AND " +
+            "user_book.book_id=#{bookId} )")
+    boolean isTakenByUser(@Param("userId") String userId, @Param("bookId") Long bookId);
 
     @Select("SELECT EXISTS " +
-            "(SELECT 1 FROM client_book " +
+            "(SELECT 1 FROM user_book " +
             "WHERE " +
-            "client_book.book_id=#{bookId} )")
+            "user_book.book_id=#{bookId} )")
     boolean isTaken(@Param("bookId") Long bookId);
 
-    @Select("INSERT INTO client_book VALUES (#{bookId},#{clientId})")
-    void takeBook(@Param("clientId") Long clientId,@Param("bookId") Long bookId);
+    @Select("INSERT INTO user_book VALUES (#{bookId},#{userId})")
+    void takeBook(@Param("userId") String userId,@Param("bookId") Long bookId);
 
-    @Select("DELETE FROM client_book WHERE book_id=#{bookId} AND client_id=#{clientId}")
-    void returnBook(@Param("clientId") Long clientId,@Param("bookId") Long bookId);
+    @Select("DELETE FROM user_book WHERE book_id=#{bookId} AND user_id=#{userId}")
+    void returnBook(@Param("userId") String userId,@Param("bookId") Long bookId);
 
 }
