@@ -8,6 +8,7 @@ import java.util.List;
 public interface UserDao {
     @Select("SELECT * FROM users")
     @Results(value = {
+            @Result(property = "id", column = "id"),
             @Result(property = "username",column = "username"),
             @Result(property = "password",column = "password"),
             @Result(property = "fName",column = "first_name"),
@@ -17,6 +18,7 @@ public interface UserDao {
 
     @Select("SELECT * FROM users WHERE username=#{username}")
     @Results(value = {
+            @Result(property = "id", column = "id"),
             @Result(property = "username",column = "username"),
             @Result(property = "password",column = "password"),
             @Result(property = "fName",column = "first_name"),
@@ -24,16 +26,23 @@ public interface UserDao {
     })
     User findByUsername(@Param("username") String username);
 
-    @Insert("INSERT INTO users (first_name,last_name) VALUES(#{fName},#{lName})")
+    @Select("SELECT * FROM users WHERE id=#{userId}")
+    @Results(value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "username",column = "username"),
+            @Result(property = "password",column = "password"),
+            @Result(property = "fName",column = "first_name"),
+            @Result(property = "lName",column = "last_name")
+    })
+    User findById(@Param("userId") Long userId);
+
+    @Insert("INSERT INTO users (username,password,first_name,last_name) VALUES(#{username},#{password},#{fName},#{lName})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
-    @Insert("INSERT INTO user_role VALUES(#{username},#{roleName})")
-    void addRole(@Param("username") String username, @Param("roleName") String roleName);
-
-    @Update("UPDATE users SET first_name=#{fName}, last_name=#{lName} WHERE username=#{username}")
+    @Update("UPDATE users SET username=#{username}, password=#{password}, first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
     void update(User user);
 
-    @Delete("CALL deleteUser(#{username})")
-    void delete(@Param("username") String username);
+    @Delete("CALL deleteUser(#{userId})")
+    void delete(@Param("userId") Long userId);
 }

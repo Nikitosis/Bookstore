@@ -38,14 +38,14 @@ public interface BookDao {
             @Result(property = "id",column = "id"),
             @Result(property = "name",column = "name")
     })
-    List<Book> findTakenByUsername(@Param("userId") String userId);
+    List<Book> findTakenByUser(@Param("userId") Long userId);
 
     @Select("SELECT EXISTS " +
             "(SELECT 1 FROM user_book " +
             "WHERE " +
             "user_book.user_id=#{userId} AND " +
             "user_book.book_id=#{bookId} )")
-    boolean isTakenByUser(@Param("userId") String userId, @Param("bookId") Long bookId);
+    boolean isTakenByUser(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
     @Select("SELECT EXISTS " +
             "(SELECT 1 FROM user_book " +
@@ -54,9 +54,9 @@ public interface BookDao {
     boolean isTaken(@Param("bookId") Long bookId);
 
     @Select("INSERT INTO user_book VALUES (#{bookId},#{userId})")
-    void takeBook(@Param("userId") String userId,@Param("bookId") Long bookId);
+    void takeBook(@Param("userId") Long userId,@Param("bookId") Long bookId);
 
     @Select("DELETE FROM user_book WHERE book_id=#{bookId} AND user_id=#{userId}")
-    void returnBook(@Param("userId") String userId,@Param("bookId") Long bookId);
+    void returnBook(@Param("userId") Long userId,@Param("bookId") Long bookId);
 
 }

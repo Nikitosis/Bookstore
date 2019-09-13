@@ -24,7 +24,7 @@ public class UserBookLogResource {
 
     @GET
     public Response getLogs(@QueryParam("bookId") Long bookId,
-                            @QueryParam("userId") String userId) {
+                            @QueryParam("userId") Long userId) {
         if (bookId != null && userId != null) {
             return Response.status(Response.Status.OK)
                     .entity(userBookLogDao.findByBookAndUser(userId,bookId))

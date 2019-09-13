@@ -46,12 +46,12 @@ public class BookServiceTest {
         BookService spyBookService=spy(bookService);
         doNothing().when(spyBookService).postUserBookLog(logCaptor.capture());
 
-        spyBookService.returnBook(testUser.getUsername(),testBook.getId());
+        spyBookService.returnBook(testUser.getId(),testBook.getId());
 
-        Assert.assertEquals(testUser.getUsername(),logCaptor.getValue().getUserId());
+        Assert.assertEquals(testUser.getId(),logCaptor.getValue().getUserId());
         Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
         Assert.assertEquals(Action.RETURN,logCaptor.getValue().getAction());
-        verify(bookDao).returnBook(eq(testUser.getUsername()),eq(testBook.getId()));
+        verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
     @Test
@@ -60,11 +60,11 @@ public class BookServiceTest {
         BookService spyBookService=spy(bookService);
         doNothing().when(spyBookService).postUserBookLog(logCaptor.capture());
 
-        spyBookService.takeBook(testUser.getUsername(),testBook.getId());
+        spyBookService.takeBook(testUser.getId(),testBook.getId());
 
-        Assert.assertEquals(testUser.getUsername(),logCaptor.getValue().getUserId());
+        Assert.assertEquals(testUser.getId(),logCaptor.getValue().getUserId());
         Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
         Assert.assertEquals(Action.TAKE,logCaptor.getValue().getAction());
-        verify(bookDao).takeBook(eq(testUser.getUsername()),eq(testBook.getId()));
+        verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }

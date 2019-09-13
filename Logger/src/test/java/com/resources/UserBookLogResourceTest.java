@@ -36,7 +36,7 @@ public class UserBookLogResourceTest {
         testLog.setAction(Action.TAKE);
         testLog.setActionDate(LocalDateTime.now());
         testLog.setBookId(12L);
-        testLog.setUserId("username");
+        testLog.setUserId(13L);
         testLog.setId(31L);
     }
 

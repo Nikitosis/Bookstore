@@ -34,9 +34,9 @@ public class UserResource {
     }
 
     @GET
-    @Path("/{username}")
-    public Response getUserByUsername(@PathParam("username") String username){
-        User user = userService.findByUsername(username);
+    @Path("/{userId}")
+    public Response getUserByUsername(@PathParam("userId") Long userId){
+        User user = userService.findById(userId);
         if(user !=null){
             return Response.ok(user).build();
         }
@@ -53,9 +53,9 @@ public class UserResource {
 
     @PUT
     public Response updateUser(@Valid User user){
-        if(userService.findByUsername(user.getUsername())!=null){
+        if(userService.findById(user.getId())!=null){
             userService.update(user);
-            return Response.ok(userService.findByUsername(user.getUsername())).build();
+            return Response.ok(userService.findById(user.getId())).build();
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
@@ -63,10 +63,10 @@ public class UserResource {
     }
 
     @DELETE
-    @Path("/{username}")
-    public Response deleteUser(@PathParam("username") String username){
-        if(userService.findByUsername(username)!=null){
-            userService.delete(username);
+    @Path("/{userId}")
+    public Response deleteUser(@PathParam("userId") Long userId){
+        if(userService.findById(userId)!=null){
+            userService.delete(userId);
             return Response.ok().build();
         }
         else{
@@ -75,10 +75,10 @@ public class UserResource {
     }
 
     @GET
-    @Path("/{username}/books")
-    public Response getTakenUsersBooks(@PathParam("username") String username){
-        if(userService.findByUsername(username)!=null){
-            List<Book> takenBooks=bookService.findTakenByUsername(username);
+    @Path("/{userId}/books")
+    public Response getTakenUsersBooks(@PathParam("userId") Long userId){
+        if(userService.findById(userId)!=null){
+            List<Book> takenBooks=bookService.findTakenByUser(userId);
             return Response.ok().entity(takenBooks).build();
         }
         else{
@@ -87,12 +87,12 @@ public class UserResource {
     }
 
     @PUT
-    @Path("/{username}/books")
-    public Response takeBook(@PathParam("username") String username,
+    @Path("/{userId}/books")
+    public Response takeBook(@PathParam("userId") Long userId,
                              @QueryParam("bookId") Long bookId){
-        if(bookService.findById(bookId)!=null && userService.findByUsername(username)!=null){
+        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
             if(!bookService.isTaken(bookId)){
-                bookService.takeBook(username,bookId);
+                bookService.takeBook(userId,bookId);
                 return Response.ok().build();
             }
             else{
@@ -107,12 +107,12 @@ public class UserResource {
     }
 
     @DELETE
-    @Path("/{username}/books")
-    public Response returnBook(@PathParam("username") String username,
+    @Path("/{userId}/books")
+    public Response returnBook(@PathParam("userId") Long userId,
                                @QueryParam("bookId") Long bookId){
-        if(bookService.findById(bookId)!=null && userService.findByUsername(username)!=null){
-            if(bookService.isTakenByUser(username,bookId)){
-                bookService.returnBook(username,bookId);
+        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
+            if(bookService.isTakenByUser(userId,bookId)){
+                bookService.returnBook(userId,bookId);
                 return Response.ok().build();
             }
             else{

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="14" author="Pupov Nikita">
+        <sqlFile endDelimiter="//" path="db/sqlFile/2019-09-13-03-changed-procedures.sql"/>
+    </changeSet>
+</databaseChangeLog>

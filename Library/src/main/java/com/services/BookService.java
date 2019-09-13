@@ -47,23 +47,23 @@ public class BookService {
         bookDao.delete(id);
     }
 
-    public List<Book> findTakenByUsername(String username){
-        return bookDao.findTakenByUsername(username);
+    public List<Book> findTakenByUser(Long userId){
+        return bookDao.findTakenByUser(userId);
     }
 
-    public boolean isTakenByUser(String username, Long bookId){
-        return bookDao.isTakenByUser(username,bookId);
+    public boolean isTakenByUser(Long userId, Long bookId){
+        return bookDao.isTakenByUser(userId,bookId);
     }
 
     public boolean isTaken(Long bookId){
         return bookDao.isTaken(bookId);
     }
 
-    public void takeBook(String username,Long bookId){
-        bookDao.takeBook(username,bookId);
+    public void takeBook(Long userId,Long bookId){
+        bookDao.takeBook(userId,bookId);
 
         UserBookLog userBookLog =new UserBookLog();
-        userBookLog.setUserId(username);
+        userBookLog.setUserId(userId);
         userBookLog.setBookId(bookId);
         userBookLog.setAction(Action.TAKE);
         userBookLog.setActionDate(LocalDateTime.now());
@@ -76,11 +76,11 @@ public class BookService {
         }
     }
 
-    public void returnBook(String username,Long bookId){
-        bookDao.returnBook(username,bookId);
+    public void returnBook(Long userId,Long bookId){
+        bookDao.returnBook(userId,bookId);
 
         UserBookLog userBookLog =new UserBookLog();
-        userBookLog.setUserId(username);
+        userBookLog.setUserId(userId);
         userBookLog.setBookId(bookId);
         userBookLog.setAction(Action.RETURN);
         userBookLog.setActionDate(LocalDateTime.now());

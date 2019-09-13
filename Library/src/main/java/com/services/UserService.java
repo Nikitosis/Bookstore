@@ -24,6 +24,10 @@ public class UserService {
         return userDao.findByUsername(username);
     }
 
+    public User findById(Long userId){
+        return userDao.findById(userId);
+    }
+
     public Long save(User book){
         return userDao.save(book);
     }
@@ -32,7 +36,7 @@ public class UserService {
         userDao.update(book);
     }
 
-    public void delete(String username){
-        userDao.delete(username);
+    public void delete(Long userId){
+        userDao.delete(userId);
     }
 }

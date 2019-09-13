@@ -15,7 +15,7 @@ public interface UserBookLogDao {
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<UserBookLog> findByUser(@Param("userId") String userId);
+    List<UserBookLog> findByUser(@Param("userId") Long userId);
 
     @Select("SELECT * FROM user_book_log WHERE book=#{bookId}")
     @Results(value = {
@@ -35,7 +35,7 @@ public interface UserBookLogDao {
             @Result(property = "actionDate",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
-    List<UserBookLog> findByBookAndUser(@Param("userId") String userId,
+    List<UserBookLog> findByBookAndUser(@Param("userId") Long userId,
                                         @Param("bookId") Long bookId);
 
     @Select("Select * FROM user_book_log")

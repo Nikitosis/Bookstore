@@ -7,6 +7,9 @@ import java.util.Objects;
 
 public class User {
     @NotNull
+    private Long id;
+
+    @NotNull
     @Length(max = 255)
     private String fName;
 
@@ -14,22 +17,29 @@ public class User {
     @Length(max = 255)
     private String lName;
 
-    @NotNull
     @Length(max = 255)
     private String username;
 
-    @NotNull
     @Length(max = 255)
     private String password;
 
     public User(){
     }
 
-    public User(String fName, String lName, String username, String password) {
+    public User(Long id, String fName, String lName, String username, String password) {
+        this.id = id;
         this.fName = fName;
         this.lName = lName;
         this.username = username;
         this.password = password;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getfName() {

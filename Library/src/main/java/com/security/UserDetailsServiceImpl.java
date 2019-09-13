@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails buildUserDetails(User user){
-        List<GrantedAuthority> authorities=roleDao.findByUsername(user.getUsername()).stream()
+        List<GrantedAuthority> authorities=roleDao.findByUser(user.getId()).stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
 

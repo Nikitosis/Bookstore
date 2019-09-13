@@ -16,5 +16,7 @@
     <include file="db/2019-09-12-01-replaced-clients-with-users.xml"/>
     <include file="db/2019-09-12-02-fixed-procedures.xml"/>
     <include file="db/2019-09-13-01-added-roles-table.xml"/>
+    <include file="db/2019-09-13-02-added-user_id-role_id.xml"/>
+    <include file="db/2019-09-13-03-changed-procedures.xml"/>
 
 </databaseChangeLog>
