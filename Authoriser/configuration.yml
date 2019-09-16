@@ -1,0 +1,20 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: ${SERVICE_CLIENTPORT:-9004}
+  adminConnectors:
+    - type: http
+      port: ${SERVICE_ADMINPORT:-9005}
+
+database:
+  url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
+  user: root
+  password: 1234
+  driverClass: com.mysql.cj.jdbc.Driver
+
+security:
+  authenticationUrl: "/authenticate"
+  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  tokenHeader: "Authorization"
+  tokenPrefix: "Bearer "
+  tokenType: "JWT"
