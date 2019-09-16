@@ -3,6 +3,7 @@ package com.services;
 import com.dao.UserDao;
 import com.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +12,12 @@ import java.util.List;
 public class UserService {
     private UserDao userDao;
 
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll(){
@@ -28,12 +32,13 @@ public class UserService {
         return userDao.findById(userId);
     }
 
-    public Long save(User book){
-        return userDao.save(book);
+    public Long save(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userDao.save(user);
     }
 
-    public void update(User book){
-        userDao.update(book);
+    public void update(User user){
+        userDao.update(user);
     }
 
     public void delete(Long userId){

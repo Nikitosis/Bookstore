@@ -47,13 +47,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     private UserDetails buildUserDetails(User user){
-        List<GrantedAuthority> authorities=roleDao.findByUser(user.getId()).stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+        List<String> roles=roleDao.findByUser(user.getId()).stream()
+                .map(role -> role.getName())
                 .collect(Collectors.toList());
 
         UserBuilder userBuilder=org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
-        userBuilder.password(passwordEncoder.encode(user.getPassword()));
-        userBuilder.authorities(authorities);
+        userBuilder.password(user.getPassword());
+        userBuilder.roles(roles.toArray(new String[0]));
 
         return userBuilder.build();
     }

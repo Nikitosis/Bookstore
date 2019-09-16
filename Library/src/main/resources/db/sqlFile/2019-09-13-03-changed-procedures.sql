@@ -5,6 +5,8 @@ CREATE PROCEDURE deleteUser(IN userId INT)
     BEGIN
         START TRANSACTION;
 
+        DELETE FROM bookstore.user_role WHERE user_id=userId;
+        DELETE FROM bookstore.user_book_log WHERE user_id=userId;
         DELETE FROM bookstore.user_book WHERE user_id=userId;
         DELETE FROM bookstore.users WHERE id=userId;
 

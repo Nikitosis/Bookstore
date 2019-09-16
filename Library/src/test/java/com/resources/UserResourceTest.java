@@ -19,6 +19,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
@@ -38,18 +40,21 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class UserResourceTest {
     //Building MainConfig
-    final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    final Validator validator = Validators.newValidator();
-    final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
-    final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
-    final MainConfig configuration=factory.build(yaml);
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    private final Validator validator = Validators.newValidator();
+    private final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
+    private final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
+    private final MainConfig configuration=factory.build(yaml);
+
+    private final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+
 
     //Creating mocks
     private UserDao userDao =mock(UserDao.class);
     private BookDao bookDao=mock(BookDao.class);
 
     //Creating dependencies
-    private UserService userService =new UserService(userDao);
+    private UserService userService =new UserService(userDao,passwordEncoder);
     private BookService bookService=new BookService(bookDao,configuration);
 
     //Creating ResourceTestRule
