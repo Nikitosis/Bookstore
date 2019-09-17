@@ -6,20 +6,19 @@ import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class User {
-    @NotNull
     private Long id;
 
-    @NotNull
     @Length(max = 255)
     private String fName;
 
-    @NotNull
     @Length(max = 255)
     private String lName;
 
+    @NotNull
     @Length(max = 255)
     private String username;
 
+    @NotNull
     @Length(max = 255)
     private String password;
 

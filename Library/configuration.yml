@@ -14,3 +14,10 @@ database:
 
 clientBookLoggerService:
   url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
+
+security:
+  authenticationUrl: "/authenticate"
+  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  tokenHeader: "Authorization"
+  tokenPrefix: "Bearer "
+  tokenType: "JWT"

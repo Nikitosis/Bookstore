@@ -1,47 +1,49 @@
 package com.configurations;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+public class SecurityConfig {
+    private String authenticationUrl;
+    private String jwtSecret;
+    private String tokenHeader;
+    private String tokenPrefix;
+    private String tokenType;
 
-@Configuration
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    public String getAuthenticationUrl() {
+        return authenticationUrl;
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    public void setAuthenticationUrl(String authenticationUrl) {
+        this.authenticationUrl = authenticationUrl;
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                    .antMatchers("/**").authenticated()
-                .and()
-                    .httpBasic()
-                .and()
-                //we don't save user's session
-                    .sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                    .csrf()
-                        .disable();
+    public String getJwtSecret() {
+        return jwtSecret;
+    }
+
+    public void setJwtSecret(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
+
+    public String getTokenHeader() {
+        return tokenHeader;
+    }
+
+    public void setTokenHeader(String tokenHeader) {
+        this.tokenHeader = tokenHeader;
+    }
+
+    public String getTokenPrefix() {
+        return tokenPrefix;
+    }
+
+    public void setTokenPrefix(String tokenPrefix) {
+        this.tokenPrefix = tokenPrefix;
+    }
+
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
     }
 }
