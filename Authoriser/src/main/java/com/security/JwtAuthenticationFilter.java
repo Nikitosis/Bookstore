@@ -49,6 +49,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         User user=(User)authResult.getPrincipal();
 
         byte[] signingKey=mainConfig.getSecurity().getJwtSecret().getBytes();
+        //TODO: inject roles into token
 
         String token=Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
@@ -59,6 +60,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
                 mainConfig.getSecurity().getTokenPrefix()+token);
-        System.out.println("Worked fine");
     }
 }
