@@ -8,6 +8,7 @@ import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -62,6 +63,9 @@ public class MainApp extends Application<MainConfig> {
         for(Map.Entry<String,Object> entry : resources.entrySet()) {
             environment.jersey().register(entry.getValue());
         }
+
+        final FilterRegistration.Dynamic cors =
+                environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());

@@ -1,6 +1,7 @@
 package com.security;
 
 import com.MainConfig;
+import io.dropwizard.jackson.Jackson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 import sun.security.util.SecurityConstants;
 
 import javax.servlet.FilterChain;
@@ -39,6 +41,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        //if it is preflight request
+        if(CorsUtils.isPreFlightRequest(request)){
+            response.setStatus(HttpServletResponse.SC_OK);
+            return null;
+        }
+
         String username=request.getParameter("username");
         String password=request.getParameter("password");
 
@@ -57,7 +65,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .collect(Collectors.toList());
 
         byte[] signingKey=mainConfig.getSecurity().getJwtSecret().getBytes();
-        //TODO: inject roles into token
 
         String token=Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
