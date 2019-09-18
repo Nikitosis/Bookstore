@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.cors.CorsUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,6 +35,11 @@ public class JwtAuthorisationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if(CorsUtils.isPreFlightRequest(request)){
+            chain.doFilter(request,response);
+            return;
+        }
+
         UsernamePasswordAuthenticationToken authenticationToken=getAuthentication(request);
         if(authenticationToken==null){
             chain.doFilter(request,response);
@@ -63,7 +69,7 @@ public class JwtAuthorisationFilter extends BasicAuthenticationFilter {
                         .getSubject();
 
                 List<GrantedAuthority> authorities = ((List<String>) parsedToken.getBody()
-                        .get("rol")).stream()
+                        .get("roles")).stream()
                         .map(authority -> new SimpleGrantedAuthority(authority))
                         .collect(Collectors.toList());
 

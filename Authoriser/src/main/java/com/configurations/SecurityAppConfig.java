@@ -1,6 +1,7 @@
 package com.configurations;
 
 import com.MainConfig;
+import com.dao.UserDao;
 import com.security.JwtAuthenticationFilter;
 import com.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private UserDao userDao;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -39,7 +43,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

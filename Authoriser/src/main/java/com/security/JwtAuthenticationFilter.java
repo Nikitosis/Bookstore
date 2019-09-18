@@ -1,10 +1,12 @@
 package com.security;
 
 import com.MainConfig;
+import com.dao.UserDao;
 import io.dropwizard.jackson.Jackson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsUtils;
 import sun.security.util.SecurityConstants;
 
@@ -32,9 +35,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private MainConfig mainConfig;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,MainConfig mainConfig) {
+    private UserDao userDao;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,MainConfig mainConfig,UserDao userDao) {
         this.authenticationManager = authenticationManager;
         this.mainConfig=mainConfig;
+        this.userDao=userDao;
 
         setFilterProcessesUrl(mainConfig.getSecurity().getAuthenticationUrl());
     }
@@ -64,6 +70,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
+        Long userId=userDao.findByUsername(user.getUsername()).getId();
+
         byte[] signingKey=mainConfig.getSecurity().getJwtSecret().getBytes();
 
         String token=Jwts.builder()
@@ -71,7 +79,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .setHeaderParam("typ",mainConfig.getSecurity().getTokenType())
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis()+864000000))
-                .claim("rol",roles)
+                .claim("roles",roles)
+                .claim("userId",userId)
                 .compact();
 
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
