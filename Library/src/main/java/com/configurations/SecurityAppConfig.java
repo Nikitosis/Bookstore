@@ -46,7 +46,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors()
+        http.csrf().disable()
+                .cors()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/**").authenticated()
@@ -56,8 +57,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and();
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean

@@ -38,6 +38,7 @@ public class BookServiceTest {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
+        testBook.setTaken(false);
     }
 
     @Test

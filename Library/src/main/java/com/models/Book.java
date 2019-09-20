@@ -15,6 +15,16 @@ public class Book {
     @Length(max = 255)
     private String name;
 
+    private Boolean isTaken;
+
+    public Boolean getTaken() {
+        return isTaken;
+    }
+
+    public void setTaken(Boolean taken) {
+        isTaken = taken;
+    }
+
     public Long getId() {
         return id;
     }
@@ -42,7 +52,8 @@ public class Book {
 
         Book book = (Book) obj;
 
-        return Objects.equals(book.name,this.name) &&
-                Objects.equals(book.id,this.id);
+        return Objects.equals(book.id,this.id) &&
+                Objects.equals(book.name,this.name) &&
+                Objects.equals(book.isTaken,this.isTaken);
     }
 }

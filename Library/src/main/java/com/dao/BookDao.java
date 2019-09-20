@@ -9,7 +9,8 @@ public interface BookDao {
     @Select("SELECT * FROM books")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "name",column = "name")
+            @Result(property = "name",column = "name"),
+            @Result(property = "isTaken",column = "id",one = @One(select = "isTaken"))
     })
     List<Book> findAll();
 

@@ -84,9 +84,9 @@ public class User {
 
         User user = (User) obj;
 
-        return Objects.equals(user.fName,this.fName) &&
+        return Objects.equals(user.id,this.id) &&
+                Objects.equals(user.fName,this.fName) &&
                 Objects.equals(user.lName,this.lName) &&
-                Objects.equals(user.username,this.username) &&
-                Objects.equals(user.password,this.password);
+                Objects.equals(user.username,this.username);
     }
 }

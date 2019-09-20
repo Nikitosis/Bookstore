@@ -82,6 +82,7 @@ public class UserResourceTest {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
+        testBook.setTaken(true);
     }
 
     @Test
@@ -130,6 +131,8 @@ public class UserResourceTest {
 
         verify(userDao).save(eq(testUser));
         Assert.assertEquals(testUser, responseUser);
+        //compare raw testUser's password to hashed responseUser's password
+        Assert.assertTrue(passwordEncoder.matches(testUser.getPassword(),responseUser.getPassword()));
     }
 
     @Test
