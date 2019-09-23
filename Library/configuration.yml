@@ -21,3 +21,6 @@ security:
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
+
+logging:
+  level: ALL

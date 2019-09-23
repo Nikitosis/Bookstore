@@ -52,7 +52,7 @@ public class UserResource {
     }
 
     @PUT
-    public Response updateUser(@Valid User user){
+    public Response updateUser(User user){
         if(userService.findById(user.getId())!=null){
             userService.update(user);
             return Response.ok(userService.findById(user.getId())).build();
