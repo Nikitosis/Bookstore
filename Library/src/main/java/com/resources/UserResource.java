@@ -46,7 +46,7 @@ public class UserResource {
     }
 
     @POST
-    public Response addUser(@Valid User user){
+    public Response addUser(User user){
         userService.save(user);
         return Response.status(Response.Status.CREATED).entity(user).build();
     }

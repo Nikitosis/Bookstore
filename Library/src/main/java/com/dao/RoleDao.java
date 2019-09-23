@@ -14,6 +14,9 @@ public interface RoleDao {
             " WHERE users.id=#{userId} ")
     List<Role> findByUser(@Param("userId") Long userId);
 
+    @Select("SELECT * FROM roles WHERE name=#{roleName}")
+    Role findByName(@Param("roleName") String roleName);
+
 
     @Insert("INSERT INTO user_role VALUES(#{userId},#{roleId})")
     void addUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);

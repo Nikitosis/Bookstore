@@ -1,5 +1,6 @@
 package com.services;
 
+import com.dao.RoleDao;
 import com.dao.UserDao;
 import com.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,14 @@ import java.util.List;
 @Service
 public class UserService {
     private UserDao userDao;
+    private RoleDao roleDao;
 
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserDao userDao, PasswordEncoder passwordEncoder) {
+    public UserService(UserDao userDao, RoleDao roleDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
+        this.roleDao = roleDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -34,7 +37,9 @@ public class UserService {
 
     public Long save(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userDao.save(user);
+        Long res=userDao.save(user);
+        roleDao.addUserRole(user.getId(),roleDao.findByName("USER").getId());
+        return res;
     }
 
     public void update(User user){

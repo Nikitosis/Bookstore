@@ -2,6 +2,7 @@ package com.resources;
 
 import com.MainConfig;
 import com.dao.BookDao;
+import com.dao.RoleDao;
 import com.dao.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
@@ -52,9 +53,10 @@ public class UserResourceTest {
     //Creating mocks
     private UserDao userDao =mock(UserDao.class);
     private BookDao bookDao=mock(BookDao.class);
+    private RoleDao roleDao=mock(RoleDao.class);
 
     //Creating dependencies
-    private UserService userService =new UserService(userDao,passwordEncoder);
+    private UserService userService =new UserService(userDao,roleDao,passwordEncoder);
     private BookService bookService=new BookService(bookDao,configuration);
 
     //Creating ResourceTestRule
