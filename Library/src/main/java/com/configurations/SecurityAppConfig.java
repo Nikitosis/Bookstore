@@ -51,11 +51,21 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+
                 .antMatchers("/swagger","/swagger.json","/swagger-static/*").permitAll()
+
+                .antMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
                 .antMatchers(HttpMethod.POST,"/users").permitAll()
-                .antMatchers(HttpMethod.GET,"/books").permitAll()
-                .antMatchers("/books").hasAnyRole("ADMIN")
-                .antMatchers("/**").authenticated()
+                .antMatchers(HttpMethod.PUT,"/users","/users/*/books").authenticated()
+                .antMatchers(HttpMethod.GET,"/users/*","/users/*/books").authenticated()
+                .antMatchers(HttpMethod.DELETE,"/users/*/books").authenticated()
+                .antMatchers(HttpMethod.DELETE,"/users/*").hasAnyRole("ADMIN")
+
+                .antMatchers(HttpMethod.GET,"/books","/books/*").permitAll()
+                .antMatchers(HttpMethod.POST,"/books").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/books/*").hasAnyRole("ADMIN")
+
                 .and()
                 .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
