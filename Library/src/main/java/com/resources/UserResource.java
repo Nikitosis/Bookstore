@@ -4,6 +4,7 @@ import com.models.Book;
 import com.models.User;
 import com.services.BookService;
 import com.services.UserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Service
+@Api(value = "/users")
 @Path("/users")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

@@ -29,5 +29,9 @@ oktaOAuth:
   clientId: "0oa1ep4cgrcPMejCk357"
   clientSecret: "x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"
 
+
+swagger:
+  resourcePackage: com.resources
+
 logging:
-  level: ALL
+  level: INFO

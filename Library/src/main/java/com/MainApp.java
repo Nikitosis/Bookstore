@@ -12,11 +12,14 @@ import io.dropwizard.migrations.CloseableLiquibaseWithClassPathMigrationsFile;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
+import sun.applet.Main;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -25,6 +28,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 public class MainApp extends Application<MainConfig> {
+
     public static void main(String[] args) throws Exception {
         new MainApp().run(args);
     }
@@ -44,6 +48,12 @@ public class MainApp extends Application<MainConfig> {
                         new EnvironmentVariableSubstitutor(false)
                 )
         );
+        bootstrap.addBundle(new SwaggerBundle<MainConfig>(){
+            @Override
+            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(MainConfig mainConfig) {
+                return mainConfig.getSwagger();
+            }
+        });
     }
 
     @Override

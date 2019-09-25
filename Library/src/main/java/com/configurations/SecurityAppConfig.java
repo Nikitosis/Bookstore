@@ -45,17 +45,17 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
         });
     }
 
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/swagger","/swagger.json","/swagger-static/*").permitAll()
                 .antMatchers(HttpMethod.POST,"/users").permitAll()
                 .antMatchers(HttpMethod.GET,"/books").permitAll()
                 .antMatchers("/books").hasAnyRole("ADMIN")
-
                 .antMatchers("/**").authenticated()
-                .and()
-                .httpBasic()
                 .and()
                 .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
