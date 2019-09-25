@@ -1,17 +1,23 @@
 package com.resources;
 
+import com.dao.RoleDao;
 import com.models.Book;
 import com.models.User;
 import com.services.BookService;
 import com.services.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -24,10 +30,13 @@ public class UserResource {
 
     private BookService bookService;
 
+    private RoleDao roleDao;
+
     @Autowired
-    public UserResource(UserService userService, BookService bookService) {
+    public UserResource(UserService userService, BookService bookService, RoleDao roleDao) {
         this.userService = userService;
         this.bookService = bookService;
+        this.roleDao = roleDao;
     }
 
     @GET
@@ -37,7 +46,7 @@ public class UserResource {
 
     @GET
     @Path("/{userId}")
-    public Response getUserByUsername(@PathParam("userId") Long userId){
+    public Response getUserById(@PathParam("userId") Long userId){
         User user = userService.findById(userId);
         if(user !=null){
             return Response.ok(user).build();
@@ -79,6 +88,17 @@ public class UserResource {
     @GET
     @Path("/{userId}/books")
     public Response getTakenUsersBooks(@PathParam("userId") Long userId){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser==null){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not registered").build();
+        }
+
+        //if not admin and tries to view other's books
+        if(!roleDao.findByUser(principalUser.getId()).contains("ROLE_ADMIN") && principalUser.getId()!=userId){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
         if(userService.findById(userId)!=null){
             List<Book> takenBooks=bookService.findTakenByUser(userId);
             return Response.ok().entity(takenBooks).build();
@@ -92,6 +112,12 @@ public class UserResource {
     @Path("/{userId}/books")
     public Response takeBook(@PathParam("userId") Long userId,
                              @QueryParam("bookId") Long bookId){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser.getId()!=userId){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
         if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
             if(!bookService.isTaken(bookId)){
                 bookService.takeBook(userId,bookId);
@@ -112,6 +138,12 @@ public class UserResource {
     @Path("/{userId}/books")
     public Response returnBook(@PathParam("userId") Long userId,
                                @QueryParam("bookId") Long bookId){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser.getId()!=userId){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
         if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
             if(bookService.isTakenByUser(userId,bookId)){
                 bookService.returnBook(userId,bookId);

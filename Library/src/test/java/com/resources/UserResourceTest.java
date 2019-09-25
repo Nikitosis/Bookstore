@@ -62,7 +62,7 @@ public class UserResourceTest {
     //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
-            .addResource(new UserResource(userService,bookService))
+            .addResource(new UserResource(userService,bookService,roleDao))
             .build();
 
     //Test entities
