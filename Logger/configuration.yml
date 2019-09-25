@@ -25,3 +25,6 @@ oktaOAuth:
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1epfonjxBlFUoa357"
   clientSecret: "Fx7CstTs71ssTxDGToqnHlgcalOH9UM5RHw3Zve5"
+
+swagger:
+  resourcePackage: com.resources

@@ -12,6 +12,8 @@ import io.dropwizard.migrations.CloseableLiquibaseWithClassPathMigrationsFile;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.springframework.web.context.ContextLoaderListener;
@@ -37,6 +39,14 @@ public class MainApp extends Application<MainConfig> {
                         new EnvironmentVariableSubstitutor(false)
                 )
         );
+
+        //for swagger
+        bootstrap.addBundle(new SwaggerBundle<MainConfig>(){
+            @Override
+            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(MainConfig mainConfig) {
+                return mainConfig.getSwagger();
+            }
+        });
     }
 
     @Override

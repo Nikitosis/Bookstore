@@ -2,6 +2,7 @@ package com.resources;
 
 import com.api.UserBookLog;
 import com.dao.UserBookLogDao;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Service
+@Api(value = "/actions")
 @Path("/actions")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

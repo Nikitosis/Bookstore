@@ -4,6 +4,7 @@ import com.configurations.OktaOAuthConfig;
 import com.configurations.SecurityConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 public class MainConfig extends Configuration {
 
@@ -12,6 +13,8 @@ public class MainConfig extends Configuration {
     private OktaOAuthConfig oktaOAuth;
 
     private SecurityConfig security;
+
+    private SwaggerBundleConfiguration swagger;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -35,5 +38,13 @@ public class MainConfig extends Configuration {
 
     public void setSecurity(SecurityConfig security) {
         this.security = security;
+    }
+
+    public SwaggerBundleConfiguration getSwagger() {
+        return swagger;
+    }
+
+    public void setSwagger(SwaggerBundleConfiguration swagger) {
+        this.swagger = swagger;
     }
 }
