@@ -11,3 +11,17 @@ database:
   user: root
   password: 1234
   driverClass: com.mysql.cj.jdbc.Driver
+
+security:
+  authenticationUrl: "/authenticate"
+  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  tokenHeader: "Authorization"
+  tokenPrefix: "Bearer "
+  tokenType: "JWT"
+
+oktaOAuth:
+  baseUrl: "https://dev-702765.okta.com"
+  issuer: "https://dev-702765.okta.com/oauth2/default"
+  tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
+  clientId: "0oa1epfonjxBlFUoa357"
+  clientSecret: "Fx7CstTs71ssTxDGToqnHlgcalOH9UM5RHw3Zve5"
