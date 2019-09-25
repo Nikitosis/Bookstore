@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.firewall.DefaultHttpFirewall;
+import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,8 +48,6 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
         });
     }
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -54,18 +55,20 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/swagger","/swagger.json","/swagger-static/*").permitAll()
 
-                .antMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.POST,"/users").permitAll()
-                .antMatchers(HttpMethod.PUT,"/users","/users/*/books").authenticated()
-                .antMatchers(HttpMethod.GET,"/users/*","/users/*/books").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/users/*/books").authenticated()
-                .antMatchers(HttpMethod.DELETE,"/users/*").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.POST,"/users").permitAll()
+                .regexMatchers(HttpMethod.PUT,"/users","/users/{\\d+}/books").authenticated()
+                .regexMatchers(HttpMethod.GET,"/users/{\\d+}","/users/{\\d+}/books").authenticated()
+                .regexMatchers(HttpMethod.DELETE,"/users/{\\d+}/books").authenticated()
+                .regexMatchers(HttpMethod.DELETE,"/users/{\\d+}").hasAnyRole("ADMIN")
 
-                .antMatchers(HttpMethod.GET,"/books","/books/*").permitAll()
-                .antMatchers(HttpMethod.POST,"/books").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.DELETE,"/books/*").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.GET,"/books","/books/{\\d+}").permitAll()
+                .regexMatchers(HttpMethod.POST,"/books").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.DELETE,"/books/{\\d+}").hasAnyRole("ADMIN")
 
+
+                .antMatchers("/**").denyAll()
                 .and()
                 .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
