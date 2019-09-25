@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setHeaderParam("typ",mainConfig.getSecurity().getTokenType())
                 .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+864000000))
+                .setExpiration(new Date(System.currentTimeMillis()+3600000))
                 .claim("roles",roles)
                 .claim("userId",userId)
                 .compact();
