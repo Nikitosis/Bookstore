@@ -1,6 +1,7 @@
 package com;
 
 import com.configurations.DependencyService;
+import com.configurations.OktaOAuthConfig;
 import com.configurations.SecurityConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -14,6 +15,8 @@ public class MainConfig extends Configuration {
     private DependencyService clientBookLoggerService;
 
     private SecurityConfig security;
+
+    private OktaOAuthConfig oktaOAuth;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -37,5 +40,13 @@ public class MainConfig extends Configuration {
 
     public void setSecurity(SecurityConfig security) {
         this.security = security;
+    }
+
+    public OktaOAuthConfig getOktaOAuth() {
+        return oktaOAuth;
+    }
+
+    public void setOktaOAuth(OktaOAuthConfig oktaOAuth) {
+        this.oktaOAuth = oktaOAuth;
     }
 }

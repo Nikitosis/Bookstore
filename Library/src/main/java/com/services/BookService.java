@@ -4,14 +4,24 @@ import com.MainConfig;
 import com.api.Action;
 import com.api.UserBookLog;
 import com.dao.BookDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -96,10 +106,39 @@ public class BookService {
     }
 
     public void postUserBookLog(UserBookLog userBookLog){
+        OAuth2AccessToken accessToken=getOktaToken();
+
         Client client = ClientBuilder.newClient();
-        client.target(mainConfig.getClientBookLoggerService().getUrl())
+        Response response=client.target(mainConfig.getClientBookLoggerService().getUrl())
                     .path("/actions")
                     .request(MediaType.APPLICATION_JSON)
+                    .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
+    }
+
+    private OAuth2AccessToken getOktaToken(){
+        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+
+        Form formValues=new Form();
+        formValues.param("grant_type","client_credentials");
+        formValues.param("scope","write");
+
+        Client client = ClientBuilder.newBuilder()
+                .register(HttpAuthenticationFeature.basic(
+                        mainConfig.getOktaOAuth().getClientId(),
+                        mainConfig.getOktaOAuth().getClientSecret()))
+                .build();
+        Response response=client.target(mainConfig.getOktaOAuth().getTokenPath())
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(formValues, MediaType.APPLICATION_FORM_URLENCODED));
+
+        String json=response.readEntity(String.class);
+
+        try {
+            return new ObjectMapper().readValue(json,DefaultOAuth2AccessToken.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

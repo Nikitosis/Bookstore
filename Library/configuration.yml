@@ -22,5 +22,12 @@ security:
   tokenPrefix: "Bearer "
   tokenType: "JWT"
 
+oktaOAuth:
+  baseUrl: "https://dev-702765.okta.com"
+  issuer: "https://dev-702765.okta.com/oauth2/default"
+  tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
+  clientId: "0oa1ep4cgrcPMejCk357"
+  clientSecret: "x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"
+
 logging:
   level: ALL

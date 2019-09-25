@@ -1,12 +1,11 @@
 package com.configurations;
 
 import com.MainConfig;
-import com.security.JwtAuthorisationFilter;
+import com.security.JwtUserAuthorisationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,6 +36,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        //create blank UserDetailsService, otherwise spring security will throw exception
         auth.userDetailsService(new UserDetailsService() {
             @Override
             public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -51,11 +51,13 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/users").permitAll()
                 .antMatchers(HttpMethod.GET,"/books").permitAll()
+                .antMatchers("/books").hasAnyRole("ADMIN")
+
                 .antMatchers("/**").authenticated()
                 .and()
                 .httpBasic()
                 .and()
-                .addFilter(new JwtAuthorisationFilter(authenticationManager(),mainConfig))
+                .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
