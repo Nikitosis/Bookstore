@@ -48,6 +48,7 @@ public class MainApp extends Application<MainConfig> {
                         new EnvironmentVariableSubstitutor(false)
                 )
         );
+        //for swagger
         bootstrap.addBundle(new SwaggerBundle<MainConfig>(){
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(MainConfig mainConfig) {

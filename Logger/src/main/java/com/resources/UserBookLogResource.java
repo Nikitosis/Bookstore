@@ -6,6 +6,7 @@ import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -48,7 +49,7 @@ public class UserBookLogResource {
     }
 
     @POST
-    public Response create(UserBookLog userBookLog) {
+    public Response create(@Valid UserBookLog userBookLog) {
         userBookLogDao.save(userBookLog);
         return Response.status(Response.Status.OK).
                 entity(userBookLog).
