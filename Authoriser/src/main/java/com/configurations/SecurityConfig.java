@@ -6,6 +6,7 @@ public class SecurityConfig {
     private String tokenHeader;
     private String tokenPrefix;
     private String tokenType;
+    private Long tokenExpirationTime;
 
     public String getAuthenticationUrl() {
         return authenticationUrl;
@@ -45,5 +46,13 @@ public class SecurityConfig {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    public Long getTokenExpirationTime() {
+        return tokenExpirationTime;
+    }
+
+    public void setTokenExpirationTime(Long tokenExpirationTime) {
+        this.tokenExpirationTime = tokenExpirationTime;
     }
 }

@@ -18,3 +18,4 @@ security:
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
+  tokenExpirationTime: 3600000
