@@ -65,7 +65,7 @@ public class UserResourceTest {
     //Creating dependencies
     private OktaService oktaService=new OktaService(configuration);
     private UserService userService =new UserService(userDao,roleDao,passwordEncoder);
-    private BookService bookService=new BookService(bookDao,configuration,oktaService);
+    private BookService bookService=spy(new BookService(bookDao,configuration,oktaService));
 
     //Creating ResourceTestRule
     @Rule
@@ -279,14 +279,18 @@ public class UserResourceTest {
     public void takeBookTest(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(false);
+
+        doNothing().when(bookService).postUserBookLog(any());
 
         resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""));
 
+        verify(bookService).postUserBookLog(any());
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
@@ -299,12 +303,15 @@ public class UserResourceTest {
         when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testUser.getId()))).thenReturn(false);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus = resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
         Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        verify(bookService,times(0)).postUserBookLog(any());
         verify(bookDao,times(0)).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
@@ -316,12 +323,15 @@ public class UserResourceTest {
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
         verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
@@ -333,12 +343,15 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
         verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
@@ -351,12 +364,15 @@ public class UserResourceTest {
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
         verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
@@ -369,10 +385,13 @@ public class UserResourceTest {
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete();
 
+        verify(bookService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
@@ -385,12 +404,15 @@ public class UserResourceTest {
         when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
         verify(bookDao,times(0)).returnBook(eq(testUser.getId()),eq(testBook.getId()));
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
     }
 
@@ -402,12 +424,15 @@ public class UserResourceTest {
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
         verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
@@ -419,12 +444,15 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
         verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
@@ -437,12 +465,15 @@ public class UserResourceTest {
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
 
+        doNothing().when(bookService).postUserBookLog(any());
+
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
 
         verify(bookDao,times(0)).returnBook(anyLong(),anyLong());
+        verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 }
