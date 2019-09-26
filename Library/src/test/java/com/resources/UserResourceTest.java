@@ -19,7 +19,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -48,7 +52,6 @@ public class UserResourceTest {
     private final MainConfig configuration=factory.build(yaml);
 
     private final PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-
 
     //Creating mocks
     private UserDao userDao =mock(UserDao.class);
@@ -85,6 +88,13 @@ public class UserResourceTest {
         testBook.setId(12L);
         testBook.setName("Name");
         testBook.setTaken(true);
+
+        //building security mocks
+        Authentication authentication=mock(Authentication.class);
+        SecurityContext securityContext=mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
@@ -132,6 +142,7 @@ public class UserResourceTest {
                 .post(Entity.entity(testUser, MediaType.APPLICATION_JSON), User.class);
 
         verify(userDao).save(eq(testUser));
+        verify(roleDao).addUserRole(eq(testUser.getId()),eq("USER"));
         Assert.assertEquals(testUser, responseUser);
         //compare raw testUser's password to hashed responseUser's password
         Assert.assertTrue(passwordEncoder.matches(testUser.getPassword(),responseUser.getPassword()));
@@ -191,6 +202,7 @@ public class UserResourceTest {
     @Test
     public void getTakenUsersBooksTest(){
         List<Book> testBooks=Arrays.asList(testBook);
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findTakenByUser(eq(testUser.getId()))).thenReturn(testBooks);
 
@@ -202,7 +214,8 @@ public class UserResourceTest {
     }
 
     @Test
-    public void getTakenUserBooksTest_cuserNotFound(){
+    public void getTakenUserBooksTest_userNotFound(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
@@ -215,12 +228,12 @@ public class UserResourceTest {
 
     @Test
     public void takeBookTest(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(false);
 
-        resources.target("/users/"+ testUser.getId()+"/books")
-               .queryParam("bookId",testBook.getId())
+        resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""));
 
@@ -229,11 +242,11 @@ public class UserResourceTest {
 
     @Test
     public void takeBookTest_userNotFound(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
@@ -244,11 +257,11 @@ public class UserResourceTest {
 
     @Test
     public void takeBookTest_bookNotFound(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
@@ -259,12 +272,12 @@ public class UserResourceTest {
 
     @Test
     public void takeBootTest_bookAlreadyTaken(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
@@ -275,12 +288,12 @@ public class UserResourceTest {
 
     @Test
     public void returnBookTest(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
-        resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete();
 
@@ -289,11 +302,11 @@ public class UserResourceTest {
 
     @Test
     public void returnBookTest_userNotFound(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
@@ -304,11 +317,11 @@ public class UserResourceTest {
 
     @Test
     public void returnBookTest_bookNotFound(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
@@ -319,12 +332,12 @@ public class UserResourceTest {
 
     @Test
     public void returnBootTest_bookNotTaken(){
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
 
-        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
-                .queryParam("bookId",testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
                 .getStatusInfo();
