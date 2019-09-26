@@ -57,15 +57,15 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
                 .regexMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.POST,"/users").permitAll()
-                .regexMatchers(HttpMethod.PUT,"/users","/users/{\\d+}/books").authenticated()
-                .regexMatchers(HttpMethod.GET,"/users/{\\d+}","/users/{\\d+}/books").authenticated()
-                .regexMatchers(HttpMethod.DELETE,"/users/{\\d+}/books").authenticated()
-                .regexMatchers(HttpMethod.DELETE,"/users/{\\d+}").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books").authenticated()
+                .regexMatchers(HttpMethod.GET,"/users/(\\d+)","/users/(\\d+)/books").authenticated()
+                .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)/books").authenticated()
+                .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)").hasAnyRole("ADMIN")
 
-                .regexMatchers(HttpMethod.GET,"/books","/books/{\\d+}").permitAll()
+                .regexMatchers(HttpMethod.GET,"/books","/books/(\\d+)").permitAll()
                 .regexMatchers(HttpMethod.POST,"/books").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
-                .regexMatchers(HttpMethod.DELETE,"/books/{\\d+}").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.DELETE,"/books/(\\d+)").hasAnyRole("ADMIN")
 
 
                 .antMatchers("/**").denyAll()
