@@ -4,14 +4,24 @@ import com.MainConfig;
 import com.api.Action;
 import com.api.UserBookLog;
 import com.dao.BookDao;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,11 +30,12 @@ public class BookService {
 
     private BookDao bookDao;
     private MainConfig mainConfig;
+    private OktaService oktaService;
 
-    @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
+        this.oktaService = oktaService;
     }
 
     public List<Book> findAll(){
@@ -96,10 +107,13 @@ public class BookService {
     }
 
     public void postUserBookLog(UserBookLog userBookLog){
+        OAuth2AccessToken accessToken=oktaService.getOktaToken();
+
         Client client = ClientBuilder.newClient();
-        client.target(mainConfig.getClientBookLoggerService().getUrl())
+        Response response=client.target(mainConfig.getClientBookLoggerService().getUrl())
                     .path("/actions")
                     .request(MediaType.APPLICATION_JSON)
+                    .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
     }
 }
