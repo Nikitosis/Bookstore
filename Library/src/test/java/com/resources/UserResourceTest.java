@@ -6,10 +6,12 @@ import com.dao.RoleDao;
 import com.dao.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
+import com.models.Role;
 import com.models.User;
 import com.services.BookService;
 import com.services.OktaService;
 import com.services.UserService;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -58,6 +60,7 @@ public class UserResourceTest {
     private UserDao userDao =mock(UserDao.class);
     private BookDao bookDao=mock(BookDao.class);
     private RoleDao roleDao=mock(RoleDao.class);
+    private Authentication authentication=mock(Authentication.class);
 
     //Creating dependencies
     private OktaService oktaService=new OktaService(configuration);
@@ -72,6 +75,7 @@ public class UserResourceTest {
 
     //Test entities
     private User testUser;
+    private User anotherTestUser;
     private Book testBook;
 
     public UserResourceTest() throws IOException, ConfigurationException {
@@ -86,16 +90,21 @@ public class UserResourceTest {
         testUser.setfName("FNAME");
         testUser.setlName("LNAME");
 
+        anotherTestUser=new User();
+        anotherTestUser.setId(13L);
+        anotherTestUser.setPassword("password1");
+        anotherTestUser.setUsername("username1");
+        anotherTestUser.setfName("FNAME1");
+        anotherTestUser.setlName("LNAME1");
+
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
         testBook.setTaken(true);
 
         //building security mocks
-        Authentication authentication=mock(Authentication.class);
         SecurityContext securityContext=mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getName()).thenReturn(testUser.getUsername());
         SecurityContextHolder.setContext(securityContext);
     }
 
@@ -204,7 +213,44 @@ public class UserResourceTest {
     @Test
     public void getTakenUsersBooksTest(){
         List<Book> testBooks=Arrays.asList(testBook);
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findTakenByUser(eq(testUser.getId()))).thenReturn(testBooks);
+
+        List<Book> responseBooks=resources.target("/users/"+ testUser.getId()+"/books")
+                .request()
+                .get(new GenericType<List<Book>>(){});
+
+        Assert.assertArrayEquals(testBooks.toArray(),responseBooks.toArray());
+    }
+
+    @Test
+    public void getTakenUsersBooksTest_wrongUser(){
+        List<Book> testBooks=Arrays.asList(testBook);
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findTakenByUser(eq(testUser.getId()))).thenReturn(testBooks);
+
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+    }
+
+    @Test
+    public void getTakenUsersBooksTest_wrongUserButAdmin(){
+        List<Book> testBooks=Arrays.asList(testBook);
+
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+        when(roleDao.findByUser(anotherTestUser.getId())).thenReturn(Arrays.asList(new Role(1L,"ADMIN")));
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findTakenByUser(eq(testUser.getId()))).thenReturn(testBooks);
 
@@ -217,6 +263,7 @@ public class UserResourceTest {
 
     @Test
     public void getTakenUserBooksTest_userNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(anyLong())).thenReturn(null);
 
@@ -230,6 +277,7 @@ public class UserResourceTest {
 
     @Test
     public void takeBookTest(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
@@ -243,8 +291,28 @@ public class UserResourceTest {
     }
 
     @Test
+    public void takeBookTest_wrongUser(){
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
+        when(bookDao.isTaken(eq(testUser.getId()))).thenReturn(false);
+
+        Response.StatusType responseStatus = resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .put(Entity.json(""))
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        verify(bookDao,times(0)).takeBook(eq(testUser.getId()),eq(testBook.getId()));
+    }
+
+    @Test
     public void takeBookTest_userNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
@@ -259,7 +327,9 @@ public class UserResourceTest {
 
     @Test
     public void takeBookTest_bookNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
@@ -274,7 +344,9 @@ public class UserResourceTest {
 
     @Test
     public void takeBootTest_bookAlreadyTaken(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
@@ -290,7 +362,9 @@ public class UserResourceTest {
 
     @Test
     public void returnBookTest(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
@@ -303,8 +377,28 @@ public class UserResourceTest {
     }
 
     @Test
+    public void returnBookTest_wrongUser(){
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
+        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
+
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .delete()
+                .getStatusInfo();
+
+        verify(bookDao,times(0)).returnBook(eq(testUser.getId()),eq(testBook.getId()));
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+    }
+
+    @Test
     public void returnBookTest_userNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(anyLong())).thenReturn(null);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
@@ -319,7 +413,9 @@ public class UserResourceTest {
 
     @Test
     public void returnBookTest_bookNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
@@ -334,7 +430,9 @@ public class UserResourceTest {
 
     @Test
     public void returnBootTest_bookNotTaken(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
