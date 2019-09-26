@@ -22,13 +22,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JwtAuthorisationFilter extends BasicAuthenticationFilter {
+public class JwtUserAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(JwtAuthorisationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(JwtUserAuthorizationFilter.class);
 
     private MainConfig mainConfig;
 
-    public JwtAuthorisationFilter(AuthenticationManager authenticationManager, MainConfig mainConfig) {
+    public JwtUserAuthorizationFilter(AuthenticationManager authenticationManager, MainConfig mainConfig) {
         super(authenticationManager);
         this.mainConfig = mainConfig;
     }

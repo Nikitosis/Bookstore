@@ -1,19 +1,10 @@
 package com.configurations;
 
 public class SecurityConfig {
-    private String authenticationUrl;
     private String jwtSecret;
     private String tokenHeader;
     private String tokenPrefix;
     private String tokenType;
-
-    public String getAuthenticationUrl() {
-        return authenticationUrl;
-    }
-
-    public void setAuthenticationUrl(String authenticationUrl) {
-        this.authenticationUrl = authenticationUrl;
-    }
 
     public String getJwtSecret() {
         return jwtSecret;

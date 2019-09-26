@@ -6,19 +6,24 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserBookLog {
 
     private Long id;
+    @NotNull
     private Long userId;
+    @NotNull
     private Long bookId;
 
+    @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime actionDate;
+    @NotNull
     private Action action;
 
     public UserBookLog(){

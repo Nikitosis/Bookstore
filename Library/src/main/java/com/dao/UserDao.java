@@ -40,7 +40,19 @@ public interface UserDao {
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
-    @Update("UPDATE users SET username=#{username}, password=#{password}, first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
+    @Update({
+            "<script>",
+            "update users",
+            "<set>",
+            "<if test='username != null'>username = #{username},</if>",
+            "<if test='password != null'>password = #{password},</if>",
+            "<if test='fName != null'>first_name = #{fName},</if>",
+            "<if test='lName != null'>last_name = #{lName},</if>",
+            "</set>",
+            "WHERE id=#{id}",
+            "</script>"
+    })
+//    @Update("UPDATE users SET <if test='username!=null'>=#{username}, password=#{password}, first_name=#{fName}, last_name=#{lName} WHERE id=#{id}")
     void update(User user);
 
     @Delete("CALL deleteUser(#{userId})")

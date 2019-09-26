@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
 import com.models.User;
 import com.services.BookService;
+import com.services.OktaService;
 import com.services.UserService;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -56,13 +57,14 @@ public class UserResourceTest {
     private RoleDao roleDao=mock(RoleDao.class);
 
     //Creating dependencies
+    private OktaService oktaService=new OktaService(configuration);
     private UserService userService =new UserService(userDao,roleDao,passwordEncoder);
-    private BookService bookService=new BookService(bookDao,configuration);
+    private BookService bookService=new BookService(bookDao,configuration,oktaService);
 
     //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
-            .addResource(new UserResource(userService,bookService))
+            .addResource(new UserResource(userService,bookService,roleDao))
             .build();
 
     //Test entities
