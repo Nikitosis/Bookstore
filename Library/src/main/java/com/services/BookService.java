@@ -30,11 +30,12 @@ public class BookService {
 
     private BookDao bookDao;
     private MainConfig mainConfig;
+    private OktaService oktaService;
 
-    @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
+        this.oktaService = oktaService;
     }
 
     public List<Book> findAll(){
@@ -106,7 +107,7 @@ public class BookService {
     }
 
     public void postUserBookLog(UserBookLog userBookLog){
-        OAuth2AccessToken accessToken=getOktaToken();
+        OAuth2AccessToken accessToken=oktaService.getOktaToken();
 
         Client client = ClientBuilder.newClient();
         Response response=client.target(mainConfig.getClientBookLoggerService().getUrl())
@@ -114,31 +115,5 @@ public class BookService {
                     .request(MediaType.APPLICATION_JSON)
                     .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
-    }
-
-    private OAuth2AccessToken getOktaToken(){
-        PasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
-
-        Form formValues=new Form();
-        formValues.param("grant_type","client_credentials");
-        formValues.param("scope","write");
-
-        Client client = ClientBuilder.newBuilder()
-                .register(HttpAuthenticationFeature.basic(
-                        mainConfig.getOktaOAuth().getClientId(),
-                        mainConfig.getOktaOAuth().getClientSecret()))
-                .build();
-        Response response=client.target(mainConfig.getOktaOAuth().getTokenPath())
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(formValues, MediaType.APPLICATION_FORM_URLENCODED));
-
-        String json=response.readEntity(String.class);
-
-        try {
-            return new ObjectMapper().readValue(json,DefaultOAuth2AccessToken.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

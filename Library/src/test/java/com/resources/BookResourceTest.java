@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.models.Book;
 import com.services.BookService;
+import com.services.OktaService;
+import com.services.UserService;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -53,7 +55,8 @@ public class BookResourceTest {
     private BookDao bookDao=mock(BookDao.class);
 
     //Creating dependencies
-    private BookService bookService=new BookService(bookDao,configuration);
+    private OktaService oktaService=new OktaService(configuration);
+    private BookService bookService=new BookService(bookDao,configuration,oktaService);
 
     //Creating ResourceTestRule
     @Rule

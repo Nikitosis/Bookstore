@@ -1,5 +1,7 @@
 package com.configurations;
 
+import java.util.List;
+
 public class OktaOAuthConfig {
     private String baseUrl;
     private String clientId;
@@ -7,6 +9,7 @@ public class OktaOAuthConfig {
     private String issuer;
     private String tokenPath;
     private String audience;
+    private List<String> scopes;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -54,5 +57,13 @@ public class OktaOAuthConfig {
 
     public void setTokenPath(String tokenPath) {
         this.tokenPath = tokenPath;
+    }
+
+    public List<String> getScopes() {
+        return scopes;
+    }
+
+    public void setScopes(List<String> scopes) {
+        this.scopes = scopes;
     }
 }
