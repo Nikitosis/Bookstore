@@ -18,6 +18,6 @@ public interface RoleDao {
     Role findByName(@Param("roleName") String roleName);
 
 
-    @Insert("INSERT INTO user_role VALUES(#{userId},#{roleId})")
-    void addUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+    @Insert("INSERT INTO user_role VALUES(#{userId},(SELECT id FROM roles WHERE name=#{role}))")
+    void addUserRole(@Param("userId") Long userId, @Param("role") String role);
 }

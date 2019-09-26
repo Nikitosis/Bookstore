@@ -38,7 +38,7 @@ public class UserService {
     public Long save(User user){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Long res=userDao.save(user);
-        roleDao.addUserRole(user.getId(),roleDao.findByName("USER").getId());
+        roleDao.addUserRole(user.getId(),"USER");
         return res;
     }
 
