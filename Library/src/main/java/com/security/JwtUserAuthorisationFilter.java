@@ -4,6 +4,7 @@ import com.MainConfig;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import liquibase.util.StringUtils;
+import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,7 +43,7 @@ public class JwtUserAuthorisationFilter extends BasicAuthenticationFilter {
 
         UsernamePasswordAuthenticationToken authenticationToken=getAuthentication(request);
         if(authenticationToken==null){
-            chain.doFilter(request,response);
+            response.setStatus(HttpStatus.UNAUTHORIZED_401);
             return;
         }
 

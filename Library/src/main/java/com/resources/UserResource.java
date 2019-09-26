@@ -91,7 +91,7 @@ public class UserResource {
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
         if(principalUser==null){
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not registered").build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User is not registered").build();
         }
 
         //if not admin and tries to view other's books
@@ -114,6 +114,10 @@ public class UserResource {
                              @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser==null){
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User is not registered").build();
+        }
+
         if(principalUser.getId()!=userId){
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
@@ -140,6 +144,10 @@ public class UserResource {
                                @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser==null){
+            return Response.status(Response.Status.UNAUTHORIZED).entity("User is not registered").build();
+        }
+
         if(principalUser.getId()!=userId){
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
