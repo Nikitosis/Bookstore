@@ -109,9 +109,9 @@ public class UserResource {
     }
 
     @PUT
-    @Path("/{userId}/books")
+    @Path("/{userId}/books/{bookId}")
     public Response takeBook(@PathParam("userId") Long userId,
-                             @QueryParam("bookId") Long bookId){
+                             @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
         if(principalUser.getId()!=userId){
@@ -135,9 +135,9 @@ public class UserResource {
     }
 
     @DELETE
-    @Path("/{userId}/books")
+    @Path("/{userId}/books/{bookId}")
     public Response returnBook(@PathParam("userId") Long userId,
-                               @QueryParam("bookId") Long bookId){
+                               @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
         if(principalUser.getId()!=userId){
