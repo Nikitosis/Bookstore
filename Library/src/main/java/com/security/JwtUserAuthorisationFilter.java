@@ -41,8 +41,29 @@ public class JwtUserAuthorisationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken=getAuthentication(request);
-        if(authenticationToken==null){
+
+
+        UsernamePasswordAuthenticationToken authenticationToken=null;
+        try {
+            authenticationToken = getAuthentication(request);
+        } catch (ExpiredJwtException exception) {
+            log.warn("Request to parse expired JWT : {} failed : {}", exception.getMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED_401);
+            return;
+        } catch (UnsupportedJwtException exception) {
+            log.warn("Request to parse unsupported JWT : {} failed : {}", exception.getMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED_401);
+            return;
+        } catch (MalformedJwtException exception) {
+            log.warn("Request to parse invalid JWT : {} failed : {}", exception.getMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED_401);
+            return;
+        } catch (SignatureException exception) {
+            log.warn("Request to parse JWT with invalid signature : {} failed : {}", exception.getMessage());
+            response.setStatus(HttpStatus.UNAUTHORIZED_401);
+            return;
+        } catch (IllegalArgumentException exception) {
+            log.warn("Request to parse empty or null JWT : {} failed : {}",exception.getMessage());
             response.setStatus(HttpStatus.UNAUTHORIZED_401);
             return;
         }
@@ -55,38 +76,26 @@ public class JwtUserAuthorisationFilter extends BasicAuthenticationFilter {
         String token = request.getHeader(mainConfig.getSecurity().getTokenHeader());
         if (StringUtils.isNotEmpty(token) && token.startsWith(mainConfig.getSecurity().getTokenPrefix())) {
 
-            try {
-                String signingKey = mainConfig.getSecurity().getJwtSecret();
+            String signingKey = mainConfig.getSecurity().getJwtSecret();
 
-                //get rid of prefix
-                token=token.replace(mainConfig.getSecurity().getTokenPrefix(), "");
+            //get rid of prefix
+            token=token.replace(mainConfig.getSecurity().getTokenPrefix(), "");
 
-                Jws<Claims> parsedToken = Jwts.parser()
-                        .setSigningKey(signingKey.getBytes())
-                        .parseClaimsJws(token);
+            Jws<Claims> parsedToken = Jwts.parser()
+                    .setSigningKey(signingKey.getBytes())
+                    .parseClaimsJws(token);
 
-                String username = parsedToken
-                        .getBody()
-                        .getSubject();
+            String username = parsedToken
+                    .getBody()
+                    .getSubject();
 
-                List<GrantedAuthority> authorities = ((List<String>) parsedToken.getBody()
-                        .get("roles")).stream()
-                        .map(authority -> new SimpleGrantedAuthority(authority))
-                        .collect(Collectors.toList());
+            List<GrantedAuthority> authorities = ((List<String>) parsedToken.getBody()
+                    .get("roles")).stream()
+                    .map(authority -> new SimpleGrantedAuthority(authority))
+                    .collect(Collectors.toList());
 
-                if (StringUtils.isNotEmpty(username)) {
-                    return new UsernamePasswordAuthenticationToken(username, null, authorities);
-                }
-            } catch (ExpiredJwtException exception) {
-                log.warn("Request to parse expired JWT : {} failed : {}", token, exception.getMessage());
-            } catch (UnsupportedJwtException exception) {
-                log.warn("Request to parse unsupported JWT : {} failed : {}", token, exception.getMessage());
-            } catch (MalformedJwtException exception) {
-                log.warn("Request to parse invalid JWT : {} failed : {}", token, exception.getMessage());
-            } catch (SignatureException exception) {
-                log.warn("Request to parse JWT with invalid signature : {} failed : {}", token, exception.getMessage());
-            } catch (IllegalArgumentException exception) {
-                log.warn("Request to parse empty or null JWT : {} failed : {}", token, exception.getMessage());
+            if (StringUtils.isNotEmpty(username)) {
+                return new UsernamePasswordAuthenticationToken(username, null, authorities);
             }
         }
         return null;
