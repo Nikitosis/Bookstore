@@ -22,7 +22,7 @@ public class UserBookLog {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime actionDate;
+    private LocalDateTime date;
     @NotNull
     private Action action;
 
@@ -30,11 +30,11 @@ public class UserBookLog {
 
     }
 
-    public UserBookLog(Long id, Long userId, Long bookId, LocalDateTime actionDate, Action action) {
+    public UserBookLog(Long id, Long userId, Long bookId, LocalDateTime date, Action action) {
         this.id = id;
         this.userId = userId;
         this.bookId = bookId;
-        this.actionDate = actionDate;
+        this.date = date;
         this.action = action;
     }
 
@@ -62,12 +62,12 @@ public class UserBookLog {
         this.bookId = bookId;
     }
 
-    public LocalDateTime getActionDate() {
-        return actionDate;
+    public LocalDateTime getDate() {
+        return date;
     }
 
-    public void setActionDate(LocalDateTime actionDate) {
-        this.actionDate = actionDate;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Action getAction() {
@@ -92,7 +92,7 @@ public class UserBookLog {
         return Objects.equals(log.id,this.id) &&
                 Objects.equals(log.userId,this.userId) &&
                 Objects.equals(log.bookId,this.bookId) &&
-                Objects.equals(log.actionDate,this.actionDate) &&
+                Objects.equals(log.date,this.date) &&
                 Objects.equals(log.action,this.action);
     }
 }

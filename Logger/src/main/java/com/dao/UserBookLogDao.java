@@ -12,7 +12,7 @@ public interface UserBookLogDao {
             @Result(property = "id",column = "id"),
             @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
-            @Result(property = "actionDate",column = "log_date"),
+            @Result(property = "date",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
     List<UserBookLog> findByUser(@Param("userId") Long userId);
@@ -22,7 +22,7 @@ public interface UserBookLogDao {
             @Result(property = "id",column = "id"),
             @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
-            @Result(property = "actionDate",column = "log_date"),
+            @Result(property = "date",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
     List<UserBookLog> findByBookId(@Param("bookId") Long bookId);
@@ -32,7 +32,7 @@ public interface UserBookLogDao {
             @Result(property = "id",column = "id"),
             @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
-            @Result(property = "actionDate",column = "log_date"),
+            @Result(property = "date",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
     List<UserBookLog> findByBookAndUser(@Param("userId") Long userId,
@@ -43,12 +43,12 @@ public interface UserBookLogDao {
             @Result(property = "id",column = "id"),
             @Result(property = "userId",column = "user_id"),
             @Result(property = "bookId",column = "book_id"),
-            @Result(property = "actionDate",column = "log_date"),
+            @Result(property = "date",column = "log_date"),
             @Result(property = "action",column = "log_action")
     })
     List<UserBookLog> findAll();
 
-    @Insert("INSERT INTO user_book_log VALUES(NULL,#{userId},#{bookId},#{actionDate},#{action})")
+    @Insert("INSERT INTO user_book_log VALUES(NULL,#{userId},#{bookId},#{date},#{action})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(UserBookLog userBookLog);
 }

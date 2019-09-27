@@ -4,24 +4,15 @@ import com.MainConfig;
 import com.api.Action;
 import com.api.UserBookLog;
 import com.dao.BookDao;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
-import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -77,7 +68,7 @@ public class BookService {
         userBookLog.setUserId(userId);
         userBookLog.setBookId(bookId);
         userBookLog.setAction(Action.TAKE);
-        userBookLog.setActionDate(LocalDateTime.now());
+        userBookLog.setDate(LocalDateTime.now());
 
         try {
             postUserBookLog(userBookLog);
@@ -94,7 +85,7 @@ public class BookService {
         userBookLog.setUserId(userId);
         userBookLog.setBookId(bookId);
         userBookLog.setAction(Action.RETURN);
-        userBookLog.setActionDate(LocalDateTime.now());
+        userBookLog.setDate(LocalDateTime.now());
 
         System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
 

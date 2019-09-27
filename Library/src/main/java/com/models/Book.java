@@ -1,6 +1,7 @@
 package com.models;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.DefaultValue;
@@ -10,6 +11,7 @@ public class Book {
     private Long id;
 
     @NotNull
+    @NotEmpty
     @Length(max = 255)
     private String name;
 

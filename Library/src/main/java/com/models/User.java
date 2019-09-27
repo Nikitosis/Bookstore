@@ -1,6 +1,9 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -15,22 +18,14 @@ public class User {
     private String lName;
 
     @NotNull
-    @Length(max = 255)
+    @NotEmpty
+    @Length(max = 255,min = 6)
     private String username;
 
-    @NotNull
-    @Length(max = 255)
+
     private String password;
 
     public User(){
-    }
-
-    public User(Long id, String fName, String lName, String username, String password) {
-        this.id = id;
-        this.fName = fName;
-        this.lName = lName;
-        this.username = username;
-        this.password = password;
     }
 
     public Long getId() {
