@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotNull;
 
 public class Role {
-    @NotNull
     private Long id;
 
     @NotNull

@@ -7,8 +7,6 @@ import javax.ws.rs.DefaultValue;
 import java.util.Objects;
 
 public class Book {
-
-    @NotNull
     private Long id;
 
     @NotNull
