@@ -92,7 +92,7 @@ public class UserResource {
         User principalUser= userService.findByUsername(auth.getName());
 
         //if not admin and tries to view other's books
-        if(!roleDao.findByUser(principalUser.getId()).stream().anyMatch(role -> role.getName()=="ADMIN") && principalUser.getId()!=userId){
+        if(!roleDao.findByUser(principalUser.getId()).stream().anyMatch(role -> role.getName().equals("ADMIN")) && principalUser.getId()!=userId){
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 

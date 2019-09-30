@@ -41,12 +41,12 @@ public class MainApp extends Application<MainConfig> {
         );
 
         //for swagger
-        bootstrap.addBundle(new SwaggerBundle<MainConfig>(){
+        /*bootstrap.addBundle(new SwaggerBundle<MainConfig>(){
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(MainConfig mainConfig) {
                 return mainConfig.getSwagger();
             }
-        });
+        });*/
     }
 
     @Override
