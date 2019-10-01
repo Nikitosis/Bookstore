@@ -1,0 +1,14 @@
+{
+	"AWSEBDockerrunVersion":1,
+	"Image":{
+		"Name":"nikitosis/bookstore_logger",
+		"Update": "true"
+	},
+	"Ports":[
+		{
+			"ContainerPort":9002,
+			"HostPort":9002
+		}
+	]
+	
+}
