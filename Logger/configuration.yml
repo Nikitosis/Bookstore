@@ -8,8 +8,8 @@ server:
 
 database:
   url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
-  user: root
-  password: 1234
+  user: ${DB_USERNAME:-root}
+  password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
 security:
