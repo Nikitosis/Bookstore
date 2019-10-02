@@ -19,5 +19,7 @@
     <include file="db/2019-09-13-02-added-user_id-role_id.xml"/>
     <include file="db/2019-09-13-03-changed-procedures.xml"/>
     <include file="db/2019-09-27-01-fixed-procedures.xml"/>
+    <include file="db/2019-10-02-01-added-user-information-fields.xml"/>
+    <include file="db/2019-10-02-02-added-book-information-fields.xml"/>
 
 </databaseChangeLog>

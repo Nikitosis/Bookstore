@@ -12,7 +12,13 @@ public interface UserDao {
             @Result(property = "username",column = "username"),
             @Result(property = "password",column = "password"),
             @Result(property = "fName",column = "first_name"),
-            @Result(property = "lName",column = "last_name")
+            @Result(property = "lName",column = "last_name"),
+            @Result(property = "country",column = "country"),
+            @Result(property = "city",column = "city"),
+            @Result(property = "gender",column = "gender"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "phone",column = "phone"),
+            @Result(property = "avatarLink",column = "avatar_link")
     })
     List<User> findAll();
 
@@ -22,7 +28,13 @@ public interface UserDao {
             @Result(property = "username",column = "username"),
             @Result(property = "password",column = "password"),
             @Result(property = "fName",column = "first_name"),
-            @Result(property = "lName",column = "last_name")
+            @Result(property = "lName",column = "last_name"),
+            @Result(property = "country",column = "country"),
+            @Result(property = "city",column = "city"),
+            @Result(property = "gender",column = "gender"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "phone",column = "phone"),
+            @Result(property = "avatarLink",column = "avatar_link")
     })
     User findByUsername(@Param("username") String username);
 
@@ -32,11 +44,17 @@ public interface UserDao {
             @Result(property = "username",column = "username"),
             @Result(property = "password",column = "password"),
             @Result(property = "fName",column = "first_name"),
-            @Result(property = "lName",column = "last_name")
+            @Result(property = "lName",column = "last_name"),
+            @Result(property = "country",column = "country"),
+            @Result(property = "city",column = "city"),
+            @Result(property = "gender",column = "gender"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "phone",column = "phone"),
+            @Result(property = "avatarLink",column = "avatar_link")
     })
     User findById(@Param("userId") Long userId);
 
-    @Insert("INSERT INTO users (username,password,first_name,last_name) VALUES(#{username},#{password},#{fName},#{lName})")
+    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
@@ -48,6 +66,12 @@ public interface UserDao {
             "<if test='password != null'>password = #{password},</if>",
             "<if test='fName != null'>first_name = #{fName},</if>",
             "<if test='lName != null'>last_name = #{lName},</if>",
+            "<if test='country != null'>country = #{country},</if>",
+            "<if test='city != null'>city = #{city},</if>",
+            "<if test='gender != null'>gender = #{gender},</if>",
+            "<if test='email != null'>email = #{email},</if>",
+            "<if test='phone != null'>phone = #{phone},</if>",
+            "<if test='avatarLink != null'>avatar_link = #{avatarLink},</if>",
             "</set>",
             "WHERE id=#{id}",
             "</script>"

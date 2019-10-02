@@ -3,8 +3,9 @@ package com.services;
 import com.MainConfig;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
-import com.crossapi.dao.BookDao;
-import com.crossapi.models.Book;
+import com.dao.BookDao;
+import com.models.Book;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class BookService {
     private MainConfig mainConfig;
     private OktaService oktaService;
 
+    @Autowired
     public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;

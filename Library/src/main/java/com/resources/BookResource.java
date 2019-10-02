@@ -1,6 +1,6 @@
 package com.resources;
 
-import com.crossapi.models.Book;
+import com.models.Book;
 import com.services.BookService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.crossapi.dao;
+package com.dao;
 
 import com.crossapi.api.UserBookLog;
 import org.apache.ibatis.annotations.*;

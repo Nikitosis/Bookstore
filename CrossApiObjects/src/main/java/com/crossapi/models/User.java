@@ -24,6 +24,32 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Length(max=255)
+    private String country;
+
+    @Length(max=255)
+    private String city;
+
+    private Gender gender;
+
+    @Length(max=13)
+    private String phone;
+
+    @Length(max=255)
+    private String email;
+
+    @Length(max=255)
+    private String avatarLink;
+
+    public enum Gender{
+        @JsonProperty("MALE")
+        MALE,
+
+        @JsonProperty("FEMALE")
+        FEMALE
+    };
+
+
     public User(){
     }
 
@@ -67,6 +93,54 @@ public class User {
         this.password = password;
     }
 
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getAvatarLink() {
+        return avatarLink;
+    }
+
+    public void setAvatarLink(String avatarLink) {
+        this.avatarLink = avatarLink;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -81,6 +155,11 @@ public class User {
         return Objects.equals(user.id,this.id) &&
                 Objects.equals(user.fName,this.fName) &&
                 Objects.equals(user.lName,this.lName) &&
-                Objects.equals(user.username,this.username);
+                Objects.equals(user.username,this.username) &&
+                Objects.equals(user.city,this.city) &&
+                Objects.equals(user.country,this.country) &&
+                Objects.equals(user.email,this.email) &&
+                Objects.equals(user.gender,this.gender) &&
+                Objects.equals(user.avatarLink,this.avatarLink);
     }
 }

@@ -1,7 +1,7 @@
 package com.resources;
 
 import com.crossapi.api.UserBookLog;
-import com.crossapi.dao.UserBookLogDao;
+import com.dao.UserBookLogDao;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

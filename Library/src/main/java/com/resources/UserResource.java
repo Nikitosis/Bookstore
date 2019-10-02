@@ -1,7 +1,7 @@
 package com.resources;
 
 import com.crossapi.dao.RoleDao;
-import com.crossapi.models.Book;
+import com.models.Book;
 import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;

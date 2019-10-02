@@ -1,4 +1,4 @@
-package com.crossapi.models;
+package com.models;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -13,6 +13,12 @@ public class Book {
     @NotEmpty
     @Length(max = 255)
     private String name;
+
+    @Length(max=13)
+    private String isbn;
+
+    @Length(max=255)
+    private String photoLink;
 
     private Boolean isTaken;
 

@@ -1,6 +1,6 @@
-package com.crossapi.dao;
+package com.dao;
 
-import com.crossapi.models.Book;
+import com.models.Book;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -10,6 +10,8 @@ public interface BookDao {
     @Results(value = {
             @Result(property = "id",column = "id"),
             @Result(property = "name",column = "name"),
+            @Result(property = "isbn",column = "isbn"),
+            @Result(property="photoLink", column = "photo_link"),
             @Result(property = "isTaken",column = "id",one = @One(select = "isTaken"))
     })
     List<Book> findAll();
@@ -17,15 +19,18 @@ public interface BookDao {
     @Select("SELECT * FROM books WHERE id=#{id}")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "name",column = "name")
+            @Result(property = "name",column = "name"),
+            @Result(property = "isbn",column = "isbn"),
+            @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "isTaken",column = "id",one = @One(select = "isTaken"))
     })
     Book findById(@Param("id") Long id);
 
-    @Insert("INSERT INTO books (name) VALUES(#{name})")
+    @Insert("INSERT INTO books  VALUES(NULL,#{name},#{isbn},#{photoLink})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(Book book);
 
-    @Update("UPDATE books SET name=#{name} WHERE id=#{id}")
+    @Update("UPDATE books SET name=#{name}, isbn=#{isbn}, photo_link=#{photoLink} WHERE id=#{id}")
     void update(Book book);
 
     @Delete("CALL deleteBook(#{id})")
@@ -37,7 +42,10 @@ public interface BookDao {
             "user_book.user_id=#{userId} ")
     @Results(value = {
             @Result(property = "id",column = "id"),
-            @Result(property = "name",column = "name")
+            @Result(property = "name",column = "name"),
+            @Result(property = "isbn",column = "isbn"),
+            @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "isTaken",column = "id",one = @One(select = "isTaken"))
     })
     List<Book> findTakenByUser(@Param("userId") Long userId);
 
