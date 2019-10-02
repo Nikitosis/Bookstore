@@ -3,6 +3,7 @@ package com.dao;
 import com.models.Book;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookDao {
@@ -56,14 +57,8 @@ public interface BookDao {
             "user_book.book_id=#{bookId} )")
     boolean isTakenByUser(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
-    @Select("SELECT EXISTS " +
-            "(SELECT 1 FROM user_book " +
-            "WHERE " +
-            "user_book.book_id=#{bookId} )")
-    boolean isTaken(@Param("bookId") Long bookId);
-
-    @Select("INSERT INTO user_book VALUES (#{bookId},#{userId})")
-    void takeBook(@Param("userId") Long userId,@Param("bookId") Long bookId);
+    @Select("INSERT INTO user_book VALUES (#{bookId},#{userId},#{takeDate},#{returnDate})")
+    void takeBook(@Param("userId") Long userId, @Param("bookId") Long bookId, @Param("takeDate")LocalDateTime takeDate,@Param("returnDate")LocalDateTime returnDate);
 
     @Select("DELETE FROM user_book WHERE book_id=#{bookId} AND user_id=#{userId}")
     void returnBook(@Param("userId") Long userId,@Param("bookId") Long bookId);

@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -110,7 +112,8 @@ public class UserResource {
     @PUT
     @Path("/{userId}/books/{bookId}")
     public Response takeBook(@PathParam("userId") Long userId,
-                             @PathParam("bookId") Long bookId){
+                             @PathParam("bookId") Long bookId,
+                             @RequestParam(value = "returnDate",required = false)LocalDateTime returnDate){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
 
@@ -119,8 +122,8 @@ public class UserResource {
         }
 
         if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
-            if(!bookService.isTaken(bookId)){
-                bookService.takeBook(userId,bookId);
+            if(!bookService.isTakenByUser(userId,bookId)){
+                bookService.takeBook(userId,bookId,returnDate);
                 return Response.ok().build();
             }
             else{

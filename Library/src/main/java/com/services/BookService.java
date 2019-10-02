@@ -59,12 +59,8 @@ public class BookService {
         return bookDao.isTakenByUser(userId,bookId);
     }
 
-    public boolean isTaken(Long bookId){
-        return bookDao.isTaken(bookId);
-    }
-
-    public void takeBook(Long userId,Long bookId){
-        bookDao.takeBook(userId,bookId);
+    public void takeBook(Long userId,Long bookId,LocalDateTime returnDate){
+        bookDao.takeBook(userId,bookId,LocalDateTime.now(),returnDate);
 
         UserBookLog userBookLog =new UserBookLog();
         userBookLog.setUserId(userId);
