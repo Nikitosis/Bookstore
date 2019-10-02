@@ -55,12 +55,17 @@ public class UserResource {
 
     @POST
     public Response addUser(@Valid User user){
-        userService.save(user);
-        return Response.status(Response.Status.CREATED).entity(user).build();
+        if(userService.findByUsername(user.getUsername())==null){
+            userService.save(user);
+            return Response.status(Response.Status.CREATED).entity(user).build();
+        }
+        else {
+            return Response.status(Response.Status.CONFLICT).build();
+        }
     }
 
     @PUT
-    public Response updateUser(User user){
+    public Response updateUser(@Valid User user){
         if(userService.findById(user.getId())!=null){
             userService.update(user);
             return Response.ok(userService.findById(user.getId())).build();
