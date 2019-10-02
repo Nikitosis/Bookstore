@@ -1,23 +1,20 @@
 package com.resources;
 
-import com.dao.RoleDao;
-import com.models.Book;
-import com.models.User;
+import com.crossapi.dao.RoleDao;
+import com.crossapi.models.Book;
+import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -57,7 +54,7 @@ public class UserResource {
     }
 
     @POST
-    public Response addUser(User user){
+    public Response addUser(@Valid User user){
         userService.save(user);
         return Response.status(Response.Status.CREATED).entity(user).build();
     }

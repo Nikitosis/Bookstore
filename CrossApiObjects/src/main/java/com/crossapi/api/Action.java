@@ -1,4 +1,4 @@
-package com.api;
+package com.crossapi.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

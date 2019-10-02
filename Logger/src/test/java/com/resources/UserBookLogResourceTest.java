@@ -1,7 +1,7 @@
 package com.resources;
-import com.api.Action;
-import com.api.UserBookLog;
-import com.dao.UserBookLogDao;
+import com.crossapi.api.Action;
+import com.crossapi.api.UserBookLog;
+import com.crossapi.dao.UserBookLogDao;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,10 +1,10 @@
 package com.services;
 
 import com.MainConfig;
-import com.api.Action;
-import com.api.UserBookLog;
-import com.dao.BookDao;
-import com.models.Book;
+import com.crossapi.api.Action;
+import com.crossapi.api.UserBookLog;
+import com.crossapi.dao.BookDao;
+import com.crossapi.models.Book;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 

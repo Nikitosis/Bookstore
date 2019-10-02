@@ -1,6 +1,6 @@
-package com.dao;
+package com.crossapi.dao;
 
-import com.models.Book;
+import com.crossapi.models.Book;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

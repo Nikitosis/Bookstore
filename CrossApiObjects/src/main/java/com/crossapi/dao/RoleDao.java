@@ -1,6 +1,6 @@
-package com.dao;
+package com.crossapi.dao;
 
-import com.models.Role;
+import com.crossapi.models.Role;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -14,7 +14,10 @@ public interface RoleDao {
             " WHERE users.id=#{userId} ")
     List<Role> findByUser(@Param("userId") Long userId);
 
+    @Select("SELECT * FROM roles WHERE name=#{roleName}")
+    Role findByName(@Param("roleName") String roleName);
 
-    @Insert("INSERT INTO user_role VALUES(#{userId},#{roleId})")
-    void addUserRole(@Param("userId") Long userId, @Param("roleId") Long roleId);
+
+    @Insert("INSERT INTO user_role VALUES(#{userId},(SELECT id FROM roles WHERE name=#{role}))")
+    void addUserRole(@Param("userId") Long userId, @Param("role") String role);
 }

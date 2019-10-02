@@ -1,8 +1,8 @@
 package com.security;
 
-import com.dao.RoleDao;
-import com.dao.UserDao;
-import com.models.User;
+import com.crossapi.dao.RoleDao;
+import com.crossapi.dao.UserDao;
+import com.crossapi.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.core.userdetails.UserDetails;

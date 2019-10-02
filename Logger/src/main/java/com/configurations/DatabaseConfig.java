@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 @Configuration
-@MapperScan("com.dao")
+@MapperScan("com.crossapi.dao")
 public class DatabaseConfig {
 
     @Autowired

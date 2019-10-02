@@ -1,10 +1,9 @@
-package com.models;
+package com.crossapi.models;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
-import javax.ws.rs.DefaultValue;
 import java.util.Objects;
 
 public class Book {

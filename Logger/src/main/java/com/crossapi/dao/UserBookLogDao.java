@@ -1,6 +1,6 @@
-package com.dao;
+package com.crossapi.dao;
 
-import com.api.UserBookLog;
+import com.crossapi.api.UserBookLog;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

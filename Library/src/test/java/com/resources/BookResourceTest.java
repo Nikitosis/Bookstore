@@ -1,39 +1,27 @@
 package com.resources;
 
 import com.MainConfig;
-import com.dao.BookDao;
+import com.crossapi.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.models.Book;
+import com.crossapi.models.Book;
 import com.services.BookService;
 import com.services.OktaService;
-import com.services.UserService;
-import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import net.sourceforge.argparse4j.inf.Argument;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import sun.applet.Main;
 
 import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

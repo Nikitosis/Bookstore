@@ -1,7 +1,8 @@
-package com.models;
+package com.crossapi.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -16,22 +17,14 @@ public class User {
     private String lName;
 
     @NotNull
-    @Length(max = 255)
+    @NotEmpty
+    @Length(max = 255,min = 6)
     private String username;
 
-    @NotNull
-    @Length(max = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     public User(){
-    }
-
-    public User(Long id, String fName, String lName, String username, String password) {
-        this.id = id;
-        this.fName = fName;
-        this.lName = lName;
-        this.username = username;
-        this.password = password;
     }
 
     public Long getId() {
@@ -85,9 +78,9 @@ public class User {
 
         User user = (User) obj;
 
-        return Objects.equals(user.fName,this.fName) &&
+        return Objects.equals(user.id,this.id) &&
+                Objects.equals(user.fName,this.fName) &&
                 Objects.equals(user.lName,this.lName) &&
-                Objects.equals(user.username,this.username) &&
-                Objects.equals(user.password,this.password);
+                Objects.equals(user.username,this.username);
     }
 }

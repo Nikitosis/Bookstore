@@ -1,14 +1,15 @@
-package com.models;
+package com.crossapi.models;
 
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
 public class Role {
-    @NotNull
     private Long id;
 
     @NotNull
+    @NotEmpty
     @Length(max = 255)
     private String name;
 

@@ -143,6 +143,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.bookstore</groupId>
+            <artifactId>CrossApiObjects</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 
