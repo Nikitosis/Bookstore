@@ -109,9 +109,15 @@ public class UserResource {
         }
     }
 
-    //TODO: make only this user can update himself, not everyone
     @PUT
     public Response updateUser(@NotNull @Valid User user){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+
+        if(principalUser.getId()!=user.getId()){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
         if(userService.findById(user.getId())!=null){
             userService.update(user);
             return Response.ok(userService.findById(user.getId())).build();
