@@ -51,7 +51,7 @@ public class BookResource {
         }
     }
 
-    @POST
+    @PUT
     @Path("/{bookId}/file")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public Response setBookFile(
@@ -73,7 +73,7 @@ public class BookResource {
         return Response.status(Response.Status.OK).entity(book).build();
     }
 
-    @POST
+    @PUT
     @Path("/{bookId}/image")
     @Consumes({MediaType.MULTIPART_FORM_DATA})
     public Response setBookImage(
@@ -87,12 +87,11 @@ public class BookResource {
 
         try {
             bookService.addImageToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
+            return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
         }
-
-        return Response.status(Response.Status.OK).entity(book).build();
     }
 
     @POST

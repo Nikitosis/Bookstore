@@ -11,6 +11,8 @@ import com.services.BookService;
 import com.services.UserService;
 import com.services.storage.StoredFile;
 import io.swagger.annotations.Api;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -68,6 +71,33 @@ public class UserResource {
         }
     }
 
+    @PUT
+    @Path("/{userId}/image")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response setUserImage(@PathParam("userId")Long userId,
+                                 @FormDataParam("file")InputStream fileStream,
+                                 @FormDataParam("file")FormDataContentDisposition contentDisposition){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+
+        if(principalUser.getId()!=userId){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
+        User user=userService.findById(userId);
+        if(user==null)
+            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+
+        try {
+            userService.setUserImage(user,new StoredFile(fileStream,contentDisposition.getFileName()));
+            return Response.status(Response.Status.OK).entity(user).build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+        }
+
+    }
+
     @POST
     public Response addUser(@NotNull @Valid User user){
         if(userService.findByUsername(user.getUsername())==null){
@@ -79,6 +109,7 @@ public class UserResource {
         }
     }
 
+    //TODO: make only this user can update himself, not everyone
     @PUT
     public Response updateUser(@NotNull @Valid User user){
         if(userService.findById(user.getId())!=null){
