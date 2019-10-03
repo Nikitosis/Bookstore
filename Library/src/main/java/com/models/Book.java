@@ -1,5 +1,6 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -19,6 +20,13 @@ public class Book {
 
     @Length(max=255)
     private String photoLink;
+
+    //url can be set only programmatically, after uploading to storage
+    @Length(max = 255)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String url;
+
+    private Double dailyPrice;
 
     public Long getId() {
         return id;
@@ -52,6 +60,22 @@ public class Book {
         this.photoLink = photoLink;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Double getDailyPrice() {
+        return dailyPrice;
+    }
+
+    public void setDailyPrice(Double dailyPrice) {
+        this.dailyPrice = dailyPrice;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -66,6 +90,8 @@ public class Book {
         return Objects.equals(book.id,this.id) &&
                 Objects.equals(book.name,this.name)&&
                 Objects.equals(book.isbn,this.isbn)&&
-                Objects.equals(book.photoLink,this.photoLink);
+                Objects.equals(book.photoLink,this.photoLink) &&
+                Objects.equals(book.dailyPrice,this.dailyPrice) &&
+                Objects.equals(book.url,this.url);
     }
 }

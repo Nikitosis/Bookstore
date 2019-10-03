@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,13 +44,13 @@ public class BookResource {
     }
 
     @POST
-    public Response addBook(@Valid Book book){
+    public Response addBook(@NotNull @Valid Book book){
         bookService.save(book);
         return Response.status(Response.Status.CREATED).entity(book).build();
     }
 
     @PUT
-    public Response updateBook(@Valid Book book){
+    public Response updateBook(@NotNull @Valid Book book){
         if(bookService.findById(book.getId())!=null){
             bookService.update(book);
             return Response.ok(bookService.findById(book.getId())).build();

@@ -14,6 +14,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "url",column = "url"),
+            @Result(property = "dailyPrice",column = "daily_price"),
     })
     List<Book> findAll();
 
@@ -23,6 +25,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "url",column = "url"),
+            @Result(property = "dailyPrice",column = "daily_price"),
     })
     Book findById(@Param("id") Long id);
 
@@ -45,6 +49,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "url",column = "url"),
+            @Result(property = "dailyPrice",column = "daily_price"),
     })
     List<Book> findTakenByUser(@Param("userId") Long userId);
 

@@ -22,5 +22,6 @@
     <include file="db/2019-10-02-01-added-user-information-fields.xml"/>
     <include file="db/2019-10-02-02-added-book-information-fields.xml"/>
     <include file="db/2019-10-02-03-changed-user-book-table.xml"/>
+    <include file="db/2019-10-03-01-added-url-price-book.xml"/>
 
 </databaseChangeLog>

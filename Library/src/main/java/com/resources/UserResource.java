@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Api(value = "/users")
@@ -63,7 +65,7 @@ public class UserResource {
     }
 
     @POST
-    public Response addUser(@Valid User user){
+    public Response addUser(@NotNull @Valid User user){
         if(userService.findByUsername(user.getUsername())==null){
             userService.save(user);
             return Response.status(Response.Status.CREATED).entity(user).build();
@@ -74,7 +76,7 @@ public class UserResource {
     }
 
     @PUT
-    public Response updateUser(@Valid User user){
+    public Response updateUser(@NotNull @Valid User user){
         if(userService.findById(user.getId())!=null){
             userService.update(user);
             return Response.ok(userService.findById(user.getId())).build();
@@ -120,11 +122,11 @@ public class UserResource {
     @Path("/{userId}/books/{bookId}")
     public Response takeBook(@PathParam("userId") Long userId,
                              @PathParam("bookId") Long bookId,
-                             @QueryParam(value = "returnDate") String returnDateStr){
+                             @QueryParam(value = "returnDate") Optional<String> returnDateStr){
         LocalDate returnDate=null;
         try{
-            if(!returnDateStr.isEmpty())
-                returnDate=LocalDate.parse(returnDateStr);
+            if(returnDateStr.isPresent())
+                returnDate=LocalDate.parse(returnDateStr.get());
         }
         catch (DateTimeParseException e){
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong format of returnDate").build();
