@@ -2,6 +2,7 @@ package com.services;
 
 import com.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.util.IOUtils;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
 import com.dao.BookDao;
@@ -11,7 +12,6 @@ import com.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -19,6 +19,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -67,6 +69,18 @@ public class BookService {
 
     public List<Book> findTakenByUser(Long userId){
         return bookDao.findTakenByUser(userId);
+    }
+
+    public StoredFile getStoredFile(Long bookId){
+        Book book=bookDao.findById(bookId);
+        InputStream inputStream=awsStorageService.getFileInputStream(book.getUrl());
+        String fileName=book.getName()+"."+book.getUrl().substring(book.getUrl().lastIndexOf(".")+1);
+        return new StoredFile(inputStream,fileName);
+    }
+
+    public URL getUrl(Long bookId){
+        Book book=bookDao.findById(bookId);
+        return awsStorageService.getFileUrl(book.getUrl());
     }
 
     public boolean isTakenByUser(Long userId, Long bookId){

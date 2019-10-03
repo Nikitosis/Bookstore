@@ -40,9 +40,10 @@ public class AwsStorageService {
                 .build();
     }
 
+    //check if file types are correct
     //returns path
     public String uploadFile(StoredFile file, CannedAccessControlList access) throws IOException {
-        String fileName=file.getContentDisposition().getFileName();
+        String fileName=file.getFileName();
         String type=fileName.substring(fileName.lastIndexOf(".")+1);
 
         String resultFileName= UUID.randomUUID().toString()+"."+type;

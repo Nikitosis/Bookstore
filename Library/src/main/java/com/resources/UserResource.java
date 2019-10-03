@@ -1,5 +1,6 @@
 package com.resources;
 
+import com.amazonaws.util.IOUtils;
 import com.crossapi.dao.RoleDao;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -8,6 +9,7 @@ import com.models.Book;
 import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;
+import com.services.storage.StoredFile;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,6 +24,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -115,6 +119,43 @@ public class UserResource {
         }
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+        }
+    }
+
+    @GET
+    @Path("/{userId}/books/{bookId}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response getBook(@PathParam("userId") Long userId,
+                             @PathParam("bookId") Long bookId,
+                             @QueryParam(value = "returnDate") Optional<String> returnDateStr){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        User principalUser= userService.findByUsername(auth.getName());
+
+        if(principalUser.getId()!=userId){
+            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+        }
+
+        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
+            if(bookService.isTakenByUser(userId,bookId)){
+                try {
+                    StoredFile storedFile=bookService.getStoredFile(bookId);
+                    return Response.status(Response.Status.OK)
+                            .entity(IOUtils.toByteArray(storedFile.getInputStream()))
+                            .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
+                            .build();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+                }
+            }
+            else{
+                //if book is already taken
+                return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
+            }
+        }
+        else{
+            //if book or user cannot be found
+            return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
         }
     }
 

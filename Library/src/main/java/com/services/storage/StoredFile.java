@@ -6,11 +6,15 @@ import java.io.InputStream;
 
 public class StoredFile {
     private InputStream inputStream;
-    private FormDataContentDisposition contentDisposition;
+    private String fileName;
 
-    public StoredFile(InputStream inputStream, FormDataContentDisposition contentDisposition) {
+    public StoredFile(){
+
+    }
+
+    public StoredFile(InputStream inputStream, String fileName) {
         this.inputStream = inputStream;
-        this.contentDisposition = contentDisposition;
+        this.fileName = fileName;
     }
 
     public InputStream getInputStream() {
@@ -21,11 +25,11 @@ public class StoredFile {
         this.inputStream = inputStream;
     }
 
-    public FormDataContentDisposition getContentDisposition() {
-        return contentDisposition;
+    public String getFileName() {
+        return fileName;
     }
 
-    public void setContentDisposition(FormDataContentDisposition contentDisposition) {
-        this.contentDisposition = contentDisposition;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

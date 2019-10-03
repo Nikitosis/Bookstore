@@ -64,7 +64,7 @@ public class BookResource {
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
 
         try {
-            bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition));
+            bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
         } catch (IOException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
