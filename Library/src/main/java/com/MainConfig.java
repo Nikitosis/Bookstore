@@ -1,5 +1,6 @@
 package com;
 
+import com.configurations.AwsConfig;
 import com.configurations.DependencyService;
 import com.configurations.OktaOAuthConfig;
 import com.configurations.SecurityConfig;
@@ -20,6 +21,8 @@ public class MainConfig extends Configuration {
     private OktaOAuthConfig oktaOAuth;
 
     private SwaggerBundleConfiguration swagger;
+
+    private AwsConfig awsConfig;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -59,5 +62,13 @@ public class MainConfig extends Configuration {
 
     public void setSwagger(SwaggerBundleConfiguration swagger) {
         this.swagger = swagger;
+    }
+
+    public AwsConfig getAwsConfig() {
+        return awsConfig;
+    }
+
+    public void setAwsConfig(AwsConfig awsConfig) {
+        this.awsConfig = awsConfig;
     }
 }
