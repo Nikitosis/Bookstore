@@ -30,11 +30,11 @@ public interface BookDao {
     })
     Book findById(@Param("id") Long id);
 
-    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink})")
+    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{url},#{dailyPrice})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(Book book);
 
-    @Update("UPDATE books SET name=#{name}, isbn=#{isbn}, photo_link=#{photoLink} WHERE id=#{id}")
+    @Update("UPDATE books SET name=#{name}, isbn=#{isbn}, photo_link=#{photoLink},url=#{url},daily_price=${dailyPrice} WHERE id=#{id}")
     void update(Book book);
 
     @Delete("CALL deleteBook(#{id})")

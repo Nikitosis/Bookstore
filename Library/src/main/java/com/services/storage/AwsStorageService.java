@@ -41,15 +41,18 @@ public class AwsStorageService {
     }
 
     //returns path
-    public String uploadFile(MultipartFile file, CannedAccessControlList access) throws IOException {
-        String fileName= UUID.randomUUID().toString();
+    public String uploadFile(StoredFile file, CannedAccessControlList access) throws IOException {
+        String fileName=file.getContentDisposition().getFileName();
+        String type=fileName.substring(fileName.lastIndexOf(".")+1);
+
+        String resultFileName= UUID.randomUUID().toString()+"."+type;
 
         client.putObject(
-                new PutObjectRequest(mainConfig.getAwsConfig().getBucketName(), fileName, file.getInputStream(), new ObjectMetadata())
+                new PutObjectRequest(mainConfig.getAwsConfig().getBucketName(), resultFileName, file.getInputStream(), new ObjectMetadata())
                         .withCannedAcl(access)
         );
 
-        return fileName;
+        return resultFileName;
     }
 
     public URL getFileUrl(String path){

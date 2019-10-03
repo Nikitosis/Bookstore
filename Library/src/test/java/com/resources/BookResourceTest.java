@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
 import com.services.BookService;
 import com.services.OktaService;
+import com.services.storage.AwsStorageService;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -43,8 +44,9 @@ public class BookResourceTest {
     private BookDao bookDao=mock(BookDao.class);
 
     //Creating dependencies
+    private AwsStorageService awsStorageService;
     private OktaService oktaService=new OktaService(configuration);
-    private BookService bookService=new BookService(bookDao,configuration,oktaService);
+    private BookService bookService=new BookService(bookDao,configuration,oktaService,awsStorageService);
 
     //Creating ResourceTestRule
     @Rule

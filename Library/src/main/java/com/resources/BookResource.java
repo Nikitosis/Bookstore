@@ -2,15 +2,23 @@ package com.resources;
 
 import com.models.Book;
 import com.services.BookService;
+import com.services.storage.StoredFile;
 import io.swagger.annotations.Api;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 @Api(value="/books")
@@ -41,6 +49,28 @@ public class BookResource {
         else{
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
+    }
+
+    @POST
+    @Path("/{bookId}")
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public Response setBookFile(
+            @PathParam("bookId") Long bookId,
+            @FormDataParam("file") InputStream fileStream,
+            @FormDataParam("file") FormDataContentDisposition fileDisposition){
+        Book book=bookService.findById(bookId);
+
+        if(book==null)
+            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+
+        try {
+            bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+        }
+
+        return Response.status(Response.Status.OK).entity(book).build();
     }
 
     @POST

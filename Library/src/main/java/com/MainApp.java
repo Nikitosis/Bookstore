@@ -16,6 +16,7 @@ import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -94,6 +95,9 @@ public class MainApp extends Application<MainConfig> {
 
         final FilterRegistration.Dynamic cors =
                 environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+
+        //enable multipart_form_data
+        environment.jersey().register(new MultiPartFeature());
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());

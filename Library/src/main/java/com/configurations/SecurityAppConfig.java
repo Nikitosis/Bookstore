@@ -67,8 +67,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.DELETE,"/books/(\\d+)").hasAnyRole("ADMIN")
 
-
-                .antMatchers("/**").denyAll()
+                //TODO: change to denyAll on production
+                .antMatchers("/**").permitAll()
                 .and()
                 .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session

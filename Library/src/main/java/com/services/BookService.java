@@ -1,19 +1,24 @@
 package com.services;
 
 import com.MainConfig;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
 import com.dao.BookDao;
 import com.models.Book;
+import com.services.storage.AwsStorageService;
+import com.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,12 +29,14 @@ public class BookService {
     private BookDao bookDao;
     private MainConfig mainConfig;
     private OktaService oktaService;
+    private AwsStorageService awsStorageService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService, AwsStorageService awsStorageService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
         this.oktaService = oktaService;
+        this.awsStorageService = awsStorageService;
     }
 
     public List<Book> findAll(){
@@ -38,6 +45,12 @@ public class BookService {
 
     public Book findById(Long id){
         return bookDao.findById(id);
+    }
+
+    public void addFileToBook(Book book, StoredFile file) throws IOException {
+        String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
+        book.setUrl(path);
+        bookDao.update(book);
     }
 
     public Long save(Book book){

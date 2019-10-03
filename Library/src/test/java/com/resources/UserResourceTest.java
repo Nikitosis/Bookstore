@@ -11,6 +11,7 @@ import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.OktaService;
 import com.services.UserService;
+import com.services.storage.AwsStorageService;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -61,9 +62,10 @@ public class UserResourceTest {
     private Authentication authentication=mock(Authentication.class);
 
     //Creating dependencies
+    private AwsStorageService awsStorageService;
     private OktaService oktaService=new OktaService(configuration);
     private UserService userService =new UserService(userDao,roleDao,passwordEncoder);
-    private BookService bookService=spy(new BookService(bookDao,configuration,oktaService));
+    private BookService bookService=spy(new BookService(bookDao,configuration,oktaService,awsStorageService));
 
     //Creating ResourceTestRule
     @Rule
