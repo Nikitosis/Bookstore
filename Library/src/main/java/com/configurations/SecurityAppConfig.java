@@ -57,7 +57,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
                 .regexMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.POST,"/users").permitAll()
-                .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books/(\\d+)").authenticated()
+                .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books/(\\d+.*)").authenticated()
                 .regexMatchers(HttpMethod.GET,"/users/(\\d+)","/users/(\\d+)/books").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)/books/(\\d+)").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)").hasAnyRole("ADMIN")

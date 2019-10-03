@@ -63,7 +63,6 @@ public class BookResourceTest {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
-        testBook.setTaken(true);
     }
 
 

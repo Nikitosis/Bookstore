@@ -1,22 +1,29 @@
 package com.resources;
 
 import com.crossapi.dao.RoleDao;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.models.Book;
 import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Service
@@ -113,7 +120,16 @@ public class UserResource {
     @Path("/{userId}/books/{bookId}")
     public Response takeBook(@PathParam("userId") Long userId,
                              @PathParam("bookId") Long bookId,
-                             @RequestParam(value = "returnDate",required = false)LocalDateTime returnDate){
+                             @QueryParam(value = "returnDate") String returnDateStr){
+        LocalDate returnDate=null;
+        try{
+            if(!returnDateStr.isEmpty())
+                returnDate=LocalDate.parse(returnDateStr);
+        }
+        catch (DateTimeParseException e){
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong format of returnDate").build();
+        }
+
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
 

@@ -14,6 +14,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,8 +60,8 @@ public class BookService {
         return bookDao.isTakenByUser(userId,bookId);
     }
 
-    public void takeBook(Long userId,Long bookId,LocalDateTime returnDate){
-        bookDao.takeBook(userId,bookId,LocalDateTime.now(),returnDate);
+    public void takeBook(Long userId, Long bookId, LocalDate returnDate){
+        bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
 
         UserBookLog userBookLog =new UserBookLog();
         userBookLog.setUserId(userId);

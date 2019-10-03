@@ -20,16 +20,6 @@ public class Book {
     @Length(max=255)
     private String photoLink;
 
-    private Boolean isTaken;
-
-    public Boolean getTaken() {
-        return isTaken;
-    }
-
-    public void setTaken(Boolean taken) {
-        isTaken = taken;
-    }
-
     public Long getId() {
         return id;
     }
@@ -46,6 +36,22 @@ public class Book {
         this.name = name;
     }
 
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getPhotoLink() {
+        return photoLink;
+    }
+
+    public void setPhotoLink(String photoLink) {
+        this.photoLink = photoLink;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -58,7 +64,8 @@ public class Book {
         Book book = (Book) obj;
 
         return Objects.equals(book.id,this.id) &&
-                Objects.equals(book.name,this.name) &&
-                Objects.equals(book.isTaken,this.isTaken);
+                Objects.equals(book.name,this.name)&&
+                Objects.equals(book.isbn,this.isbn)&&
+                Objects.equals(book.photoLink,this.photoLink);
     }
 }

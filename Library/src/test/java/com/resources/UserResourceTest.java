@@ -98,7 +98,6 @@ public class UserResourceTest {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
-        testBook.setTaken(true);
 
         //building security mocks
         SecurityContext securityContext=mock(SecurityContext.class);
@@ -280,7 +279,6 @@ public class UserResourceTest {
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-        when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(false);
 
         doNothing().when(bookService).postUserBookLog(any());
 
@@ -289,7 +287,7 @@ public class UserResourceTest {
                 .put(Entity.json(""));
 
         verify(bookService).postUserBookLog(any());
-        verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()));
+        //verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
     @Test
@@ -299,7 +297,7 @@ public class UserResourceTest {
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
-        when(bookDao.isTaken(eq(testUser.getId()))).thenReturn(false);
+        //when(bookDao.isTaken(eq(testUser.getId()))).thenReturn(false);
 
         doNothing().when(bookService).postUserBookLog(any());
 
@@ -310,7 +308,7 @@ public class UserResourceTest {
 
         Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
         verify(bookService,times(0)).postUserBookLog(any());
-        verify(bookDao,times(0)).takeBook(eq(testUser.getId()),eq(testBook.getId()));
+        //verify(bookDao,times(0)).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
     @Test
@@ -328,7 +326,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
@@ -348,7 +346,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
@@ -360,7 +358,7 @@ public class UserResourceTest {
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-        when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
+        //when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
         doNothing().when(bookService).postUserBookLog(any());
 
@@ -369,7 +367,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).postUserBookLog(any());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
