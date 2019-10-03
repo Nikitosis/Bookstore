@@ -50,8 +50,15 @@ public class BookService {
     }
 
     public void addFileToBook(Book book, StoredFile file) throws IOException {
-        String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
+        String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setUrl(path);
+        bookDao.update(book);
+    }
+
+    public void addImageToBook(Book book,StoredFile file) throws IOException {
+        String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
+        URL url=awsStorageService.getFileUrl(path);
+        book.setPhotoLink(url.toString());
         bookDao.update(book);
     }
 
