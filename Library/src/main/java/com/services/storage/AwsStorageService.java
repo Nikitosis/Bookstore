@@ -65,4 +65,14 @@ public class AwsStorageService {
                 .getObjectContent();
     }
 
+    public boolean isAllowedFileType(String fileName){
+        String fileType=fileName.substring(fileName.lastIndexOf(".")+1);
+        return mainConfig.getAwsConfig().getAllowedFileTypes().contains(fileType);
+    }
+
+    public boolean isAllowedImageType(String imageName){
+        String imageType=imageName.substring(imageName.lastIndexOf(".")+1);
+        return mainConfig.getAwsConfig().getAllowedImageTypes().contains(imageType);
+    }
+
 }

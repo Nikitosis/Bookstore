@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.IllegalFormatException;
 import java.util.List;
 
 @Service
@@ -49,13 +50,21 @@ public class BookService {
         return bookDao.findById(id);
     }
 
-    public void addFileToBook(Book book, StoredFile file) throws IOException {
+    public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException {
+        if(!awsStorageService.isAllowedFileType(file.getFileName())){
+            throw new IllegalArgumentException("Wrong file type for book");
+        }
+
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setUrl(path);
         bookDao.update(book);
     }
 
-    public void addImageToBook(Book book,StoredFile file) throws IOException {
+    public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException {
+        if(!awsStorageService.isAllowedImageType(file.getFileName())){
+            throw new IllegalArgumentException("Wrong image type");
+        }
+
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         URL url=awsStorageService.getFileUrl(path);
         book.setPhotoLink(url.toString());

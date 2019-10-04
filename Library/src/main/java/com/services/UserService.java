@@ -49,7 +49,11 @@ public class UserService {
         return res;
     }
 
-    public void setUserImage(User user, StoredFile file) throws IOException {
+    public void setUserImage(User user, StoredFile file) throws IOException, IllegalArgumentException {
+        if(!awsStorageService.isAllowedImageType(file.getFileName())){
+            throw new IllegalArgumentException("Wrong image type");
+        }
+
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         URL url=awsStorageService.getFileUrl(path);
         user.setAvatarLink(url.toString());

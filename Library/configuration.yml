@@ -41,3 +41,9 @@ awsConfig:
   accessKey: AKIASVAFABVMDDSDW4OH
   secretKey: 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
   bucketName: bookstore.bucket
+  allowedFileTypes:
+    - pdf
+    - txt
+  allowedImageTypes:
+    - jpg
+    - png

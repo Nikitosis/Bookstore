@@ -26,9 +26,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -94,8 +92,10 @@ public class UserResource {
         } catch (IOException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+        } catch(IllegalArgumentException e){
+            e.printStackTrace();
+            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
         }
-
     }
 
     @POST

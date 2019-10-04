@@ -1,11 +1,17 @@
 package com.configurations;
 
+import java.util.List;
+
 public class AwsConfig {
 
     private String accessKey;
     private String secretKey;
 
     private String bucketName;
+
+    private List<String> allowedFileTypes;
+
+    private List<String> allowedImageTypes;
 
     public String getAccessKey() {
         return accessKey;
@@ -29,5 +35,21 @@ public class AwsConfig {
 
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
+    }
+
+    public List<String> getAllowedFileTypes() {
+        return allowedFileTypes;
+    }
+
+    public void setAllowedFileTypes(List<String> allowedFileTypes) {
+        this.allowedFileTypes = allowedFileTypes;
+    }
+
+    public List<String> getAllowedImageTypes() {
+        return allowedImageTypes;
+    }
+
+    public void setAllowedImageTypes(List<String> allowedImageTypes) {
+        this.allowedImageTypes = allowedImageTypes;
     }
 }

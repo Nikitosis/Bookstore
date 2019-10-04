@@ -65,12 +65,15 @@ public class BookResource {
 
         try {
             bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
+            return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+        } catch(IllegalArgumentException e){
+            e.printStackTrace();
+            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
         }
 
-        return Response.status(Response.Status.OK).entity(book).build();
     }
 
     @PUT
@@ -91,6 +94,9 @@ public class BookResource {
         } catch (IOException e) {
             e.printStackTrace();
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+        } catch(IllegalArgumentException e){
+            e.printStackTrace();
+            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
         }
     }
 
