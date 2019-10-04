@@ -45,3 +45,6 @@ awsConfig:
     - txt
   allowedImageTypes:
     - jpg
+    - png
+  maxFileSize: 314572800    #300MB
+  maxImageSize: 26214400   #25MB

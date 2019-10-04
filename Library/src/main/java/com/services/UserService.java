@@ -1,5 +1,7 @@
 package com.services;
 
+import com.MainConfig;
+import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.crossapi.dao.RoleDao;
 import com.crossapi.dao.UserDao;
@@ -22,12 +24,15 @@ public class UserService {
 
     private PasswordEncoder passwordEncoder;
 
+    private MainConfig mainConfig;
+
     @Autowired
-    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, PasswordEncoder passwordEncoder) {
+    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.awsStorageService = awsStorageService;
         this.passwordEncoder = passwordEncoder;
+        this.mainConfig = mainConfig;
     }
 
     public List<User> findAll(){
@@ -49,10 +54,13 @@ public class UserService {
         return res;
     }
 
-    public void setUserImage(User user, StoredFile file) throws IOException, IllegalArgumentException {
+    public void setUserImage(User user, StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedImageType(file.getFileName())){
             throw new IllegalArgumentException("Wrong image type");
         }
+        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
+            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
+
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         URL url=awsStorageService.getFileUrl(path);

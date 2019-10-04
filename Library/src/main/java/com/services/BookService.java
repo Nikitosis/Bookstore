@@ -1,6 +1,7 @@
 package com.services;
 
 import com.MainConfig;
+import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
 import com.crossapi.api.Action;
@@ -50,20 +51,25 @@ public class BookService {
         return bookDao.findById(id);
     }
 
-    public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException {
+    public void addFileToBook(Book book, StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedFileType(file.getFileName())){
             throw new IllegalArgumentException("Wrong file type for book");
         }
+        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxFileSize())
+            throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsConfig().getMaxFileSize());
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setUrl(path);
         bookDao.update(book);
     }
 
-    public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException {
+    public void addImageToBook(Book book,StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedImageType(file.getFileName())){
             throw new IllegalArgumentException("Wrong image type");
         }
+        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
+            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
+
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         URL url=awsStorageService.getFileUrl(path);

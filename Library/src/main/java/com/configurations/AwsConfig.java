@@ -13,6 +13,10 @@ public class AwsConfig {
 
     private List<String> allowedImageTypes;
 
+    private Long maxFileSize;
+
+    private Long maxImageSize;
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -51,5 +55,21 @@ public class AwsConfig {
 
     public void setAllowedImageTypes(List<String> allowedImageTypes) {
         this.allowedImageTypes = allowedImageTypes;
+    }
+
+    public Long getMaxFileSize() {
+        return maxFileSize;
+    }
+
+    public void setMaxFileSize(Long maxFileSize) {
+        this.maxFileSize = maxFileSize;
+    }
+
+    public Long getMaxImageSize() {
+        return maxImageSize;
+    }
+
+    public void setMaxImageSize(Long maxImageSize) {
+        this.maxImageSize = maxImageSize;
     }
 }

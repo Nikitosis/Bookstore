@@ -1,5 +1,7 @@
 package com.resources;
 
+import com.MainConfig;
+import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.util.IOUtils;
 import com.crossapi.dao.RoleDao;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +14,7 @@ import com.services.UserService;
 import com.services.storage.StoredFile;
 import io.swagger.annotations.Api;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +25,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
@@ -50,7 +59,7 @@ public class UserResource {
     private RoleDao roleDao;
 
     @Autowired
-    public UserResource(UserService userService, BookService bookService, RoleDao roleDao) {
+    public UserResource(UserService userService, BookService bookService, RoleDao roleDa) {
         this.userService = userService;
         this.bookService = bookService;
         this.roleDao = roleDao;
@@ -79,7 +88,8 @@ public class UserResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setUserImage(@PathParam("userId")Long userId,
                                  @FormDataParam("file")InputStream fileStream,
-                                 @FormDataParam("file")FormDataContentDisposition contentDisposition){
+                                 @FormDataParam("file")FormDataContentDisposition contentDisposition,
+                                 @Context final HttpServletRequest request){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
 
@@ -93,15 +103,19 @@ public class UserResource {
             log.warn("User cannot be found: " + userId);
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
         try {
-            userService.setUserImage(user,new StoredFile(fileStream,contentDisposition.getFileName()));
+            userService.setUserImage(user,new StoredFile(fileStream,contentDisposition.getFileName()),request.getContentLengthLong());
             return Response.status(Response.Status.OK).entity(user).build();
         } catch (IOException e) {
             log.warn("Cannot read file");
             return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read file").build();
         } catch(IllegalArgumentException e){
-            log.warn("Wrong file type");
+            log.warn(e.getMessage());
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
+        } catch(FileTooLargeException e){
+            log.warn(e.getErrorMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file size").build();
         }
     }
 

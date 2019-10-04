@@ -1,5 +1,6 @@
 package com.resources;
 
+import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.models.Book;
 import com.services.BookService;
 import com.services.storage.StoredFile;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
@@ -62,7 +64,8 @@ public class BookResource {
     public Response setBookFile(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition fileDisposition){
+            @FormDataParam("file") FormDataContentDisposition fileDisposition,
+            HttpServletRequest request){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
@@ -71,14 +74,17 @@ public class BookResource {
         }
 
         try {
-            bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
+            bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()),request.getContentLengthLong());
             return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
-            log.warn("Cannot read the file",e.getCause());
+            log.warn("Cannot read the file",e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read the file").build();
         } catch(IllegalArgumentException e){
-            log.warn("Wrong file type",e.getCause());
+            log.warn("Wrong file type",e.getMessage());
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
+        } catch(FileTooLargeException e){
+            log.warn("Wrong file size",e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file size").build();
         }
 
     }
@@ -89,7 +95,8 @@ public class BookResource {
     public Response setBookImage(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition fileDisposition){
+            @FormDataParam("file") FormDataContentDisposition fileDisposition,
+            HttpServletRequest request){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
@@ -98,14 +105,17 @@ public class BookResource {
         }
 
         try {
-            bookService.addImageToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
+            bookService.addImageToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()),request.getContentLengthLong());
             return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
             log.warn("Cannot read the file");
             return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read the file").build();
         } catch(IllegalArgumentException e){
-            log.warn("Wrong file type");
+            log.warn("Wrong file type",e.getMessage());
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
+        } catch(FileTooLargeException e){
+            log.warn("Wrong file size",e.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file size").build();
         }
     }
 

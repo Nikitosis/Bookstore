@@ -97,7 +97,7 @@ public class MainApp extends Application<MainConfig> {
                 environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
         //enable multipart_form_data
-        environment.jersey().register(new MultiPartFeature());
+        environment.jersey().register(MultiPartFeature.class);
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
