@@ -39,6 +39,7 @@ public class User {
     private String email;
 
     @Length(max=255)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String avatarLink;
 
     private Double money;

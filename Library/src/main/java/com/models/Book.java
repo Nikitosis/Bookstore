@@ -1,5 +1,6 @@
 package com.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -19,11 +20,11 @@ public class Book {
     private String isbn;
 
     @Length(max=255)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String photoLink;
 
     //url can be set only programmatically, after uploading to storage
-    @Length(max = 255)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private String url;
 
     private Double dailyPrice;
