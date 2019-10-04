@@ -1,10 +1,13 @@
 package com.resources;
 
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.models.Book;
 import com.services.BookService;
 import com.services.storage.StoredFile;
+import com.utils.ObjectValidator;
 import io.swagger.annotations.Api;
+import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -17,8 +20,10 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -60,7 +65,7 @@ public class BookResource {
 
     @PUT
     @Path("/{bookId}/file")
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setBookFile(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
@@ -86,17 +91,16 @@ public class BookResource {
             log.warn("Wrong file size",e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file size").build();
         }
-
     }
 
     @PUT
     @Path("/{bookId}/image")
-    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setBookImage(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
             @FormDataParam("file") FormDataContentDisposition fileDisposition,
-            HttpServletRequest request){
+            @Context final HttpServletRequest request){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
@@ -119,10 +123,59 @@ public class BookResource {
         }
     }
 
+    //here book's file and image are not mandatory.
+    //The only requirement is valid bookInfo
     @POST
-    public Response addBook(@NotNull @Valid Book book){
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public Response addBook(@FormDataParam("file") InputStream fileStream,
+                         @FormDataParam("file") FormDataContentDisposition fileDisposition,
+                         @FormDataParam("image") InputStream imageStream,
+                         @FormDataParam("image") FormDataContentDisposition imageDisposition,
+                         @FormDataParam("bookInfo") FormDataBodyPart bookPart,
+                         @Context final HttpServletRequest request){
+        if(bookPart==null){
+            log.warn("bookInfo is empty");
+            return Response.status(Response.Status.BAD_REQUEST).entity("bookInfo is empty").build();
+        }
+        //converting bookInfo json to book pojo
+        bookPart.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+        Book book=bookPart.getValueAs(Book.class);
+
+        try{
+            //validating the book
+            ObjectValidator.validateFields(book);
+        }catch(ValidationException e){
+            log.warn("Invalid bookInfo");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid bookInfo").build();
+        }
+
         bookService.save(book);
-        return Response.status(Response.Status.CREATED).entity(book).build();
+
+        //adding file to book
+        try {
+            if(fileStream!=null)
+                bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()),request.getContentLengthLong());
+        }  catch (IOException e) {
+            log.warn("Cannot read the file");
+        } catch(IllegalArgumentException e){
+            log.warn(e.getMessage());
+        } catch(FileTooLargeException e){
+            log.warn(e.getMessage());
+        }
+
+        //adding image to book
+        try {
+            if(imageStream!=null)
+                bookService.addImageToBook(book,new StoredFile(imageStream,imageDisposition.getFileName()),request.getContentLengthLong());
+        }  catch (IOException e) {
+            log.warn("Cannot read the image");
+        } catch(IllegalArgumentException e){
+            log.warn(e.getMessage());
+        } catch(FileTooLargeException e){
+            log.warn(e.getMessage());
+        }
+
+        return Response.status(Response.Status.OK).entity(book).build();
     }
 
     @PUT
