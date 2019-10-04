@@ -18,7 +18,8 @@ public interface UserDao {
             @Result(property = "gender",column = "gender"),
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
-            @Result(property = "avatarLink",column = "avatar_link")
+            @Result(property = "avatarLink",column = "avatar_link"),
+            @Result(property = "money",column = "money")
     })
     List<User> findAll();
 
@@ -34,7 +35,8 @@ public interface UserDao {
             @Result(property = "gender",column = "gender"),
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
-            @Result(property = "avatarLink",column = "avatar_link")
+            @Result(property = "avatarLink",column = "avatar_link"),
+            @Result(property = "money",column = "money")
     })
     User findByUsername(@Param("username") String username);
 
@@ -50,11 +52,12 @@ public interface UserDao {
             @Result(property = "gender",column = "gender"),
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
-            @Result(property = "avatarLink",column = "avatar_link")
+            @Result(property = "avatarLink",column = "avatar_link"),
+            @Result(property = "money",column = "money")
     })
     User findById(@Param("userId") Long userId);
 
-    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink})")
+    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
@@ -71,6 +74,7 @@ public interface UserDao {
             "<if test='email != null'>email = #{email},</if>",
             "<if test='phone != null'>phone = #{phone},</if>",
             "<if test='avatarLink != null'>avatar_link = #{avatarLink},</if>",
+            "<if test='money != null'>money = #{money},</if>",
             "</set>",
             "WHERE id=#{id}",
             "</script>"
