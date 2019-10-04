@@ -34,7 +34,19 @@ public interface BookDao {
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(Book book);
 
-    @Update("UPDATE books SET name=#{name}, isbn=#{isbn}, photo_link=#{photoLink},url=#{url},daily_price=${dailyPrice} WHERE id=#{id}")
+    @Update({
+        "<script>",
+                "update books",
+                "<set>",
+                "<if test='name != null'>name = #{name},</if>",
+                "<if test='isbn != null'>isbn = #{isbn},</if>",
+                "<if test='photoLink != null'>photo_link = #{photoLink},</if>",
+                "<if test='url != null'>url = #{url},</if>",
+                "<if test='dailyPrice != null'>daily_price = #{dailyPrice},</if>",
+                "</set>",
+                "WHERE id=#{id}",
+                "</script>"
+    })
     void update(Book book);
 
     @Delete("CALL deleteBook(#{id})")

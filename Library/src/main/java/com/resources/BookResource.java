@@ -179,15 +179,61 @@ public class BookResource {
     }
 
     @PUT
-    public Response updateBook(@NotNull @Valid Book book){
-        if(bookService.findById(book.getId())!=null){
-            bookService.update(book);
-            return Response.ok(bookService.findById(book.getId())).build();
+    @Consumes({MediaType.MULTIPART_FORM_DATA})
+    public Response updateBook(@FormDataParam("file") InputStream fileStream,
+                               @FormDataParam("file") FormDataContentDisposition fileDisposition,
+                               @FormDataParam("image") InputStream imageStream,
+                               @FormDataParam("image") FormDataContentDisposition imageDisposition,
+                               @FormDataParam("bookInfo") FormDataBodyPart bookPart,
+                               @Context final HttpServletRequest request){
+        if(bookPart==null){
+            log.warn("bookInfo is empty");
+            return Response.status(Response.Status.BAD_REQUEST).entity("bookInfo is empty").build();
         }
-        else{
+        //converting bookInfo json to book pojo
+        bookPart.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+        Book book=bookPart.getValueAs(Book.class);
+
+        try{
+            //validating the book
+            ObjectValidator.validateFields(book);
+        }catch(ValidationException e){
+            log.warn("Invalid bookInfo");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid bookInfo").build();
+        }
+
+        if(bookService.findById(book.getId())==null){
             log.warn("Book cannot be found. BookId: "+book.getId());
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
+
+        bookService.update(book);
+
+        //adding file to book
+        try {
+            if(fileStream!=null)
+                bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()),request.getContentLengthLong());
+        }  catch (IOException e) {
+            log.warn("Cannot read the file");
+        } catch(IllegalArgumentException e){
+            log.warn(e.getMessage());
+        } catch(FileTooLargeException e){
+            log.warn(e.getMessage());
+        }
+
+        //adding image to book
+        try {
+            if(imageStream!=null)
+                bookService.addImageToBook(book,new StoredFile(imageStream,imageDisposition.getFileName()),request.getContentLengthLong());
+        }  catch (IOException e) {
+            log.warn("Cannot read the image");
+        } catch(IllegalArgumentException e){
+            log.warn(e.getMessage());
+        } catch(FileTooLargeException e){
+            log.warn(e.getMessage());
+        }
+
+        return Response.status(Response.Status.OK).entity(book).build();
     }
 
     @DELETE

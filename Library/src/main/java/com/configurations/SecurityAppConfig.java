@@ -57,14 +57,14 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
                 .regexMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.POST,"/users").permitAll()
-                .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books/(\\d+.*)").authenticated()
+                .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books/(\\d+.*)","/users/(\\d+)/image").authenticated()
                 .regexMatchers(HttpMethod.GET,"/users/(\\d+)","/users/(\\d+)/books").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)/books/(\\d+)").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)").hasAnyRole("ADMIN")
 
                 .regexMatchers(HttpMethod.GET,"/books","/books/(\\d+)").permitAll()
                 .regexMatchers(HttpMethod.POST,"/books").hasAnyRole("ADMIN")
-                .regexMatchers(HttpMethod.PUT,"/books").hasAnyRole("ADMIN")
+                .regexMatchers(HttpMethod.PUT,"/books","/books/(\\d+)/image").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.DELETE,"/books/(\\d+)").hasAnyRole("ADMIN")
 
                 //TODO: change to denyAll on production
