@@ -41,6 +41,8 @@ public class User {
     @Length(max=255)
     private String avatarLink;
 
+    private Double money;
+
     public enum Gender{
         @JsonProperty("MALE")
         MALE,
@@ -141,6 +143,14 @@ public class User {
         this.phone = phone;
     }
 
+    public Double getMoney() {
+        return money;
+    }
+
+    public void setMoney(Double money) {
+        this.money = money;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -160,6 +170,7 @@ public class User {
                 Objects.equals(user.country,this.country) &&
                 Objects.equals(user.email,this.email) &&
                 Objects.equals(user.gender,this.gender) &&
-                Objects.equals(user.avatarLink,this.avatarLink);
+                Objects.equals(user.avatarLink,this.avatarLink) &&
+                Objects.equals(user.money,this.money);
     }
 }
