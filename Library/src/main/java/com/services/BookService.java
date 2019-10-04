@@ -19,6 +19,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -51,10 +52,12 @@ public class BookService {
         return bookDao.findById(id);
     }
 
-    public void addFileToBook(Book book, StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedFileType(file.getFileName())){
             throw new IllegalArgumentException("Wrong file type for book");
         }
+
+        Long fileSize=getFileSize(file.getInputStream());
         if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxFileSize())
             throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsConfig().getMaxFileSize());
 
@@ -63,10 +66,12 @@ public class BookService {
         bookDao.update(book);
     }
 
-    public void addImageToBook(Book book,StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedImageType(file.getFileName())){
             throw new IllegalArgumentException("Wrong image type");
         }
+
+        Long fileSize=getFileSize(file.getInputStream());
         if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
 
@@ -154,5 +159,16 @@ public class BookService {
                     .request(MediaType.APPLICATION_JSON)
                     .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
+    }
+
+    private Long getFileSize(InputStream inputStream){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            IOUtils.copy(inputStream,baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1L;
+        }
+        return Long.valueOf(baos.size());
     }
 }

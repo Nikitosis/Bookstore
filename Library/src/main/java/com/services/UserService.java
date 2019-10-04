@@ -3,6 +3,7 @@ package com.services;
 import com.MainConfig;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.util.IOUtils;
 import com.crossapi.dao.RoleDao;
 import com.crossapi.dao.UserDao;
 import com.crossapi.models.User;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -54,10 +57,12 @@ public class UserService {
         return res;
     }
 
-    public void setUserImage(User user, StoredFile file,Long fileSize) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public void setUserImage(User user, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         if(!awsStorageService.isAllowedImageType(file.getFileName())){
             throw new IllegalArgumentException("Wrong image type");
         }
+
+        Long fileSize=getFileSize(file.getInputStream());
         if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
 
@@ -76,5 +81,16 @@ public class UserService {
 
     public void delete(Long userId){
         userDao.delete(userId);
+    }
+
+    private Long getFileSize(InputStream inputStream){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            IOUtils.copy(inputStream,baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1L;
+        }
+        return Long.valueOf(baos.size());
     }
 }

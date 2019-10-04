@@ -74,13 +74,12 @@ public class UserResource {
     @Path("/{userId}")
     public Response getUserById(@PathParam("userId") Long userId){
         User user = userService.findById(userId);
-        if(user !=null){
-            return Response.ok(user).build();
-        }
-        else{
+        if(user==null){
             log.warn("User cannot be found: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
+        return Response.ok(user).build();
     }
 
     @PUT
@@ -88,8 +87,7 @@ public class UserResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setUserImage(@PathParam("userId")Long userId,
                                  @FormDataParam("file")InputStream fileStream,
-                                 @FormDataParam("file")FormDataContentDisposition contentDisposition,
-                                 @Context final HttpServletRequest request){
+                                 @FormDataParam("file")FormDataContentDisposition fileDisposition){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
 
@@ -104,31 +102,22 @@ public class UserResource {
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
 
-        try {
-            userService.setUserImage(user,new StoredFile(fileStream,contentDisposition.getFileName()),request.getContentLengthLong());
-            return Response.status(Response.Status.OK).entity(user).build();
-        } catch (IOException e) {
-            log.warn("Cannot read file");
-            return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read file").build();
-        } catch(IllegalArgumentException e){
-            log.warn(e.getMessage());
-            return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
-        } catch(FileTooLargeException e){
-            log.warn(e.getErrorMessage());
-            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file size").build();
+        if(!tryAddImageToUser(user,fileStream,fileDisposition)){
+            return Response.status(Response.Status.BAD_REQUEST).build();
         }
+
+        return Response.status(Response.Status.OK).entity(user).build();
     }
 
     @POST
     public Response addUser(@NotNull @Valid User user){
-        if(userService.findByUsername(user.getUsername())==null){
-            userService.save(user);
-            return Response.status(Response.Status.CREATED).entity(user).build();
-        }
-        else {
+        if(userService.findByUsername(user.getUsername())!=null){
             log.warn("User already exists with this username: "+user.getUsername());
             return Response.status(Response.Status.CONFLICT).build();
         }
+
+        userService.save(user);
+        return Response.status(Response.Status.CREATED).entity(user).build();
     }
 
     @PUT
@@ -141,27 +130,25 @@ public class UserResource {
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
-        if(userService.findById(user.getId())!=null){
-            userService.update(user);
-            return Response.ok(userService.findById(user.getId())).build();
-        }
-        else{
+        if(userService.findById(user.getId())==null){
             log.warn("User cannot be found: "+user.getId());
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
+        userService.update(user);
+        return Response.ok(userService.findById(user.getId())).build();
     }
 
     @DELETE
     @Path("/{userId}")
     public Response deleteUser(@PathParam("userId") Long userId){
-        if(userService.findById(userId)!=null){
-            userService.delete(userId);
-            return Response.ok().build();
-        }
-        else{
+        if(userService.findById(userId)==null){
             log.warn("User cannot be found: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
+        userService.delete(userId);
+        return Response.ok().build();
     }
 
     @GET
@@ -176,14 +163,13 @@ public class UserResource {
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
-        if(userService.findById(userId)!=null){
-            List<Book> takenBooks=bookService.findTakenByUser(userId);
-            return Response.ok().entity(takenBooks).build();
-        }
-        else{
+        if(userService.findById(userId)==null){
             log.warn("User cannot be found: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
+        List<Book> takenBooks=bookService.findTakenByUser(userId);
+        return Response.ok().entity(takenBooks).build();
     }
 
     @GET
@@ -200,30 +186,29 @@ public class UserResource {
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
-        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
-            if(bookService.isTakenByUser(userId,bookId)){
-                try {
-                    StoredFile storedFile=bookService.getStoredFile(bookId);
-                    return Response.status(Response.Status.OK)
-                            .entity(IOUtils.toByteArray(storedFile.getInputStream()))
-                            .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
-                            .build();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    log.warn("Error processing the file");
-                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-                }
-            }
-            else{
-                //if book is not taken
-                log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
-                return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
-            }
-        }
-        else{
-            //if book or user cannot be found
+        //if book or user cannot be found
+        if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
+        }
+
+        //if book is not taken
+        if(!bookService.isTakenByUser(userId,bookId)){
+            log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
+            return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
+        }
+
+
+        try {
+            StoredFile storedFile=bookService.getStoredFile(bookId);
+            return Response.status(Response.Status.OK)
+                    .entity(IOUtils.toByteArray(storedFile.getInputStream()))
+                    .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
+                    .build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.warn("Error processing the file");
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -249,22 +234,21 @@ public class UserResource {
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
-        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
-            if(!bookService.isTakenByUser(userId,bookId)){
-                bookService.takeBook(userId,bookId,returnDate);
-                return Response.ok().build();
-            }
-            else{
-                //if book is already taken
-                log.warn("Book already taken by this user. BookId: "+bookId+" .UserId: "+userId);
-                return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
-            }
-        }
-        else{
-            //if book or user cannot be found
+        //if book or user cannot be found
+        if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
         }
+
+        //if book is already taken
+        if(bookService.isTakenByUser(userId,bookId)){
+            log.warn("Book already taken by this user. BookId: "+bookId+" .UserId: "+userId);
+            return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
+        }
+
+        bookService.takeBook(userId,bookId,returnDate);
+        return Response.ok().build();
+
     }
 
     @DELETE
@@ -279,21 +263,39 @@ public class UserResource {
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
-        if(bookService.findById(bookId)!=null && userService.findById(userId)!=null){
-            if(bookService.isTakenByUser(userId,bookId)){
-                bookService.returnBook(userId,bookId);
-                return Response.ok().build();
-            }
-            else{
-                //if book is not taken by this user
-                log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
-                return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
-            }
-        }
-        else{
-            //if book or user cannot be found
+        //if book or user cannot be found
+        if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
             return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
         }
+
+        //if book is not taken
+        if(!bookService.isTakenByUser(userId,bookId)){
+            log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
+            return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
+        }
+
+
+        bookService.returnBook(userId,bookId);
+        return Response.ok().build();
+
+    }
+
+    private boolean tryAddImageToUser(User user,
+                                      InputStream fileStream,
+                                      FormDataContentDisposition fileDisposition){
+        try {
+            if(fileStream!=null) {
+                userService.setUserImage(user, new StoredFile(fileStream, fileDisposition.getFileName()));
+                return true;
+            }
+        }  catch (IOException e) {
+            log.warn("Cannot read the file");
+        } catch(IllegalArgumentException e){
+            log.warn(e.getMessage());
+        } catch(FileTooLargeException e){
+            log.warn(e.getMessage());
+        }
+        return false;
     }
 }
