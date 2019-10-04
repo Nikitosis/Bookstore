@@ -30,7 +30,6 @@ oktaOAuth:
   scopes:
     - write
 
-
 swagger:
   resourcePackage: com.resources
 
@@ -46,4 +45,3 @@ awsConfig:
     - txt
   allowedImageTypes:
     - jpg
-    - png

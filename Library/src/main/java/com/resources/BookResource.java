@@ -7,6 +7,8 @@ import io.swagger.annotations.Api;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,8 @@ import java.io.InputStream;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class BookResource {
+
+    private static final Logger log= LoggerFactory.getLogger(BookResource.class);
 
     private BookService bookService;
 
@@ -47,6 +51,7 @@ public class BookResource {
             return Response.ok(book).build();
         }
         else{
+            log.warn("Book cannot be found. BookId: "+id);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
@@ -60,17 +65,19 @@ public class BookResource {
             @FormDataParam("file") FormDataContentDisposition fileDisposition){
         Book book=bookService.findById(bookId);
 
-        if(book==null)
+        if(book==null) {
+            log.warn("Book cannot be found. BookId: " + bookId);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+        }
 
         try {
             bookService.addFileToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
             return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+            log.warn("Cannot read the file",e.getCause());
+            return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read the file").build();
         } catch(IllegalArgumentException e){
-            e.printStackTrace();
+            log.warn("Wrong file type",e.getCause());
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
         }
 
@@ -85,17 +92,19 @@ public class BookResource {
             @FormDataParam("file") FormDataContentDisposition fileDisposition){
         Book book=bookService.findById(bookId);
 
-        if(book==null)
+        if(book==null) {
+            log.warn("Book cannot be found. BookId: "+bookId);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+        }
 
         try {
             bookService.addImageToBook(book,new StoredFile(fileStream,fileDisposition.getFileName()));
             return Response.status(Response.Status.OK).entity(book).build();
         } catch (IOException e) {
-            e.printStackTrace();
-            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong file").build();
+            log.warn("Cannot read the file");
+            return Response.status(Response.Status.BAD_REQUEST).entity("Cannot read the file").build();
         } catch(IllegalArgumentException e){
-            e.printStackTrace();
+            log.warn("Wrong file type");
             return Response.status(Response.Status.UNSUPPORTED_MEDIA_TYPE).entity("Wrong file type").build();
         }
     }
@@ -113,6 +122,7 @@ public class BookResource {
             return Response.ok(bookService.findById(book.getId())).build();
         }
         else{
+            log.warn("Book cannot be found. BookId: "+book.getId());
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
@@ -125,6 +135,7 @@ public class BookResource {
             return Response.ok().build();
         }
         else{
+            log.warn("Book cannot be found. BookId: "+id);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
     }
