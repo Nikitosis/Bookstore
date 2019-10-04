@@ -62,7 +62,6 @@ public interface UserDao {
             "<script>",
             "update users",
             "<set>",
-            "<if test='username != null'>username = #{username},</if>",
             "<if test='password != null'>password = #{password},</if>",
             "<if test='fName != null'>first_name = #{fName},</if>",
             "<if test='lName != null'>last_name = #{lName},</if>",
