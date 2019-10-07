@@ -15,6 +15,9 @@ database:
 clientBookLoggerService:
   url: http://${LOGGER_SERVICE_URL:-localhost:9002}
 
+feeChargerService:
+  url: http://${FEE_CHARGER_SERVICE_URL:-localhost:9006}
+
 security:
   jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
   tokenHeader: "Authorization"

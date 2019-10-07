@@ -72,7 +72,7 @@ public interface BookDao {
             "user_book.book_id=#{bookId} )")
     boolean isTakenByUser(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
-    @Select("INSERT INTO user_book VALUES (#{bookId},#{userId},#{takeDate},#{returnDate})")
+    @Select("INSERT INTO user_book VALUES (#{bookId},#{userId},#{takeDate},#{returnDate},NULL)")
     void takeBook(@Param("userId") Long userId, @Param("bookId") Long bookId, @Param("takeDate") LocalDate takeDate, @Param("returnDate") LocalDate returnDate);
 
     @Select("DELETE FROM user_book WHERE book_id=#{bookId} AND user_id=#{userId}")

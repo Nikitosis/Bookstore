@@ -232,6 +232,11 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
         }
 
+        if(bookService.findById(bookId).getDailyPrice()>userService.findById(userId).getMoney()){
+            log.warn("Cannot take book. User doesn't have enough money");
+            return Response.status(Response.Status.BAD_REQUEST).entity("Not enough money").build();
+        }
+
         bookService.takeBook(userId,bookId,returnDate);
         return Response.ok().build();
 

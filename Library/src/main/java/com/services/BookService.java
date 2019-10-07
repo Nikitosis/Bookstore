@@ -117,6 +117,12 @@ public class BookService {
     public void takeBook(Long userId, Long bookId, LocalDate returnDate){
         bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
 
+        try {
+            postChargeBookFee(userId, bookId);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
         UserBookLog userBookLog =new UserBookLog();
         userBookLog.setUserId(userId);
         userBookLog.setBookId(bookId);
@@ -160,6 +166,18 @@ public class BookService {
                     .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                     .async()
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
+    }
+
+    public Future<Response> postChargeBookFee(Long userId,Long bookId){
+        OAuth2AccessToken accessToken=oktaService.getOktaToken();
+
+        Client client = ClientBuilder.newClient();
+        return client.target(mainConfig.getFeeChargerService().getUrl())
+                .path("/users/"+userId+"/books/"+bookId)
+                .request(MediaType.APPLICATION_JSON)
+                .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
+                .async()
+                .put(Entity.json(""));
     }
 
     private Long getFileSize(InputStream inputStream){

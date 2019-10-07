@@ -16,6 +16,8 @@ public class MainConfig extends Configuration {
 
     private DependencyService clientBookLoggerService;
 
+    private DependencyService feeChargerService;
+
     private SecurityConfig security;
 
     private OktaOAuthConfig oktaOAuth;
@@ -70,5 +72,13 @@ public class MainConfig extends Configuration {
 
     public void setAwsConfig(AwsConfig awsConfig) {
         this.awsConfig = awsConfig;
+    }
+
+    public DependencyService getFeeChargerService() {
+        return feeChargerService;
+    }
+
+    public void setFeeChargerService(DependencyService feeChargerService) {
+        this.feeChargerService = feeChargerService;
     }
 }
