@@ -1,11 +1,11 @@
 package com.resources;
 
 import com.MainConfig;
+import com.crossapi.models.Book;
 import com.dao.BookDao;
 import com.crossapi.dao.RoleDao;
 import com.crossapi.dao.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.models.Book;
 import com.crossapi.models.Role;
 import com.crossapi.models.User;
 import com.services.BookService;

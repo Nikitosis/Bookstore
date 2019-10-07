@@ -42,6 +42,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String avatarLink;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Double money;
 
     public enum Gender{

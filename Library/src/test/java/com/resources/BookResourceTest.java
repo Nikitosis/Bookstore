@@ -1,9 +1,9 @@
 package com.resources;
 
 import com.MainConfig;
+import com.crossapi.models.Book;
 import com.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.models.Book;
 import com.services.BookService;
 import com.services.OktaService;
 import com.services.storage.AwsStorageService;

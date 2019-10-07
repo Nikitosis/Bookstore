@@ -2,8 +2,8 @@ package com.services;
 
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
+import com.crossapi.models.Book;
 import com.dao.BookDao;
-import com.models.Book;
 import com.crossapi.models.User;
 import org.junit.Assert;
 import org.junit.Before;

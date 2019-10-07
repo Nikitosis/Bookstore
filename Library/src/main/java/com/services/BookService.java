@@ -6,8 +6,8 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
+import com.crossapi.models.Book;
 import com.dao.BookDao;
-import com.models.Book;
 import com.services.storage.AwsStorageService;
 import com.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.IllegalFormatException;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 public class BookService {
@@ -150,14 +150,15 @@ public class BookService {
         }
     }
 
-    public void postUserBookLog(UserBookLog userBookLog){
+    public Future<Response> postUserBookLog(UserBookLog userBookLog){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
 
         Client client = ClientBuilder.newClient();
-        Response response=client.target(mainConfig.getClientBookLoggerService().getUrl())
+        return client.target(mainConfig.getClientBookLoggerService().getUrl())
                     .path("/actions")
                     .request(MediaType.APPLICATION_JSON)
                     .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
+                    .async()
                     .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
     }
 

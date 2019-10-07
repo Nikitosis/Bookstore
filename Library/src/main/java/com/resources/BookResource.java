@@ -1,8 +1,7 @@
 package com.resources;
 
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.models.Book;
+import com.crossapi.models.Book;
 import com.services.BookService;
 import com.services.storage.StoredFile;
 import com.utils.ObjectValidator;
@@ -15,15 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -54,13 +46,12 @@ public class BookResource {
     @Path("/{id}")
     public Response getBookById(@PathParam("id") Long id){
         Book book=bookService.findById(id);
-        if(book!=null){
-            return Response.ok(book).build();
-        }
-        else{
+        if(book==null){
             log.warn("Book cannot be found. BookId: "+id);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
+
+        return Response.ok(book).build();
     }
 
     @PUT
@@ -69,8 +60,7 @@ public class BookResource {
     public Response setBookFile(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition fileDisposition,
-            @HeaderParam("content-length") Long contentLength){
+            @FormDataParam("file") FormDataContentDisposition fileDisposition){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
@@ -91,8 +81,7 @@ public class BookResource {
     public Response setBookImage(
             @PathParam("bookId") Long bookId,
             @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition fileDisposition,
-            @HeaderParam("content-length") Long contentLength){
+            @FormDataParam("file") FormDataContentDisposition fileDisposition){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
@@ -166,14 +155,13 @@ public class BookResource {
     @DELETE
     @Path("/{id}")
     public Response deleteBook(@PathParam("id") Long id){
-        if(bookService.findById(id)!=null){
-            bookService.delete(id);
-            return Response.ok().build();
-        }
-        else{
+        if(bookService.findById(id)==null){
             log.warn("Book cannot be found. BookId: "+id);
             return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
         }
+
+        bookService.delete(id);
+        return Response.ok().build();
     }
 
     private Book convertBodyPartToBook(FormDataBodyPart bookPart){

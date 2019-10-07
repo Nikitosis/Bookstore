@@ -1,45 +1,31 @@
 package com.resources;
 
-import com.MainConfig;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.util.IOUtils;
 import com.crossapi.dao.RoleDao;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.models.Book;
+import com.crossapi.models.Book;
 import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;
 import com.services.storage.StoredFile;
 import io.swagger.annotations.Api;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +45,7 @@ public class UserResource {
     private RoleDao roleDao;
 
     @Autowired
-    public UserResource(UserService userService, BookService bookService, RoleDao roleDa) {
+    public UserResource(UserService userService, BookService bookService, RoleDao roleDao) {
         this.userService = userService;
         this.bookService = bookService;
         this.roleDao = roleDao;
@@ -103,6 +89,7 @@ public class UserResource {
         }
 
         if(!tryAddImageToUser(user,fileStream,fileDisposition)){
+            log.warn("Failed to add image to user");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
