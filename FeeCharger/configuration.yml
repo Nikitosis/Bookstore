@@ -16,7 +16,7 @@ libraryService:
   url: http://${LIBRARY_SERVICE_URL:-localhost:9000}
 
 feeChargeConfig:
-  rentPeriod: 60
+  rentPeriod: 1
   checkExpirationInterval: 1
 
 oktaOAuth:

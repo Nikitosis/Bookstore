@@ -34,6 +34,7 @@ public class MainApp extends Application<MainConfig> {
         );
     }
 
+
     @Override
     public void run(MainConfig mainConfig, Environment environment) throws Exception {
         AnnotationConfigWebApplicationContext parent = new AnnotationConfigWebApplicationContext();
@@ -68,5 +69,9 @@ public class MainApp extends Application<MainConfig> {
 
         //last, but not least, let's link Spring to the embedded Jetty in Dropwizard
         environment.servlets().addServletListeners(new ContextLoaderListener(ctx));
+
+        //add Spring Security filter
+        FilterRegistration.Dynamic filterRegistration=environment.servlets().addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
+        filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
     }
 }
