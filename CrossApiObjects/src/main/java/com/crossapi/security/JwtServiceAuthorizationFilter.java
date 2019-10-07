@@ -1,10 +1,9 @@
-package com.security;
+package com.crossapi.security;
 
-import com.MainConfig;
 import com.okta.jwt.JoseException;
 import com.okta.jwt.Jwt;
 import com.okta.jwt.JwtVerifier;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,14 +26,11 @@ public class JwtServiceAuthorizationFilter extends BasicAuthenticationFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtServiceAuthorizationFilter.class);
 
-    private MainConfig mainConfig;
-
     private JwtVerifier jwtVerifier;
 
 
-    public JwtServiceAuthorizationFilter(AuthenticationManager authenticationManager, MainConfig mainConfig, JwtVerifier jwtVerifier) {
+    public JwtServiceAuthorizationFilter(AuthenticationManager authenticationManager, JwtVerifier jwtVerifier) {
         super(authenticationManager);
-        this.mainConfig = mainConfig;
         this.jwtVerifier=jwtVerifier;
     }
 

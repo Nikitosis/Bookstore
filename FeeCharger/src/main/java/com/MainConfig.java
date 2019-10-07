@@ -1,8 +1,8 @@
 package com;
 
-import com.configuration.DependencyService;
-import com.configuration.FeeChargeConfig;
-import com.configuration.OktaOAuthConfig;
+import com.crossapi.configuration.DependencyService;
+import com.crossapi.configuration.FeeChargeConfig;
+import com.crossapi.configuration.OktaOAuthConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 

@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.mainConfig=mainConfig;
         this.userDao=userDao;
 
-        setFilterProcessesUrl(mainConfig.getSecurity().getAuthenticationUrl());
+        setFilterProcessesUrl(mainConfig.getAuthenticationUrl());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setHeaderParam("typ",mainConfig.getSecurity().getTokenType())
                 .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+mainConfig.getSecurity().getTokenExpirationTime()))
+                .setExpiration(new Date(System.currentTimeMillis()+mainConfig.getTokenExpirationTime()))
                 .claim("roles",roles)
                 .claim("userId",userId)
                 .compact();

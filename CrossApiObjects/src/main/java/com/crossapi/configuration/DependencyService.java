@@ -1,4 +1,4 @@
-package com.configurations;
+package com.crossapi.configuration;
 
 public class DependencyService {
     private String url;

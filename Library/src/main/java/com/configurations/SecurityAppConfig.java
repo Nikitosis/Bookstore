@@ -1,11 +1,12 @@
 package com.configurations;
 
 import com.MainConfig;
+import com.crossapi.configuration.OktaOAuthConfig;
+import com.crossapi.security.JwtServiceAuthorizationFilter;
+import com.crossapi.security.JwtUserAuthorizationFilter;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.okta.jwt.JwtHelper;
 import com.okta.jwt.JwtVerifier;
-import com.security.JwtServiceAuthorizationFilter;
-import com.security.JwtUserAuthorizationFilter;
 import liquibase.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -88,8 +89,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 //TODO: change to denyAll on production
                 .antMatchers("/**").permitAll()
                 .and()
-                .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),mainConfig,jwtVerifier()))
-                .addFilter(new JwtUserAuthorizationFilter(authenticationManager(),mainConfig))
+                .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),jwtVerifier()))
+                .addFilter(new JwtUserAuthorizationFilter(authenticationManager(),mainConfig.getSecurity()))
                 //we don't save user's session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

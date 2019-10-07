@@ -1,9 +1,9 @@
-package com.security;
+package com.crossapi.security;
 
-import com.MainConfig;
+import com.crossapi.configuration.SecurityConfig;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,11 +26,11 @@ public class JwtUserAuthorizationFilter extends BasicAuthenticationFilter {
 
     private static final Logger log = LoggerFactory.getLogger(JwtUserAuthorizationFilter.class);
 
-    private MainConfig mainConfig;
+    private SecurityConfig securityConfig;
 
-    public JwtUserAuthorizationFilter(AuthenticationManager authenticationManager, MainConfig mainConfig) {
+    public JwtUserAuthorizationFilter(AuthenticationManager authenticationManager, SecurityConfig securityConfig) {
         super(authenticationManager);
-        this.mainConfig = mainConfig;
+        this.securityConfig = securityConfig;
     }
 
     @Override
@@ -51,14 +51,14 @@ public class JwtUserAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader(mainConfig.getSecurity().getTokenHeader());
-        if (StringUtils.isNotEmpty(token) && token.startsWith(mainConfig.getSecurity().getTokenPrefix())) {
+        String token = request.getHeader(securityConfig.getTokenHeader());
+        if (StringUtils.isNotEmpty(token) && token.startsWith(securityConfig.getTokenPrefix())) {
 
             try {
-                String signingKey = mainConfig.getSecurity().getJwtSecret();
+                String signingKey = securityConfig.getJwtSecret();
 
                 //get rid of prefix
-                token=token.replace(mainConfig.getSecurity().getTokenPrefix(), "");
+                token=token.replace(securityConfig.getTokenPrefix(), "");
 
                 Jws<Claims> parsedToken = Jwts.parser()
                         .setSigningKey(signingKey.getBytes())

@@ -1,4 +1,4 @@
-package com.configuration;
+package com.crossapi.configuration;
 
 import java.util.List;
 

@@ -1,14 +1,12 @@
 package com;
 
-import com.configurations.AwsConfig;
-import com.configurations.DependencyService;
-import com.configurations.OktaOAuthConfig;
-import com.configurations.SecurityConfig;
+import com.crossapi.configuration.AwsConfig;
+import com.crossapi.configuration.DependencyService;
+import com.crossapi.configuration.OktaOAuthConfig;
+import com.crossapi.configuration.SecurityConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-
-import java.util.Map;
 
 public class MainConfig extends Configuration {
 

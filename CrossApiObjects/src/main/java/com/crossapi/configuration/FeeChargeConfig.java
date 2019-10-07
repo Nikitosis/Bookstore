@@ -1,4 +1,4 @@
-package com.configuration;
+package com.crossapi.configuration;
 
 public class FeeChargeConfig {
     private Long rentPeriod;

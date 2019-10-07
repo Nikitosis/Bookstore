@@ -12,10 +12,11 @@ database:
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
+tokenExpirationTime: 3600000
+authenticationUrl: "/authenticate"
+
 security:
-  authenticationUrl: "/authenticate"
   jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
-  tokenExpirationTime: 3600000

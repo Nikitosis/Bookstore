@@ -1,10 +1,11 @@
 package com.configuration;
 
 import com.MainConfig;
+import com.crossapi.configuration.OktaOAuthConfig;
+import com.crossapi.security.JwtServiceAuthorizationFilter;
 import com.nimbusds.oauth2.sdk.ParseException;
 import com.okta.jwt.JwtHelper;
 import com.okta.jwt.JwtVerifier;
-import com.security.JwtServiceAuthorizationFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -70,7 +69,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/**").denyAll()
                 .and()
-                .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),mainConfig,jwtVerifier()))
+                .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),jwtVerifier()))
                 //we don't save user's session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
