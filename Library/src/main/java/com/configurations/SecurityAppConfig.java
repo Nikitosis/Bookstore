@@ -1,14 +1,18 @@
 package com.configurations;
 
 import com.MainConfig;
-import com.security.JwtUserAuthorisationFilter;
+import com.nimbusds.oauth2.sdk.ParseException;
+import com.okta.jwt.JwtHelper;
+import com.okta.jwt.JwtVerifier;
+import com.security.JwtServiceAuthorizationFilter;
+import com.security.JwtUserAuthorizationFilter;
+import liquibase.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,12 +21,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.firewall.DefaultHttpFirewall;
-import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 @Configuration
@@ -48,6 +51,21 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
         });
     }
 
+    @Bean
+    public JwtVerifier jwtVerifier() throws IOException, ParseException {
+        OktaOAuthConfig oAuthConfig=mainConfig.getOktaOAuth();
+
+        JwtHelper helper=new JwtHelper()
+                .setIssuerUrl(oAuthConfig.getIssuer());
+
+        String audience=oAuthConfig.getAudience();
+        if(StringUtils.isNotEmpty(audience)){
+            helper.setAudience(audience);
+        }
+
+        return helper.build();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -70,7 +88,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 //TODO: change to denyAll on production
                 .antMatchers("/**").permitAll()
                 .and()
-                .addFilter(new JwtUserAuthorisationFilter(authenticationManager(),mainConfig))
+                .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),mainConfig,jwtVerifier()))
+                .addFilter(new JwtUserAuthorizationFilter(authenticationManager(),mainConfig))
                 //we don't save user's session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

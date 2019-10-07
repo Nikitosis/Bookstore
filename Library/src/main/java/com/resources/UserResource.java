@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -163,8 +164,7 @@ public class UserResource {
     @Path("/{userId}/books/{bookId}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getBook(@PathParam("userId") Long userId,
-                             @PathParam("bookId") Long bookId,
-                             @QueryParam(value = "returnDate") Optional<String> returnDateStr){
+                             @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
         User principalUser= userService.findByUsername(auth.getName());
 
@@ -214,10 +214,9 @@ public class UserResource {
         }
 
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
 
-        if(principalUser.getId()!=userId){
-            log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
+        if(!isAuthorisedManageBooks(auth,userId)){
+            log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
@@ -243,10 +242,9 @@ public class UserResource {
     public Response returnBook(@PathParam("userId") Long userId,
                                @PathParam("bookId") Long bookId){
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
 
-        if(principalUser.getId()!=userId){
-            log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
+        if(!isAuthorisedManageBooks(auth,userId)){
+            log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
             return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
         }
 
@@ -265,7 +263,18 @@ public class UserResource {
 
         bookService.returnBook(userId,bookId);
         return Response.ok().build();
+    }
 
+    private boolean isAuthorisedManageBooks(Authentication auth, Long userId){
+        //if request is from service
+        if(auth.getAuthorities().stream().anyMatch(authority -> ((GrantedAuthority) authority).getAuthority().equals("write")))
+            return true;
+
+        User principalUser= userService.findByUsername(auth.getName());
+        if(principalUser.getId()==userId)
+            return true;
+
+        return false;
     }
 
     private boolean tryAddImageToUser(User user,
