@@ -1,0 +1,31 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: ${SERVICE_CLIENTPORT:-9006}
+  adminConnectors:
+    - type: http
+      port: ${SERVICE_ADMINPORT:-9007}
+
+database:
+  url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
+  user: ${DB_USERNAME:-root}
+  password: ${DB_PASSWORD:-1234}
+  driverClass: com.mysql.cj.jdbc.Driver
+
+libraryService:
+  url: http://${LIBRARY_SERVICE_URL:-localhost:9000}
+
+feeChargeConfig:
+  rentPeriod: 60
+  checkExpirationInterval: 1
+
+oktaOAuth:
+  baseUrl: "https://dev-702765.okta.com"
+  issuer: "https://dev-702765.okta.com/oauth2/default"
+  tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
+  clientId: "0oa1iyrvx8grc62vY357"
+  clientSecret: "Ku3MBSGH1-7r-8iV0KIen3WeoUSwFD_NISm5u0S7"
+  scopes:
+    - write
+logging:
+  level: INFO
