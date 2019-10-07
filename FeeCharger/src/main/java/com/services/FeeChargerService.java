@@ -96,12 +96,12 @@ public class FeeChargerService {
         User user=userDao.findById(rent.getUserId());
         Book book=bookDao.findById(rent.getBookId());
 
-        return user.getMoney()>=book.getDailyPrice();
+        return user.getMoney()>=book.getPrice();
     }
 
     private void extendBookRent(UserBook rent){
         Book book=bookDao.findById(rent.getBookId());
-        feeChargerDao.chargeFee(rent.getUserId(),book.getDailyPrice());
+        feeChargerDao.chargeFee(rent.getUserId(),book.getPrice());
 
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());

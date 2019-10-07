@@ -25,9 +25,9 @@ public class Book {
 
     //url can be set only programmatically, after uploading to storage
     @JsonIgnore
-    private String url;
+    private String filePath;
 
-    private Double dailyPrice;
+    private Double price;
 
     public Long getId() {
         return id;
@@ -61,20 +61,20 @@ public class Book {
         this.photoLink = photoLink;
     }
 
-    public String getUrl() {
-        return url;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
-    public Double getDailyPrice() {
-        return dailyPrice;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setDailyPrice(Double dailyPrice) {
-        this.dailyPrice = dailyPrice;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class Book {
                 Objects.equals(book.name,this.name)&&
                 Objects.equals(book.isbn,this.isbn)&&
                 Objects.equals(book.photoLink,this.photoLink) &&
-                Objects.equals(book.dailyPrice,this.dailyPrice) &&
-                Objects.equals(book.url,this.url);
+                Objects.equals(book.price,this.price) &&
+                Objects.equals(book.filePath,this.filePath);
     }
 }

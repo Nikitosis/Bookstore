@@ -62,7 +62,7 @@ public class BookService {
             throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsConfig().getMaxFileSize());
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
-        book.setUrl(path);
+        book.setFilePath(path);
         bookDao.update(book);
     }
 
@@ -100,14 +100,14 @@ public class BookService {
 
     public StoredFile getStoredFile(Long bookId){
         Book book=bookDao.findById(bookId);
-        InputStream inputStream=awsStorageService.getFileInputStream(book.getUrl());
-        String fileName=book.getName()+"."+book.getUrl().substring(book.getUrl().lastIndexOf(".")+1);
+        InputStream inputStream=awsStorageService.getFileInputStream(book.getFilePath());
+        String fileName=book.getName()+"."+book.getFilePath().substring(book.getFilePath().lastIndexOf(".")+1);
         return new StoredFile(inputStream,fileName);
     }
 
     public URL getUrl(Long bookId){
         Book book=bookDao.findById(bookId);
-        return awsStorageService.getFileUrl(book.getUrl());
+        return awsStorageService.getFileUrl(book.getFilePath());
     }
 
     public boolean isTakenByUser(Long userId, Long bookId){

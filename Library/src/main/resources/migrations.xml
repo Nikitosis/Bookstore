@@ -25,5 +25,6 @@
     <include file="db/2019-10-03-01-added-url-price-book.xml"/>
     <include file="db/2019-10-04-01-added-money-user.xml"/>
     <include file="db/2019-10-07-added-paid_until-to-user_book.xml"/>
+    <include file="db/2019-10-08-01-renamed-books-fields.xml"/>
 
 </databaseChangeLog>

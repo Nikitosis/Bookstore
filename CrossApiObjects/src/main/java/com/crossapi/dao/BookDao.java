@@ -13,8 +13,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
-            @Result(property = "url",column = "url"),
-            @Result(property = "dailyPrice",column = "daily_price"),
+            @Result(property = "filePath",column = "file_path"),
+            @Result(property = "price",column = "price"),
     })
     List<Book> findAll();
 
@@ -24,8 +24,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
-            @Result(property = "url",column = "url"),
-            @Result(property = "dailyPrice",column = "daily_price"),
+            @Result(property = "filePath",column = "file_path"),
+            @Result(property = "price",column = "price"),
     })
     Book findById(@Param("id") Long id);
 
@@ -40,8 +40,8 @@ public interface BookDao {
                 "<if test='name != null'>name = #{name},</if>",
                 "<if test='isbn != null'>isbn = #{isbn},</if>",
                 "<if test='photoLink != null'>photo_link = #{photoLink},</if>",
-                "<if test='url != null'>url = #{url},</if>",
-                "<if test='dailyPrice != null'>daily_price = #{dailyPrice},</if>",
+                "<if test='filePath != null'>file_path = #{filePath},</if>",
+                "<if test='price != null'>price = #{price},</if>",
                 "</set>",
                 "WHERE id=#{id}",
                 "</script>"
@@ -60,8 +60,8 @@ public interface BookDao {
             @Result(property = "name",column = "name"),
             @Result(property = "isbn",column = "isbn"),
             @Result(property="photoLink", column = "photo_link"),
-            @Result(property = "url",column = "url"),
-            @Result(property = "dailyPrice",column = "daily_price"),
+            @Result(property = "filePath",column = "file_path"),
+            @Result(property = "price",column = "price"),
     })
     List<Book> findTakenByUser(@Param("userId") Long userId);
 
