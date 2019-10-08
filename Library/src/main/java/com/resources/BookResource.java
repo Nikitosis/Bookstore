@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Service
-@Api(value="/books")
+//@Api(value="/books")
 @Path("/books")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

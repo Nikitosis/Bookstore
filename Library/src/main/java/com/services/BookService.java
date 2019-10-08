@@ -78,8 +78,8 @@ public class BookService {
 
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
-        URL url=awsStorageService.getFileUrl(path);
-        book.setPhotoLink(url.toString());
+        String url=awsStorageService.getFileUrl(path);
+        book.setPhotoLink(url);
         bookDao.update(book);
     }
 
@@ -104,11 +104,6 @@ public class BookService {
         InputStream inputStream=awsStorageService.getFileInputStream(book.getFilePath());
         String fileName=book.getName()+"."+book.getFilePath().substring(book.getFilePath().lastIndexOf(".")+1);
         return new StoredFile(inputStream,fileName);
-    }
-
-    public URL getUrl(Long bookId){
-        Book book=bookDao.findById(bookId);
-        return awsStorageService.getFileUrl(book.getFilePath());
     }
 
     public boolean isTakenByUser(Long userId, Long bookId){

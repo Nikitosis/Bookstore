@@ -172,8 +172,6 @@ public class User {
                 Objects.equals(user.city,this.city) &&
                 Objects.equals(user.country,this.country) &&
                 Objects.equals(user.email,this.email) &&
-                Objects.equals(user.gender,this.gender) &&
-                Objects.equals(user.avatarLink,this.avatarLink) &&
-                Objects.equals(user.money,this.money);
+                Objects.equals(user.gender,this.gender);
     }
 }

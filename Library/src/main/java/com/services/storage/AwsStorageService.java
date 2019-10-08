@@ -56,8 +56,8 @@ public class AwsStorageService {
         return resultFileName;
     }
 
-    public URL getFileUrl(String path){
-        return client.getUrl(mainConfig.getAwsS3Config().getBucketName(),path);
+    public String getFileUrl(String path){
+        return client.getUrl(mainConfig.getAwsS3Config().getBucketName(),path).toString();
     }
 
     public InputStream getFileInputStream(String path){
