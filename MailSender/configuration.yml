@@ -11,3 +11,10 @@ mailConfig:
   password: kmaowuxuwzlxmzsy
   fromName: Bookstore
   fromAddress: bookstore.noreply.service@gmail.com
+
+oktaOAuth:
+  baseUrl: "https://dev-702765.okta.com"
+  issuer: "https://dev-702765.okta.com/oauth2/default"
+  tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
+  clientId: "0oa1j89ftf8jgPY1Q357"
+  clientSecret: "vXDxtECRU_X5s7qJ0d7w4BZJO8Yy83z8QA831aeU"
