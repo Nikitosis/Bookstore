@@ -26,5 +26,6 @@
     <include file="db/2019-10-04-01-added-money-user.xml"/>
     <include file="db/2019-10-07-added-paid_until-to-user_book.xml"/>
     <include file="db/2019-10-08-01-renamed-books-fields.xml"/>
+    <include file="db/2019-10-08-02-changed-money-types.xml"/>
 
 </databaseChangeLog>

@@ -100,7 +100,7 @@ public class FeeChargerService {
         User user=userDao.findById(rent.getUserId());
         Book book=bookDao.findById(rent.getBookId());
 
-        return user.getMoney()>=book.getPrice();
+        return user.getMoney().compareTo(book.getPrice())>=0;
     }
 
     private void extendBookRent(UserBook rent){

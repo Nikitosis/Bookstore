@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class User {
@@ -43,7 +44,7 @@ public class User {
     private String avatarLink;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Double money;
+    private BigDecimal money;
 
     public enum Gender{
         @JsonProperty("MALE")
@@ -145,11 +146,11 @@ public class User {
         this.phone = phone;
     }
 
-    public Double getMoney() {
+    public BigDecimal getMoney() {
         return money;
     }
 
-    public void setMoney(Double money) {
+    public void setMoney(BigDecimal money) {
         this.money = money;
     }
 

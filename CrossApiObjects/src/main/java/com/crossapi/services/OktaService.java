@@ -1,6 +1,6 @@
-package com.services;
+package com.crossapi.services;
 
-import com.MainConfig;
+import com.crossapi.configuration.OktaOAuthConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +16,21 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 
-@Service
 public class OktaService {
 
-    private MainConfig mainConfig;
+    private OktaOAuthConfig oktaOAuthConfig;
 
     private OAuth2AccessToken curToken=null;
 
-    @Autowired
-    public OktaService(MainConfig mainConfig) {
-        this.mainConfig = mainConfig;
+    public OktaService(OktaOAuthConfig oktaOAuthConfig) {
+        this.oktaOAuthConfig = oktaOAuthConfig;
     }
 
     private Form getForm(){
         Form formValues=new Form();
         formValues.param("grant_type","client_credentials");
         String scopes="";
-        for(String scope:mainConfig.getOktaOAuth().getScopes()){
+        for(String scope:oktaOAuthConfig.getScopes()){
             scopes=scopes+scope+" ";
         }
         formValues.param("scope",scopes);
@@ -44,10 +42,10 @@ public class OktaService {
 
         Client client = ClientBuilder.newBuilder()
                 .register(HttpAuthenticationFeature.basic(
-                        mainConfig.getOktaOAuth().getClientId(),
-                        mainConfig.getOktaOAuth().getClientSecret()))
+                        oktaOAuthConfig.getClientId(),
+                        oktaOAuthConfig.getClientSecret()))
                 .build();
-        Response response=client.target(mainConfig.getOktaOAuth().getTokenPath())
+        Response response=client.target(oktaOAuthConfig.getTokenPath())
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(formValues, MediaType.APPLICATION_FORM_URLENCODED));
 

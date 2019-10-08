@@ -3,13 +3,14 @@ package com.dao;
 import com.models.UserBook;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public interface FeeChargerDao {
 
     @Update("UPDATE users SET money=money-#{fee} WHERE users.id=#{userId}")
-    void chargeFee(@Param("userId") Long userId,@Param("fee") Double fee);
+    void chargeFee(@Param("userId") Long userId,@Param("fee") BigDecimal fee);
 
     @Update("UPDATE user_book SET paid_until=#{untilDate} WHERE user_id=#{userId} AND book_id=#{bookId}")
     void extendBookRent(@Param("userId")Long userId, @Param("bookId") Long bookId,@Param("untilDate") LocalDateTime untilDate);
