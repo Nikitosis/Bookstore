@@ -39,7 +39,7 @@ swagger:
 logging:
   level: INFO
 
-awsConfig:
+awsS3Config:
   accessKey: AKIASVAFABVMDDSDW4OH
   secretKey: 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
   bucketName: bookstore.bucket

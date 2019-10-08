@@ -22,7 +22,7 @@ public class MainConfig extends Configuration {
 
     private SwaggerBundleConfiguration swagger;
 
-    private AwsConfig awsConfig;
+    private AwsConfig awsS3Config;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -65,11 +65,11 @@ public class MainConfig extends Configuration {
     }
 
     public AwsConfig getAwsConfig() {
-        return awsConfig;
+        return awsS3Config;
     }
 
-    public void setAwsConfig(AwsConfig awsConfig) {
-        this.awsConfig = awsConfig;
+    public void setAwsConfig(AwsConfig awsS3Config) {
+        this.awsS3Config = awsS3Config;
     }
 
     public DependencyService getFeeChargerService() {

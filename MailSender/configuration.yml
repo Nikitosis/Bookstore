@@ -1,0 +1,13 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: ${SERVICE_CLIENTPORT:-9008}
+  adminConnectors:
+    - type: http
+      port: ${SERVICE_ADMINPORT:-9009}
+
+mailConfig:
+  username: bookstore.noreply.service@gmail.com
+  password: kmaowuxuwzlxmzsy
+  fromName: Bookstore
+  fromAddress: bookstore.noreply.service@gmail.com
