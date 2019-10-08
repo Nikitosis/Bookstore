@@ -63,8 +63,8 @@ public class UserService {
         }
 
         Long fileSize=getFileSize(file.getInputStream());
-        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
-            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
+        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
+            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
 
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);

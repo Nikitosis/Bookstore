@@ -5,6 +5,16 @@ public class Mail {
     private String subject;
     private String body;
 
+    public Mail(String receiverEmail, String subject, String body) {
+        this.receiverEmail = receiverEmail;
+        this.subject = subject;
+        this.body = body;
+    }
+
+    public Mail(){
+
+    }
+
     public String getReceiverEmail() {
         return receiverEmail;
     }

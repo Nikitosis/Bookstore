@@ -7,6 +7,7 @@ import com.amazonaws.util.IOUtils;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
 import com.crossapi.models.Book;
+import com.crossapi.services.OktaService;
 import com.dao.BookDao;
 import com.services.storage.AwsStorageService;
 import com.services.storage.StoredFile;
@@ -58,8 +59,8 @@ public class BookService {
         }
 
         Long fileSize=getFileSize(file.getInputStream());
-        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxFileSize())
-            throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsConfig().getMaxFileSize());
+        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxFileSize())
+            throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsS3Config().getMaxFileSize());
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setFilePath(path);
@@ -72,8 +73,8 @@ public class BookService {
         }
 
         Long fileSize=getFileSize(file.getInputStream());
-        if(fileSize==-1 || fileSize>mainConfig.getAwsConfig().getMaxImageSize())
-            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsConfig().getMaxImageSize());
+        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
+            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
 
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);

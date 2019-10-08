@@ -2,6 +2,7 @@ package com.resources;
 
 import com.MainConfig;
 import com.crossapi.models.Book;
+import com.crossapi.services.OktaService;
 import com.dao.BookDao;
 import com.crossapi.dao.RoleDao;
 import com.crossapi.dao.UserDao;
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.crossapi.models.Role;
 import com.crossapi.models.User;
 import com.services.BookService;
-import com.services.OktaService;
 import com.services.UserService;
 import com.services.storage.AwsStorageService;
 import io.dropwizard.configuration.ConfigurationException;
@@ -63,7 +63,7 @@ public class UserResourceTest {
 
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
-    private OktaService oktaService=new OktaService(configuration);
+    private OktaService oktaService=new OktaService(configuration.getOktaOAuth());
     private UserService userService =new UserService(userDao,roleDao,awsStorageService,passwordEncoder,configuration);
     private BookService bookService=spy(new BookService(bookDao,configuration,oktaService,awsStorageService));
 

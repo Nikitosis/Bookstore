@@ -2,7 +2,9 @@ package com.services;
 
 import com.MainConfig;
 import com.crossapi.models.Book;
+import com.crossapi.models.Mail;
 import com.crossapi.models.User;
+import com.crossapi.services.OktaService;
 import com.dao.BookDao;
 import com.dao.FeeChargerDao;
 import com.dao.UserDao;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
@@ -80,6 +83,7 @@ public class FeeChargerService {
         }
         else{
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
+            sendReturnBookNotification(rent);
             sendReturnBook(rent);
         }
     }
@@ -106,6 +110,32 @@ public class FeeChargerService {
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
+    }
+
+    private Future<Response> sendReturnBookNotification(UserBook rent){
+        User curUser=userDao.findById(rent.getUserId());
+        Book book=bookDao.findById(rent.getBookId());
+
+        if(curUser==null || curUser.getEmail()==null)
+            return null;
+
+        OAuth2AccessToken accessToken = oktaService.getOktaToken();
+        Client client = ClientBuilder.newClient();
+
+        Mail mail = new Mail(
+                curUser.getEmail(),
+                "Cannot extend book's rent",
+                "Unfortunately, you don't have enough money on your account to extend " +
+                        book.getName() + " rent. Book cost is " + book.getPrice() +
+                        " but your current balance is " + curUser.getMoney()
+        );
+
+        return client.target(mainConfig.getMailSenderService().getUrl())
+                .path("/mail")
+                .request(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken.getValue())
+                .async()
+                .post(Entity.entity(mail, MediaType.APPLICATION_JSON));
     }
 
     private Future<Response> sendReturnBook(UserBook rent){

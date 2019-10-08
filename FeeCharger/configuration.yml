@@ -15,6 +15,9 @@ database:
 libraryService:
   url: http://${LIBRARY_SERVICE_URL:-localhost:9000}
 
+mailSenderService:
+  url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
+
 feeChargeConfig:
   rentPeriod: 1
   checkExpirationInterval: 1

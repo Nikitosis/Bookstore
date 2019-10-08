@@ -29,8 +29,8 @@ public class AwsStorageService {
         this.mainConfig=mainConfig;
 
         AWSCredentials credentials=new BasicAWSCredentials(
-                mainConfig.getAwsConfig().getAccessKey(),
-                mainConfig.getAwsConfig().getSecretKey()
+                mainConfig.getAwsS3Config().getAccessKey(),
+                mainConfig.getAwsS3Config().getSecretKey()
         );
 
         client= AmazonS3ClientBuilder
@@ -49,7 +49,7 @@ public class AwsStorageService {
         String resultFileName= UUID.randomUUID().toString()+"."+type;
 
         client.putObject(
-                new PutObjectRequest(mainConfig.getAwsConfig().getBucketName(), resultFileName, file.getInputStream(), new ObjectMetadata())
+                new PutObjectRequest(mainConfig.getAwsS3Config().getBucketName(), resultFileName, file.getInputStream(), new ObjectMetadata())
                         .withCannedAcl(access)
         );
 
@@ -57,22 +57,22 @@ public class AwsStorageService {
     }
 
     public URL getFileUrl(String path){
-        return client.getUrl(mainConfig.getAwsConfig().getBucketName(),path);
+        return client.getUrl(mainConfig.getAwsS3Config().getBucketName(),path);
     }
 
     public InputStream getFileInputStream(String path){
-        return client.getObject(mainConfig.getAwsConfig().getBucketName(),path)
+        return client.getObject(mainConfig.getAwsS3Config().getBucketName(),path)
                 .getObjectContent();
     }
 
     public boolean isAllowedFileType(String fileName){
         String fileType=fileName.substring(fileName.lastIndexOf(".")+1);
-        return mainConfig.getAwsConfig().getAllowedFileTypes().contains(fileType);
+        return mainConfig.getAwsS3Config().getAllowedFileTypes().contains(fileType);
     }
 
     public boolean isAllowedImageType(String imageName){
         String imageType=imageName.substring(imageName.lastIndexOf(".")+1);
-        return mainConfig.getAwsConfig().getAllowedImageTypes().contains(imageType);
+        return mainConfig.getAwsS3Config().getAllowedImageTypes().contains(imageType);
     }
 
 }

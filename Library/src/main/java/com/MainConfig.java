@@ -40,6 +40,14 @@ public class MainConfig extends Configuration {
         this.clientBookLoggerService = clientBookLoggerService;
     }
 
+    public DependencyService getFeeChargerService() {
+        return feeChargerService;
+    }
+
+    public void setFeeChargerService(DependencyService feeChargerService) {
+        this.feeChargerService = feeChargerService;
+    }
+
     public SecurityConfig getSecurity() {
         return security;
     }
@@ -64,19 +72,11 @@ public class MainConfig extends Configuration {
         this.swagger = swagger;
     }
 
-    public AwsConfig getAwsConfig() {
+    public AwsConfig getAwsS3Config() {
         return awsS3Config;
     }
 
-    public void setAwsConfig(AwsConfig awsS3Config) {
+    public void setAwsS3Config(AwsConfig awsS3Config) {
         this.awsS3Config = awsS3Config;
-    }
-
-    public DependencyService getFeeChargerService() {
-        return feeChargerService;
-    }
-
-    public void setFeeChargerService(DependencyService feeChargerService) {
-        this.feeChargerService = feeChargerService;
     }
 }

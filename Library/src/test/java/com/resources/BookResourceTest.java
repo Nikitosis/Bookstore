@@ -2,10 +2,10 @@ package com.resources;
 
 import com.MainConfig;
 import com.crossapi.models.Book;
+import com.crossapi.services.OktaService;
 import com.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.services.BookService;
-import com.services.OktaService;
 import com.services.storage.AwsStorageService;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -45,7 +45,7 @@ public class BookResourceTest {
 
     //Creating dependencies
     private AwsStorageService awsStorageService;
-    private OktaService oktaService=new OktaService(configuration);
+    private OktaService oktaService=new OktaService(configuration.getOktaOAuth());
     private BookService bookService=new BookService(bookDao,configuration,oktaService,awsStorageService);
 
     //Creating ResourceTestRule
