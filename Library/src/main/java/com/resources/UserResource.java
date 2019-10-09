@@ -8,7 +8,9 @@ import com.crossapi.models.User;
 import com.services.BookService;
 import com.services.UserService;
 import com.services.storage.StoredFile;
-import io.swagger.annotations.Api;
+import com.utils.ObjectValidator;
+import org.eclipse.jetty.http.HttpStatus;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
@@ -20,8 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -75,8 +75,7 @@ public class UserResource {
     public Response setUserImage(@PathParam("userId")Long userId,
                                  @FormDataParam("file")InputStream fileStream,
                                  @FormDataParam("file")FormDataContentDisposition fileDisposition){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
+        User principalUser= getAuthenticatedUser();
 
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
@@ -98,20 +97,40 @@ public class UserResource {
     }
 
     @POST
-    public Response addUser(@NotNull @Valid User user){
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response addUser(@FormDataParam("image") InputStream imageStream,
+                            @FormDataParam("image") FormDataContentDisposition imageDisposition,
+                            @FormDataParam("userInfo") FormDataBodyPart userPart){
+        User user= convertBodyPartToUser(userPart);
+
+        if(user==null){
+            log.warn("UserInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid userInfo").build();
+        }
+
         if(userService.findByUsername(user.getUsername())!=null){
             log.warn("User already exists with this username: "+user.getUsername());
             return Response.status(Response.Status.CONFLICT).build();
         }
 
         userService.save(user);
+
+        tryAddImageToUser(user,imageStream,imageDisposition);
+
         return Response.status(Response.Status.CREATED).entity(user).build();
     }
 
     @PUT
-    public Response updateUser(@NotNull @Valid User user){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
+    public Response updateUser(@FormDataParam("image") InputStream imageStream,
+                               @FormDataParam("image") FormDataContentDisposition imageDisposition,
+                               @FormDataParam("userInfo") FormDataBodyPart userPart){
+        User user= convertBodyPartToUser(userPart);
+        if(user==null){
+            log.warn("UserInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid userInfo").build();
+        }
+
+        User principalUser= getAuthenticatedUser();
 
         if(principalUser.getId()!=user.getId()){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+user.getId());
@@ -122,6 +141,8 @@ public class UserResource {
             log.warn("User cannot be found: "+user.getId());
             return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
         }
+
+        tryAddImageToUser(user,imageStream,imageDisposition);
 
         userService.update(user);
         return Response.ok(userService.findById(user.getId())).build();
@@ -142,8 +163,7 @@ public class UserResource {
     @GET
     @Path("/{userId}/books")
     public Response getTakenUsersBooks(@PathParam("userId") Long userId){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
+        User principalUser= getAuthenticatedUser();
 
         //if not admin and tries to view other's books
         if(!roleDao.findByUser(principalUser.getId()).stream().anyMatch(role -> role.getName().equals("ADMIN")) && principalUser.getId()!=userId){
@@ -165,8 +185,7 @@ public class UserResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getBook(@PathParam("userId") Long userId,
                              @PathParam("bookId") Long bookId){
-        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
-        User principalUser= userService.findByUsername(auth.getName());
+        User principalUser= getAuthenticatedUser();
 
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
@@ -270,6 +289,11 @@ public class UserResource {
         return Response.ok().build();
     }
 
+    private User getAuthenticatedUser(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        return userService.findByUsername(auth.getName());
+    }
+
     private boolean isAuthorisedManageBooks(Authentication auth, Long userId){
         //if request is from service
         if(auth.getAuthorities().stream().anyMatch(authority -> ((GrantedAuthority) authority).getAuthority().equals("write")))
@@ -280,6 +304,23 @@ public class UserResource {
             return true;
 
         return false;
+    }
+
+    private User convertBodyPartToUser(FormDataBodyPart userPart){
+        try {
+            //converting bookInfo json to book pojo
+            userPart.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+            User user = userPart.getValueAs(User.class);
+
+            //validating the book
+            ObjectValidator.validateFields(user);
+
+            return user;
+
+        }catch (Exception e){
+            log.warn(e.getMessage());
+            return null;
+        }
     }
 
     private boolean tryAddImageToUser(User user,

@@ -80,8 +80,8 @@ public class BookResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setBookImage(
             @PathParam("bookId") Long bookId,
-            @FormDataParam("file") InputStream fileStream,
-            @FormDataParam("file") FormDataContentDisposition fileDisposition){
+            @FormDataParam("image") InputStream fileStream,
+            @FormDataParam("image") FormDataContentDisposition fileDisposition){
         Book book=bookService.findById(bookId);
 
         if(book==null) {
