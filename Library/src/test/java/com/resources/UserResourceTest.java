@@ -17,6 +17,10 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -71,12 +75,15 @@ public class UserResourceTest {
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
             .addResource(new UserResource(userService,bookService,roleDao))
+            .addResource(new MultiPartFeature())
             .build();
 
     //Test entities
     private User testUser;
     private User anotherTestUser;
     private Book testBook;
+    FileDataBodyPart testImagePart;
+    FormDataBodyPart testUserPart;
 
     public UserResourceTest() throws IOException, ConfigurationException {
     }
@@ -100,6 +107,9 @@ public class UserResourceTest {
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
+
+        testImagePart=new FileDataBodyPart("image",new File("src/test/resources/testImage.png"));
+        testUserPart=new FormDataBodyPart("userInfo",testUser,MediaType.APPLICATION_JSON_TYPE);
 
         //building security mocks
         SecurityContext securityContext=mock(SecurityContext.class);
@@ -144,12 +154,19 @@ public class UserResourceTest {
 
     @Test
     public void addUserTest(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
         when(userDao.save(any(User.class))).thenReturn(1L);
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
 
+
         User responseUser =resources.target("/users")
+                .register(MultiPartFeature.class)
                 .request()
-                .post(Entity.entity(testUser, MediaType.APPLICATION_JSON), User.class);
+                .post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA), User.class);
 
         verify(userDao).save(eq(testUser));
         verify(roleDao).addUserRole(eq(testUser.getId()),eq("USER"));

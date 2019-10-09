@@ -1,17 +1,24 @@
 package com.resources;
 
 import com.MainConfig;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.crossapi.models.Book;
 import com.crossapi.services.OktaService;
+import com.crossapi.testutils.mixins.BookMixin;
+import com.crossapi.testutils.mixins.MixinModule;
 import com.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.services.BookService;
 import com.services.storage.AwsStorageService;
+import com.services.storage.StoredFile;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.glassfish.jersey.media.multipart.*;
+import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -23,6 +30,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +43,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class BookResourceTest {
     //Building MainConfig
-    final ObjectMapper objectMapper = Jackson.newObjectMapper();
+    final ObjectMapper objectMapper = Jackson.newObjectMapper().registerModule(new MixinModule());
     final Validator validator = Validators.newValidator();
     final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
     final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
@@ -44,27 +53,42 @@ public class BookResourceTest {
     private BookDao bookDao=mock(BookDao.class);
 
     //Creating dependencies
-    private AwsStorageService awsStorageService;
-    private OktaService oktaService=new OktaService(configuration.getOktaOAuth());
+    private AwsStorageService awsStorageService=mock(AwsStorageService.class);
+    private OktaService oktaService=mock(OktaService.class);
     private BookService bookService=new BookService(bookDao,configuration,oktaService,awsStorageService);
 
     //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
             .addResource(new BookResource(bookService))
+            .addResource(new MultiPartFeature())
+            .setMapper(objectMapper)
             .build();
 
     //Test entities
     private Book testBook;
+    FileDataBodyPart testFilePart;
+    FileDataBodyPart testImagePart;
+    FormDataBodyPart testBookPart;
+
 
     public BookResourceTest() throws IOException, ConfigurationException {
     }
 
     @Before
     public void init() {
+
         testBook=new Book();
         testBook.setId(12L);
         testBook.setName("Name");
+        testBook.setFilePath("testFile.pdf");
+        testBook.setPhotoLink("http://someling.png");
+        testBook.setIsbn("12521234");
+        testBook.setPrice(new BigDecimal("12.99"));
+
+        testFilePart=new FileDataBodyPart("file",new File("src/test/resources/testFile.pdf"));
+        testImagePart=new FileDataBodyPart("image",new File("src/test/resources/testImage.png"));
+        testBookPart=new FormDataBodyPart("bookInfo",testBook,MediaType.APPLICATION_JSON_TYPE);
     }
 
 
@@ -104,26 +128,79 @@ public class BookResourceTest {
     }
 
     @Test
-    public void addBookTest(){
+    public void addBookTest() throws IOException, ParseException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testBookPart)
+                .bodyPart(testFilePart)
+                .bodyPart(testImagePart);
+
         when(bookDao.save(any(Book.class))).thenReturn(1L);
+        when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
+        when(awsStorageService.isAllowedFileType(any())).thenReturn(true);
+        //when uploading file
+        when(awsStorageService.uploadFile(
+                    argThat((StoredFile file)-> testFilePart.getFileEntity().getName().equals(file.getFileName())),
+                    eq(CannedAccessControlList.Private))
+            ).thenReturn(testBook.getFilePath());
+        //when getting photo url
+        when(awsStorageService.getFileUrl(any())).thenReturn(testBook.getPhotoLink());
 
         Book responseBook=resources.target("/books")
+                .register(MultiPartFeature.class)
                 .request()
-                .post(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
+                .post(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA),Book.class);
 
         verify(bookDao).save(eq(testBook));
+        //upload image with public access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
+                eq(CannedAccessControlList.PublicRead)
+        );
+        //upload file with private access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile file)-> testFilePart.getFileEntity().getName().equals(file.getFileName())),
+                eq(CannedAccessControlList.Private)
+        );
+
         Assert.assertEquals(testBook,responseBook);
     }
 
     @Test
-    public void updateBookTest(){
+    public void updateBookTest() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testBookPart)
+                .bodyPart(testFilePart)
+                .bodyPart(testImagePart);
+
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
+        when(awsStorageService.isAllowedFileType(any())).thenReturn(true);
+        //when uploading file
+        when(awsStorageService.uploadFile(
+                argThat((StoredFile file)-> testFilePart.getFileEntity().getName().equals(file.getFileName())),
+                eq(CannedAccessControlList.Private))
+        ).thenReturn(testBook.getFilePath());
+        //when getting photo url
+        when(awsStorageService.getFileUrl(any())).thenReturn(testBook.getPhotoLink());
 
         Book responseBook=resources.target("/books")
+                .register(MultiPartFeature.class)
                 .request()
-                .put(Entity.entity(testBook,MediaType.APPLICATION_JSON),Book.class);
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA),Book.class);
 
-        verify(bookDao).update(eq(testBook));
+        verify(bookDao,atLeast(1)).update(eq(testBook));
+        //upload image with public access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
+                eq(CannedAccessControlList.PublicRead)
+        );
+        //upload file with private access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile file)-> testFilePart.getFileEntity().getName().equals(file.getFileName())),
+                eq(CannedAccessControlList.Private)
+        );
         Assert.assertEquals(testBook,responseBook);
     }
 
@@ -131,14 +208,66 @@ public class BookResourceTest {
     public void updateBookTest_bookNotFound(){
         when(bookDao.findById(anyLong())).thenReturn(null);
 
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testBookPart);
+
         Response.StatusType responseStatus= resources.target("/books")
+                .register(MultiPartFeature.class)
                 .request()
-                .put(Entity.entity(testBook,MediaType.APPLICATION_JSON)).getStatusInfo();
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA)).getStatusInfo();
 
         verify(bookDao,times(0)).update(any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
 
+    @Test
+    public void setBookFileTest() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testFilePart);
+
+        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(awsStorageService.isAllowedFileType(any())).thenReturn(true);
+
+        Book responseBook=resources.target("/books")
+                .path(testBook.getId()+"/file")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA),Book.class);
+
+        verify(bookDao,atLeast(1)).update(eq(testBook));
+        Assert.assertEquals(responseBook,testBook);
+        //upload file with private access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile file)-> testFilePart.getFileEntity().getName().equals(file.getFileName())),
+                eq(CannedAccessControlList.Private)
+        );
+    }
+
+    @Test
+    public void setBookImageTest() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testImagePart);
+
+        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
+
+        Book responseBook=resources.target("/books")
+                .path(testBook.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA),Book.class);
+
+        verify(bookDao,atLeast(1)).update(eq(testBook));
+        Assert.assertEquals(responseBook,testBook);
+        //upload file with private access
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
+                eq(CannedAccessControlList.PublicRead)
+        );
+    }
     @Test
     public void deleteBookTest(){
         when(bookDao.findById(anyLong())).thenReturn(testBook);

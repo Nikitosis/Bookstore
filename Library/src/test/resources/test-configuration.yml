@@ -5,3 +5,13 @@ server:
   adminConnectors:
     - type: http
       port: 9001
+
+awsS3Config:
+  allowedFileTypes:
+    - pdf
+    - txt
+  allowedImageTypes:
+    - jpg
+    - png
+  maxFileSize: 314572800    #300MB
+  maxImageSize: 26214400   #25MB

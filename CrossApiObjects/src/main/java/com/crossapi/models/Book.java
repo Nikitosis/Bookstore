@@ -30,6 +30,10 @@ public class Book {
 
     private BigDecimal price;
 
+    public Book(){
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -92,6 +96,8 @@ public class Book {
         return Objects.equals(book.id,this.id) &&
                 Objects.equals(book.name,this.name)&&
                 Objects.equals(book.isbn,this.isbn)&&
+                Objects.equals(book.photoLink,this.photoLink) &&
+                Objects.equals(book.filePath,this.filePath)&&
                 Objects.equals(book.price,this.price);
     }
 }

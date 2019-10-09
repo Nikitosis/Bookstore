@@ -42,7 +42,7 @@ public class BookServiceTest {
 
     @Test
     public void returnBookTest(){
-        ArgumentCaptor<UserBookLog> logCaptor=new ArgumentCaptor<UserBookLog>();
+        ArgumentCaptor<UserBookLog> logCaptor=ArgumentCaptor.forClass(UserBookLog.class);
         BookService spyBookService=spy(bookService);
         doNothing().when(spyBookService).postUserBookLog(logCaptor.capture());
 
