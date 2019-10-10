@@ -171,7 +171,11 @@ public class User {
                 Objects.equals(user.username,this.username) &&
                 Objects.equals(user.city,this.city) &&
                 Objects.equals(user.country,this.country) &&
+                Objects.equals(user.phone,this.phone)&&
                 Objects.equals(user.email,this.email) &&
+                Objects.equals(user.money,this.money) &&
+                Objects.equals(user.avatarLink,this.avatarLink) &&
+                Objects.equals(user.password,this.password)&&
                 Objects.equals(user.gender,this.gender);
     }
 }

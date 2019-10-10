@@ -121,6 +121,7 @@ public class UserResource {
     }
 
     @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response updateUser(@FormDataParam("image") InputStream imageStream,
                                @FormDataParam("image") FormDataContentDisposition imageDisposition,
                                @FormDataParam("userInfo") FormDataBodyPart userPart){

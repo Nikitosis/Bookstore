@@ -190,7 +190,7 @@ public class BookResourceTest {
                 .request()
                 .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA),Book.class);
 
-        verify(bookDao,atLeast(1)).update(eq(testBook));
+        verify(bookDao,atLeast(1)).update(any());
         //upload image with public access
         verify(awsStorageService).uploadFile(
                 argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
