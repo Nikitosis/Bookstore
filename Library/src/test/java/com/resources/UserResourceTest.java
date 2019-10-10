@@ -2,6 +2,7 @@ package com.resources;
 
 import com.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.util.IOUtils;
 import com.crossapi.models.Book;
 import com.crossapi.services.OktaService;
 import com.crossapi.testutils.mixins.MixinModule;
@@ -20,6 +21,7 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -41,8 +43,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -87,6 +88,7 @@ public class UserResourceTest {
     private User testUser;
     private User anotherTestUser;
     private Book testBook;
+    FileDataBodyPart testFilePart;
     FileDataBodyPart testImagePart;
     FormDataBodyPart testUserPart;
 
@@ -131,6 +133,7 @@ public class UserResourceTest {
         testBook.setIsbn("12521234");
         testBook.setPrice(new BigDecimal("12.99"));
 
+        testFilePart=new FileDataBodyPart("file",new File("src/test/resources/testFile.pdf"));
         testImagePart=new FileDataBodyPart("image",new File("src/test/resources/testImage.png"));
         testUserPart=new FormDataBodyPart("userInfo",testUser,MediaType.APPLICATION_JSON_TYPE);
 
@@ -176,6 +179,94 @@ public class UserResourceTest {
     }
 
     @Test
+    public void setUserImage() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(userService.findById(testUser.getId())).thenReturn(testUser);
+        when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
+        when(awsStorageService.getFileUrl(any())).thenReturn(testUser.getAvatarLink());
+
+        User responseUser=resources.target("/users/"+testUser.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA),User.class);
+
+        Assert.assertEquals(testUser,responseUser);
+        verify(userDao,atLeast(1)).update(any());
+        verify(awsStorageService).uploadFile(
+                argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
+                eq(CannedAccessControlList.PublicRead)
+        );
+    }
+
+    @Test
+    public void setUserImage_wrongUser(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userDao.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        verify(userDao,times(0)).update(any());
+    }
+
+    @Test
+    public void setUserImage_userNotFound(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
+        verify(userDao,times(0)).update(any());
+    }
+
+    @Test
+    public void setUserImage_wrongImage(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
+        verify(userDao,times(0)).update(any());
+    }
+
+    @Test
     public void addUserTest() throws IOException {
         FormDataMultiPart multiPart=new FormDataMultiPart();
         multiPart
@@ -183,7 +274,6 @@ public class UserResourceTest {
                 .bodyPart(testImagePart);
 
         when(userDao.save(any(User.class))).thenReturn(1L);
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
         when(passwordEncoder.encode(eq(testUser.getPassword()))).thenReturn(testUser.getPassword());
         when(awsStorageService.getFileUrl(any())).thenReturn(testUser.getAvatarLink());
@@ -202,6 +292,45 @@ public class UserResourceTest {
                 eq(CannedAccessControlList.PublicRead)
         );
         Assert.assertEquals(testUser, responseUser);
+    }
+
+    @Test
+    public void addUserTest_invalidUserInfo() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testImagePart);
+
+        int responseStatus =resources.target("/users")
+                .register(MultiPartFeature.class)
+                .request()
+                .post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
+                .getStatus();
+
+
+        verify(userDao,times(0)).save(eq(testUser));
+        verify(awsStorageService,times(0)).uploadFile(any(),any());
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY_422,responseStatus);
+    }
+
+    @Test
+    public void addUserTest_usernameAlreadyTaken() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
+        Response.StatusType responseStatus =resources.target("/users")
+                .register(MultiPartFeature.class)
+                .request()
+                .post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+
+        verify(userDao,times(0)).save(eq(testUser));
+        verify(awsStorageService,times(0)).uploadFile(any(),any());
+        Assert.assertEquals(Response.Status.CONFLICT,responseStatus);
     }
 
     @Test
@@ -229,6 +358,42 @@ public class UserResourceTest {
     }
 
     @Test
+    public void updateUserTest_invalidUserInfo(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testImagePart);
+
+        int responseStatus = resources.target("/users")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatus();
+
+        verify(userDao,times(0)).update(any());
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY_422,responseStatus);
+    }
+
+    @Test
+    public void updateUserTest_wrongUser(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testUserPart)
+                .bodyPart(testImagePart);
+
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userDao.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        Response.StatusType responseStatus = resources.target("/users")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+        verify(userDao,times(0)).update(any());
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+    }
+
+    @Test
     public void updateUserTest_userNotFound() throws IOException {
         FormDataMultiPart multiPart=new FormDataMultiPart();
         multiPart
@@ -249,6 +414,104 @@ public class UserResourceTest {
         verify(awsStorageService,times(0)).uploadFile(any(),any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
+
+    @Test
+    public void getBookTest() throws IOException {
+        FileInputStream fileInputStream=new FileInputStream(testFilePart.getFileEntity().getPath());
+
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(userDao.findById(testUser.getId())).thenReturn(testUser);
+        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
+        when(awsStorageService.getFileInputStream(eq(testBook.getFilePath()))).thenReturn(fileInputStream);
+
+        ByteArrayInputStream resposeInputStream= (ByteArrayInputStream) resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getEntity();
+
+        Assert.assertArrayEquals(
+                IOUtils.toByteArray(new FileInputStream(testFilePart.getFileEntity().getPath())),
+                IOUtils.toByteArray(resposeInputStream)
+        );
+    }
+
+    @Test
+    public void getBookTest_wrongUser(){
+        when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
+        when(userDao.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+    }
+
+    @Test
+    public void getBookTest_userNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(userDao.findById(testUser.getId())).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
+    }
+
+    @Test
+    public void getBookTest_bookNotFound(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
+    }
+
+    @Test
+    public void getBookTest_bookNotTaken(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(userDao.findById(testUser.getId())).thenReturn(testUser);
+        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
+    }
+
+    @Test
+    public void getBookTest_cannotLoadBook(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(userDao.findById(testUser.getId())).thenReturn(testUser);
+        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
+        when(awsStorageService.getFileInputStream(eq(testBook.getFilePath()))).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .get()
+                .getStatusInfo();
+
+        Assert.assertEquals(Response.Status.INTERNAL_SERVER_ERROR,responseStatus);
+    }
+
 
     @Test
     public void deleteUserTest(){
@@ -297,9 +560,6 @@ public class UserResourceTest {
         List<Book> testBooks=Arrays.asList(testBook);
         when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
         when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
-
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findTakenByUser(eq(testUser.getId()))).thenReturn(testBooks);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books")
                 .request()
@@ -353,22 +613,36 @@ public class UserResourceTest {
         doReturn(null).when(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         //when(bookService.postUserBookLog(any())).thenAnswer(null);
 
-        resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+                .queryParam("returnDate","2019-10-02")
                 .request()
-                .put(Entity.json(""));
+                .put(Entity.json(""))
+                .getStatusInfo();
 
         verify(bookService).postUserBookLog(any());
+        verify(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
+        Assert.assertEquals(Response.Status.OK,responseStatus);
+    }
+
+    @Test
+    public void takeBookTest_invalidReturnDate(){
+
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+                .queryParam("returnDate","2019-1sd0-02")
+                .request()
+                .put(Entity.json(""))
+                .getStatusInfo();
+
+        verify(bookService,times(0)).takeBook(any(),any(),any());
+        verify(bookDao,times(0)).takeBook(any(),any(),any(),any());
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test
     public void takeBookTest_wrongUser(){
         when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
         when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
-
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
-        //when(bookDao.isTaken(eq(testUser.getId()))).thenReturn(false)
 
         Response.StatusType responseStatus = resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -403,7 +677,6 @@ public class UserResourceTest {
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
@@ -437,6 +710,28 @@ public class UserResourceTest {
     }
 
     @Test
+    public void takeBookTest_notEnoughMoney(){
+        when(authentication.getName()).thenReturn(testUser.getUsername());
+        when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
+
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
+        testUser.setMoney(new BigDecimal("0"));
+        testBook.setPrice(new BigDecimal("10"));
+        //when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
+
+        Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
+                .request()
+                .put(Entity.json(""))
+                .getStatusInfo();
+
+        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+        verify(bookService,times(0)).takeBook(any(),any(),any());
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
+    }
+
+    @Test
     public void returnBookTest(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
@@ -444,9 +739,6 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
-
-        doReturn(null).when(bookService).postUserBookLog(any());
-        doReturn(null).when(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
 
         resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -460,10 +752,6 @@ public class UserResourceTest {
     public void returnBookTest_wrongUser(){
         when(authentication.getName()).thenReturn(anotherTestUser.getUsername());
         when(userService.findByUsername(eq(anotherTestUser.getUsername()))).thenReturn(anotherTestUser);
-
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testUser.getId()))).thenReturn(testBook);
-        when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -496,7 +784,6 @@ public class UserResourceTest {
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())

@@ -73,8 +73,8 @@ public class UserResource {
     @Path("/{userId}/image")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response setUserImage(@PathParam("userId")Long userId,
-                                 @FormDataParam("file")InputStream fileStream,
-                                 @FormDataParam("file")FormDataContentDisposition fileDisposition){
+                                 @FormDataParam("image")InputStream fileStream,
+                                 @FormDataParam("image")FormDataContentDisposition fileDisposition){
         User principalUser= getAuthenticatedUser();
 
         if(principalUser.getId()!=userId){
@@ -212,7 +212,7 @@ public class UserResource {
                     .entity(IOUtils.toByteArray(storedFile.getInputStream()))
                     .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
                     .build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             log.warn("Error processing the file");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

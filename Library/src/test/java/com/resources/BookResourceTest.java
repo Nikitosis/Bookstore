@@ -17,6 +17,7 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.eclipse.jetty.http.HttpStatus;
 import org.glassfish.jersey.media.multipart.*;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.*;
@@ -167,6 +168,22 @@ public class BookResourceTest {
     }
 
     @Test
+    public void addBookTest_invalidBookInfo(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testFilePart)
+                .bodyPart(testImagePart);
+
+        int responseStatus=resources.target("/books")
+                .register(MultiPartFeature.class)
+                .request()
+                .post(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatus();
+
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY_422,responseStatus);
+    }
+
+    @Test
     public void updateBookTest() throws IOException {
         FormDataMultiPart multiPart=new FormDataMultiPart();
         multiPart
@@ -202,6 +219,22 @@ public class BookResourceTest {
                 eq(CannedAccessControlList.Private)
         );
         Assert.assertEquals(testBook,responseBook);
+    }
+
+    @Test
+    public void updateBook_invalidBookInfo(){
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testFilePart)
+                .bodyPart(testImagePart);
+
+        int responseStatus=resources.target("/books")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatus();
+
+        Assert.assertEquals(HttpStatus.UNPROCESSABLE_ENTITY_422,responseStatus);
     }
 
     @Test
@@ -246,6 +279,47 @@ public class BookResourceTest {
     }
 
     @Test
+    public void setBookFileTest_bookNotFound() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testFilePart);
+
+        when(bookService.findById(anyLong())).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/books")
+                .path(testBook.getId()+"/file")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+
+        verify(bookDao,times(0)).update(any());
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
+    }
+
+    @Test
+    public void setBookFileTest_wrongFile() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testFilePart);
+
+        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(awsStorageService.isAllowedFileType(any())).thenReturn(false);
+
+        Response.StatusType responseStatus=resources.target("/books")
+                .path(testBook.getId()+"/file")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+
+        verify(bookDao,times(0)).update(any());
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
+    }
+
+    @Test
     public void setBookImageTest() throws IOException {
         FormDataMultiPart multiPart=new FormDataMultiPart();
         multiPart
@@ -267,6 +341,46 @@ public class BookResourceTest {
                 argThat((StoredFile image)-> testImagePart.getFileEntity().getName().equals(image.getFileName())),
                 eq(CannedAccessControlList.PublicRead)
         );
+    }
+
+    @Test
+    public void setBookImageTest_bookNotFound() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testImagePart);
+
+        when(bookService.findById(anyLong())).thenReturn(null);
+
+        Response.StatusType responseStatus=resources.target("/books")
+                .path(testBook.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+
+        verify(bookDao,times(0)).update(any());
+        Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
+    }
+
+    @Test
+    public void setBookImageTest_wrongFile() throws IOException {
+        FormDataMultiPart multiPart=new FormDataMultiPart();
+        multiPart
+                .bodyPart(testImagePart);
+
+        when(bookService.findById(anyLong())).thenReturn(testBook);
+
+        Response.StatusType responseStatus=resources.target("/books")
+                .path(testBook.getId()+"/image")
+                .register(MultiPartFeature.class)
+                .request()
+                .put(Entity.entity(multiPart,MediaType.MULTIPART_FORM_DATA))
+                .getStatusInfo();
+
+
+        verify(bookDao,times(0)).update(any());
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
     @Test
     public void deleteBookTest(){
