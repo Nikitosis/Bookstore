@@ -1,0 +1,134 @@
+package com.services;
+
+import com.MainConfig;
+import com.crossapi.configuration.DependencyService;
+import com.crossapi.configuration.FeeChargeConfig;
+import com.crossapi.models.Book;
+import com.crossapi.models.User;
+import com.crossapi.services.OktaService;
+import com.dao.BookDao;
+import com.dao.FeeChargerDao;
+import com.dao.UserDao;
+import com.models.UserBook;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
+public class FeeChargerServiceTest {
+    @Mock
+    private BookDao bookDao;
+
+    @Mock
+    private FeeChargerDao feeChargerDao;
+
+    @Mock
+    private UserDao userDao;
+
+    @Mock
+    private MainConfig mainConfig;
+
+    @Mock
+    private OktaService oktaService;
+
+    @InjectMocks
+    private FeeChargerService feeChargerService;
+
+    private User testUser;
+    private Book testBook;
+    private UserBook testRent;
+
+
+    public FeeChargerServiceTest(){
+        testUser =new User();
+        testUser.setId(12L);
+        testUser.setPassword("password");
+        testUser.setUsername("username");
+        testUser.setfName("FNAME");
+        testUser.setlName("LNAME");
+        testUser.setCity("city");
+        testUser.setCountry("country");
+        testUser.setGender(User.Gender.FEMALE);
+        testUser.setPhone("932312");
+        testUser.setEmail("email@gmail.com");
+        testUser.setMoney(new BigDecimal("100.01"));
+        testUser.setAvatarLink("http://someUserLink.png");
+
+        testBook=new Book();
+        testBook.setId(12L);
+        testBook.setName("Name");
+        testBook.setFilePath("testFile.pdf");
+        testBook.setPhotoLink("http://someling.png");
+        testBook.setIsbn("12521234");
+        testBook.setPrice(new BigDecimal("12.99"));
+
+        testRent=new UserBook();
+        testRent.setBookId(testBook.getId());
+        testRent.setUserId(testUser.getId());
+    }
+
+    @Before
+    public void defaultMocks(){
+        OAuth2AccessToken accessToken=mock(OAuth2AccessToken.class);
+        when(oktaService.getOktaToken()).thenReturn(accessToken);
+        when(accessToken.getValue()).thenReturn("TokenValue");
+
+
+        DependencyService mailSenderService=mock(DependencyService.class);
+        when(mainConfig.getMailSenderService()).thenReturn(mailSenderService);
+        when(mailSenderService.getUrl()).thenReturn("mailSenderUrl");
+
+        DependencyService libraryService=mock(DependencyService.class);
+        when(mainConfig.getLibraryService()).thenReturn(libraryService);
+        when(libraryService.getUrl()).thenReturn("libraryServiceUrl");
+
+        FeeChargeConfig feeChargeConfig=mock(FeeChargeConfig.class);
+        when(mainConfig.getFeeChargeConfig()).thenReturn(feeChargeConfig);
+        when(feeChargeConfig.getRentPeriod()).thenReturn(10000000L);
+    }
+
+    @Test
+    public void tryExtendRentTest_rentIsValid(){
+        testRent.setPaidUntil(LocalDateTime.now().plusMonths(1));
+
+        feeChargerService.tryExtendRent(testRent);
+
+        verify(feeChargerDao,times(0)).chargeFee(any(),any());
+        verify(feeChargerDao,times(0)).extendBookRent(any(),any(),any());
+    }
+
+    @Test
+    public void tryExtendRentTest_notEnoughMoney_returnBook() throws Exception {
+        testUser.setMoney(new BigDecimal("1"));
+        testBook.setPrice(new BigDecimal("10"));
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+
+        feeChargerService.tryExtendRent(testRent);
+
+        verify(feeChargerDao,times(0)).chargeFee(any(),any());
+        verify(feeChargerDao,times(0)).extendBookRent(any(),any(),any());
+    }
+
+    @Test
+    public void tryExtendRentTest_extendBook(){
+        when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
+        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+
+        feeChargerService.tryExtendRent(testRent);
+
+        verify(feeChargerDao).chargeFee(eq(testUser.getId()),eq(testBook.getPrice()));
+        verify(feeChargerDao).extendBookRent(eq(testUser.getId()),eq(testBook.getId()),any());
+    }
+
+}
