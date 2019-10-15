@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.crossapi.models.Role;
 import com.crossapi.models.User;
 import com.services.BookService;
+import com.services.RequestSenderService;
 import com.services.UserService;
 import com.services.storage.AwsStorageService;
 import com.services.storage.StoredFile;
@@ -73,8 +74,9 @@ public class UserResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
     private OktaService oktaService=new OktaService(configuration.getOktaOAuth());
-    private UserService userService =new UserService(userDao,roleDao,awsStorageService,passwordEncoder,configuration);
-    private BookService bookService=spy(new BookService(bookDao,configuration,oktaService,awsStorageService));
+    private RequestSenderService requestSenderService=mock(RequestSenderService.class);
+    private UserService userService =new UserService(userDao,roleDao,awsStorageService,requestSenderService,passwordEncoder,configuration);
+    private BookService bookService=spy(new BookService(bookDao,configuration,requestSenderService,awsStorageService));
 
     //Creating ResourceTestRule
     @Rule
@@ -609,8 +611,8 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        doReturn(null).when(bookService).postUserBookLog(any());
-        doReturn(null).when(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        //doReturn(null).when(bookService).postUserBookLog(any());
+        //doReturn(null).when(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         //when(bookService.postUserBookLog(any())).thenAnswer(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
@@ -619,8 +621,8 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(bookService).postUserBookLog(any());
-        verify(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        //verify(bookService).postUserBookLog(any());
+        //verify(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
@@ -744,7 +746,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        verify(bookService).postUserBookLog(any());
+        //verify(bookService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 

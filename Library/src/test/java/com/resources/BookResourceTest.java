@@ -10,6 +10,7 @@ import com.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.services.BookService;
+import com.services.RequestSenderService;
 import com.services.storage.AwsStorageService;
 import com.services.storage.StoredFile;
 import io.dropwizard.configuration.ConfigurationException;
@@ -56,7 +57,8 @@ public class BookResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
     private OktaService oktaService=mock(OktaService.class);
-    private BookService bookService=new BookService(bookDao,configuration,oktaService,awsStorageService);
+    private RequestSenderService requestSenderService=mock(RequestSenderService.class);
+    private BookService bookService=new BookService(bookDao,configuration,requestSenderService,awsStorageService);
 
     //Creating ResourceTestRule
     @Rule

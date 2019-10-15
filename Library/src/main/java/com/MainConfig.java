@@ -16,6 +16,10 @@ public class MainConfig extends Configuration {
 
     private DependencyService feeChargerService;
 
+    private DependencyService authorizerService;
+
+    private DependencyService mailSenderService;
+
     private SecurityConfig security;
 
     private OktaOAuthConfig oktaOAuth;
@@ -78,5 +82,21 @@ public class MainConfig extends Configuration {
 
     public void setAwsS3Config(AwsConfig awsS3Config) {
         this.awsS3Config = awsS3Config;
+    }
+
+    public DependencyService getAuthorizerService() {
+        return authorizerService;
+    }
+
+    public void setAuthorizerService(DependencyService authorizerService) {
+        this.authorizerService = authorizerService;
+    }
+
+    public DependencyService getMailSenderService() {
+        return mailSenderService;
+    }
+
+    public void setMailSenderService(DependencyService mailSenderService) {
+        this.mailSenderService = mailSenderService;
     }
 }

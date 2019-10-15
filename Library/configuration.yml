@@ -18,6 +18,12 @@ clientBookLoggerService:
 feeChargerService:
   url: http://${FEE_CHARGER_SERVICE_URL:-localhost:9006}
 
+authorizerService:
+  url: http://${AUTHORIZER_SERVICE_URL:-localhost:9004}
+
+mailSenderService:
+  url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
+
 security:
   jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
   tokenHeader: "Authorization"

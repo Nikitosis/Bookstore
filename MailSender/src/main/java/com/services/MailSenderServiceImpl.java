@@ -2,6 +2,9 @@ package com.services;
 
 import com.MainConfig;
 import com.crossapi.models.Mail;
+import com.resources.MailSenderResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,8 @@ public class MailSenderServiceImpl implements MailSenderService {
     private MainConfig mainConfig;
     private Session session;
 
+    private static final Logger log= LoggerFactory.getLogger(MailSenderResource.class);
+
     @Autowired
     public MailSenderServiceImpl(MainConfig mainConfig, Session session) {
         this.mainConfig = mainConfig;
@@ -29,6 +34,8 @@ public class MailSenderServiceImpl implements MailSenderService {
         MimeMessage message=new MimeMessage(session);
 
         try{
+            log.info("Sending mail to "+mail.getReceiverEmail());
+
             message.setFrom(new InternetAddress(mainConfig.getMailConfig().getFromAddress()));
             message.setRecipients(
                     Message.RecipientType.TO,

@@ -19,7 +19,9 @@ public interface UserDao {
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
             @Result(property = "avatarLink",column = "avatar_link"),
-            @Result(property = "money",column = "money")
+            @Result(property = "money",column = "money"),
+            @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property = "verificationToken",column = "verification_token")
     })
     List<User> findAll();
 
@@ -36,7 +38,9 @@ public interface UserDao {
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
             @Result(property = "avatarLink",column = "avatar_link"),
-            @Result(property = "money",column = "money")
+            @Result(property = "money",column = "money"),
+            @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property = "verificationToken",column = "verification_token")
     })
     User findByUsername(@Param("username") String username);
 
@@ -53,11 +57,13 @@ public interface UserDao {
             @Result(property = "email",column = "email"),
             @Result(property = "phone",column = "phone"),
             @Result(property = "avatarLink",column = "avatar_link"),
-            @Result(property = "money",column = "money")
+            @Result(property = "money",column = "money"),
+            @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property = "verificationToken",column = "verification_token")
     })
     User findById(@Param("userId") Long userId);
 
-    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money})")
+    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
@@ -75,6 +81,8 @@ public interface UserDao {
             "<if test='phone != null'>phone = #{phone},</if>",
             "<if test='avatarLink != null'>avatar_link = #{avatarLink},</if>",
             "<if test='money != null'>money = #{money},</if>",
+            "<if test='isEmailVerified != null'>is_email_verified = #{isEmailVerified},</if>",
+            "<if test='verificationToken != null'>verification_token = #{verificationToken},</if>",
             "</set>",
             "WHERE id=#{id}",
             "</script>"

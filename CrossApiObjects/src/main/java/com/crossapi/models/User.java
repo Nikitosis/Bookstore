@@ -1,5 +1,6 @@
 package com.crossapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,6 +10,14 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class User {
+    public enum Gender{
+        @JsonProperty("MALE")
+        MALE,
+
+        @JsonProperty("FEMALE")
+        FEMALE
+    };
+
     private Long id;
 
     @Length(max = 255)
@@ -46,13 +55,10 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private BigDecimal money;
 
-    public enum Gender{
-        @JsonProperty("MALE")
-        MALE,
+    private Boolean isEmailVerified;
 
-        @JsonProperty("FEMALE")
-        FEMALE
-    };
+    @JsonIgnore
+    private String verificationToken;
 
 
     public User(){
@@ -154,6 +160,22 @@ public class User {
         this.money = money;
     }
 
+    public Boolean getEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -176,6 +198,8 @@ public class User {
                 Objects.equals(user.money,this.money) &&
                 Objects.equals(user.avatarLink,this.avatarLink) &&
                 Objects.equals(user.password,this.password)&&
+                Objects.equals(user.isEmailVerified,this.isEmailVerified) &&
+                Objects.equals(user.verificationToken,this.verificationToken) &&
                 Objects.equals(user.gender,this.gender);
     }
 }

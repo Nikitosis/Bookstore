@@ -34,14 +34,14 @@ public class BookService {
 
     private BookDao bookDao;
     private MainConfig mainConfig;
-    private OktaService oktaService;
+    private RequestSenderService requestSenderService;
     private AwsStorageService awsStorageService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, OktaService oktaService, AwsStorageService awsStorageService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderService requestSenderService, AwsStorageService awsStorageService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
-        this.oktaService = oktaService;
+        this.requestSenderService = requestSenderService;
         this.awsStorageService = awsStorageService;
     }
 
@@ -114,7 +114,7 @@ public class BookService {
         bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
 
         try {
-            postChargeBookFee(userId, bookId);
+            requestSenderService.postChargeBookFee(userId, bookId);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -126,7 +126,7 @@ public class BookService {
         userBookLog.setDate(LocalDateTime.now());
 
         try {
-            postUserBookLog(userBookLog);
+            requestSenderService.postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -145,35 +145,11 @@ public class BookService {
         System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
 
         try {
-           postUserBookLog(userBookLog);
+           requestSenderService.postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
         }
-    }
-
-    public Future<Response> postUserBookLog(UserBookLog userBookLog){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-
-        Client client = ClientBuilder.newClient();
-        return client.target(mainConfig.getClientBookLoggerService().getUrl())
-                    .path("/actions")
-                    .request(MediaType.APPLICATION_JSON)
-                    .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
-                    .async()
-                    .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
-    }
-
-    public Future<Response> postChargeBookFee(Long userId,Long bookId){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-
-        Client client = ClientBuilder.newClient();
-        return client.target(mainConfig.getFeeChargerService().getUrl())
-                .path("/users/"+userId+"/books/"+bookId)
-                .request(MediaType.APPLICATION_JSON)
-                .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
-                .async()
-                .put(Entity.json(""));
     }
 
     private Long getFileSize(InputStream inputStream){

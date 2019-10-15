@@ -59,8 +59,8 @@ public class BookServiceTest {
     public void takeBookTest(){
         ArgumentCaptor<UserBookLog> logCaptor=ArgumentCaptor.forClass(UserBookLog.class);
         BookService spyBookService=spy(bookService);
-        doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
-        doReturn(null).when(spyBookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        //doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
+        //doReturn(null).when(spyBookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
 
         spyBookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
 
@@ -74,7 +74,7 @@ public class BookServiceTest {
     public void returnBookTest(){
         ArgumentCaptor<UserBookLog> logCaptor=ArgumentCaptor.forClass(UserBookLog.class);
         BookService spyBookService=spy(bookService);
-        doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
+        //doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
 
         spyBookService.returnBook(testUser.getId(),testBook.getId());
 

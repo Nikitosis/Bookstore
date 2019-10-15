@@ -17,7 +17,6 @@ import javax.ws.rs.core.MediaType;
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)
 public class MailSenderResource {
-    private static final Logger log= LoggerFactory.getLogger(MailSenderResource.class);
 
     private MailSenderService mailSenderService;
 
@@ -29,7 +28,6 @@ public class MailSenderResource {
     @POST
     @Path("/mail")
     public void sendMail(@Valid Mail mail){
-        log.info("Sending mail to "+mail.getReceiverEmail());
         mailSenderService.sendMail(mail);
     }
 }
