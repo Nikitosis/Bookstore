@@ -116,7 +116,7 @@ public class FeeChargerService {
         User curUser=userDao.findById(rent.getUserId());
         Book book=bookDao.findById(rent.getBookId());
 
-        if(curUser==null || curUser.getEmail()==null)
+        if(curUser==null || curUser.getEmail()==null || !curUser.getEmailVerified())
             return null;
 
         OAuth2AccessToken accessToken = oktaService.getOktaToken();

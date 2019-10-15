@@ -63,6 +63,25 @@ public interface UserDao {
     })
     User findById(@Param("userId") Long userId);
 
+    @Select("SELECT * FROM users WHERE verification_token=#{verificationToken}")
+    @Results(value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "username",column = "username"),
+            @Result(property = "password",column = "password"),
+            @Result(property = "fName",column = "first_name"),
+            @Result(property = "lName",column = "last_name"),
+            @Result(property = "country",column = "country"),
+            @Result(property = "city",column = "city"),
+            @Result(property = "gender",column = "gender"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "phone",column = "phone"),
+            @Result(property = "avatarLink",column = "avatar_link"),
+            @Result(property = "money",column = "money"),
+            @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property = "verificationToken",column = "verification_token")
+    })
+    User findByVerificationToken(@Param("verificationToken") String verificationToken);
+
     @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
