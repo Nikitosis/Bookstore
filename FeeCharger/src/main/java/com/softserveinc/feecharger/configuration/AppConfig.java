@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan("com")
+@ComponentScan("com.softserveinc.feecharger")
 public class AppConfig {
 
     private MainConfig mainConfig;

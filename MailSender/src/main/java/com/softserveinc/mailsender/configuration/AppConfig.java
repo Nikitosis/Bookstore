@@ -12,7 +12,7 @@ import javax.mail.Session;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("com")
+@ComponentScan("com.softserveinc.mailsender")
 public class AppConfig {
     private MainConfig mainConfig;
 
