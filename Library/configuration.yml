@@ -45,9 +45,9 @@ logging:
   level: INFO
 
 awsS3Config:
-  accessKey: AKIASVAFABVMDDSDW4OH
-  secretKey: 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
-  bucketName: bookstore.bucket
+  accessKey: ${AWS_S3_ACCESS_KEY}
+  secretKey: ${AWS_S3_SECRET_KEY}
+  bucketName: bookstorebucket
   allowedFileTypes:
     - pdf
     - txt
