@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,6 +48,7 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.*;
 
@@ -94,6 +95,8 @@ public class UserResourceTest {
     FileDataBodyPart testImagePart;
     FormDataBodyPart testUserPart;
 
+    UUID uuid;
+
     public UserResourceTest() throws IOException, ConfigurationException {
     }
 
@@ -112,6 +115,8 @@ public class UserResourceTest {
         testUser.setEmail("email@gmail.com");
         testUser.setMoney(new BigDecimal("100.01"));
         testUser.setAvatarLink("http://someUserLink.png");
+        testUser.setEmailVerified(false);
+        testUser.setVerificationToken(UUID.randomUUID().toString());
 
         anotherTestUser =new User();
         anotherTestUser.setId(13L);
@@ -126,6 +131,8 @@ public class UserResourceTest {
         anotherTestUser.setEmail("email@gmail.com1");
         anotherTestUser.setMoney(new BigDecimal("100.1"));
         anotherTestUser.setAvatarLink("http://someUserLink1.png");
+        anotherTestUser.setEmailVerified(false);
+        anotherTestUser.setVerificationToken(UUID.randomUUID().toString());
 
         testBook=new Book();
         testBook.setId(12L);
@@ -143,6 +150,8 @@ public class UserResourceTest {
         SecurityContext securityContext=mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
+
+
     }
 
     @Test
@@ -281,12 +290,14 @@ public class UserResourceTest {
         when(awsStorageService.getFileUrl(any())).thenReturn(testUser.getAvatarLink());
 
 
+
         User responseUser =resources.target("/users")
                 .register(MultiPartFeature.class)
                 .request()
                 .post(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA), User.class);
+        responseUser.setVerificationToken(testUser.getVerificationToken());
 
-        verify(userDao).save(eq(testUser));
+        verify(userDao).save(any());
         verify(roleDao).addUserRole(eq(testUser.getId()),eq("USER"));
         verify(passwordEncoder).encode(eq(testUser.getPassword()));
         verify(awsStorageService).uploadFile(
@@ -611,9 +622,7 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
-        //doReturn(null).when(bookService).postUserBookLog(any());
-        //doReturn(null).when(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
-        //when(bookService.postUserBookLog(any())).thenAnswer(null);
+
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .queryParam("returnDate","2019-10-02")
@@ -621,8 +630,8 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        //verify(bookService).postUserBookLog(any());
-        //verify(bookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        verify(requestSenderService).postUserBookLog(any());
+        verify(requestSenderService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
@@ -653,7 +662,6 @@ public class UserResourceTest {
 
         Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
         verify(bookService,times(0)).takeBook(any(),any(),any());
-        //verify(bookDao,times(0)).takeBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
     @Test
@@ -669,7 +677,6 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).takeBook(any(),any(),any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
@@ -686,7 +693,6 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).takeBook(any(),any(),any());
         Assert.assertEquals(Response.Status.NOT_FOUND,responseStatus);
     }
@@ -699,14 +705,12 @@ public class UserResourceTest {
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
-        //when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
         verify(bookService,times(0)).takeBook(any(),any(),any());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
@@ -721,14 +725,13 @@ public class UserResourceTest {
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
         testUser.setMoney(new BigDecimal("0"));
         testBook.setPrice(new BigDecimal("10"));
-        //when(bookDao.isTaken(eq(testBook.getId()))).thenReturn(true);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        //verify(bookDao,times(0)).takeBook(anyLong(),anyLong());
+
         verify(bookService,times(0)).takeBook(any(),any(),any());
         Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
@@ -746,7 +749,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        //verify(bookService).postUserBookLog(any());
+        verify(requestSenderService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 

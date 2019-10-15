@@ -12,14 +12,13 @@ database:
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
+verificationUrl: http://localhost:9004/verify
+
 clientBookLoggerService:
   url: http://${LOGGER_SERVICE_URL:-localhost:9002}
 
 feeChargerService:
   url: http://${FEE_CHARGER_SERVICE_URL:-localhost:9006}
-
-authorizerService:
-  url: http://${AUTHORIZER_SERVICE_URL:-localhost:9004}
 
 mailSenderService:
   url: http://${MAIL_SENDER_SERVICE:-localhost:9008}

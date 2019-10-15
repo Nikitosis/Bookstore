@@ -213,7 +213,6 @@ public class UserResource {
                     .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
             log.warn("Error processing the file");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }

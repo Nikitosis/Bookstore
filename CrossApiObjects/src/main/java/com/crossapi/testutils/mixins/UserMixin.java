@@ -1,5 +1,6 @@
 package com.crossapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -45,6 +46,11 @@ public class UserMixin {
 
     @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private BigDecimal money;
+
+    private Boolean isEmailVerified;
+
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
+    private String verificationToken;
 
     public enum Gender{
         @JsonProperty("MALE")
@@ -152,5 +158,21 @@ public class UserMixin {
 
     public void setMoney(BigDecimal money) {
         this.money = money;
+    }
+
+    public Boolean getEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
     }
 }

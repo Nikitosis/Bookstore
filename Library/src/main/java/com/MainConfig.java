@@ -16,7 +16,7 @@ public class MainConfig extends Configuration {
 
     private DependencyService feeChargerService;
 
-    private DependencyService authorizerService;
+    private String verificationUrl;
 
     private DependencyService mailSenderService;
 
@@ -84,12 +84,12 @@ public class MainConfig extends Configuration {
         this.awsS3Config = awsS3Config;
     }
 
-    public DependencyService getAuthorizerService() {
-        return authorizerService;
+    public String getVerificationUrl() {
+        return verificationUrl;
     }
 
-    public void setAuthorizerService(DependencyService authorizerService) {
-        this.authorizerService = authorizerService;
+    public void setVerificationUrl(String verificationUrl) {
+        this.verificationUrl = verificationUrl;
     }
 
     public DependencyService getMailSenderService() {

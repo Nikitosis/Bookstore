@@ -106,7 +106,7 @@ public class UserService {
 
     private void resetVerification(User user){
         String verificationToken=UUID.randomUUID().toString();
-        String verificationUrl=mainConfig.getAuthorizerService().getUrl()+"/verify/"+ verificationToken;
+        String verificationUrl=mainConfig.getVerificationUrl()+verificationToken;
         Mail mail=new Mail(user.getEmail(),"Please,verify your email",
                 "Email verification is required. Follow this link to verify your email: "+verificationUrl);
         requestSenderService.sendEmailVerification(mail);

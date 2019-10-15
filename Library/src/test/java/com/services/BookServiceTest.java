@@ -1,10 +1,12 @@
 package com.services;
 
+import com.MainConfig;
 import com.crossapi.api.Action;
 import com.crossapi.api.UserBookLog;
 import com.crossapi.models.Book;
 import com.dao.BookDao;
 import com.crossapi.models.User;
+import com.services.storage.AwsStorageService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +25,12 @@ import static org.mockito.Mockito.*;
 public class BookServiceTest {
     @Mock
     private BookDao bookDao;
+    @Mock
+    private MainConfig mainConfig;
+    @Mock
+    private RequestSenderService requestSenderService;
+    @Mock
+    private AwsStorageService awsStorageService;
 
     @InjectMocks
     private BookService bookService;
@@ -57,30 +65,20 @@ public class BookServiceTest {
 
     @Test
     public void takeBookTest(){
-        ArgumentCaptor<UserBookLog> logCaptor=ArgumentCaptor.forClass(UserBookLog.class);
-        BookService spyBookService=spy(bookService);
-        //doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
-        //doReturn(null).when(spyBookService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
 
-        spyBookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
+        bookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
 
-        Assert.assertEquals(testUser.getId(),logCaptor.getValue().getUserId());
-        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
-        Assert.assertEquals(Action.TAKE,logCaptor.getValue().getAction());
+        verify(requestSenderService).postUserBookLog(any());
+        verify(requestSenderService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
     }
 
     @Test
     public void returnBookTest(){
-        ArgumentCaptor<UserBookLog> logCaptor=ArgumentCaptor.forClass(UserBookLog.class);
-        BookService spyBookService=spy(bookService);
-        //doReturn(null).when(spyBookService).postUserBookLog(logCaptor.capture());
 
-        spyBookService.returnBook(testUser.getId(),testBook.getId());
+        bookService.returnBook(testUser.getId(),testBook.getId());
 
-        Assert.assertEquals(testUser.getId(),logCaptor.getValue().getUserId());
-        Assert.assertEquals(testBook.getId(),logCaptor.getValue().getBookId());
-        Assert.assertEquals(Action.RETURN,logCaptor.getValue().getAction());
+        verify(requestSenderService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }
