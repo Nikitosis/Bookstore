@@ -20,7 +20,9 @@ public class AuthorizerResource {
 
     @GET
     @Path("/verify/{verificationToken}")
-    public void verifyEmail(@PathParam("verificationToken") String verificationToken){
+    public String verifyEmail(@PathParam("verificationToken") String verificationToken){
         authorizerService.verifyEmail(verificationToken);
+
+        return "OK";
     }
 }

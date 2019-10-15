@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +52,7 @@ public class BookService {
             throw new IllegalArgumentException("Wrong file type for book");
         }
 
-        Long fileSize=getFileSize(file.getInputStream());
+        Long fileSize=getFileSize(file);
         if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxFileSize())
             throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsS3Config().getMaxFileSize());
 
@@ -65,7 +66,7 @@ public class BookService {
             throw new IllegalArgumentException("Wrong image type");
         }
 
-        Long fileSize=getFileSize(file.getInputStream());
+        Long fileSize=getFileSize(file);
         if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
 
@@ -145,14 +146,15 @@ public class BookService {
         }
     }
 
-    private Long getFileSize(InputStream inputStream){
+    private Long getFileSize(StoredFile storedFile){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            IOUtils.copy(inputStream,baos);
+            IOUtils.copy(storedFile.getInputStream(),baos);
         } catch (IOException e) {
             e.printStackTrace();
             return -1L;
         }
+        storedFile.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
         return Long.valueOf(baos.size());
     }
 }

@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -77,8 +75,8 @@ public class UserService {
             throw new IllegalArgumentException("Wrong image type");
         }
 
-        Long fileSize=getFileSize(file.getInputStream());
-        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
+        Long fileSize=getFileSize(file);
+        if(fileSize<=0 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
 
 
@@ -106,7 +104,7 @@ public class UserService {
 
     private void resetVerification(User user){
         String verificationToken=UUID.randomUUID().toString();
-        String verificationUrl=mainConfig.getVerificationUrl()+verificationToken;
+        String verificationUrl=mainConfig.getVerificationUrl()+"/"+verificationToken;
         Mail mail=new Mail(user.getEmail(),"Please,verify your email",
                 "Email verification is required. Follow this link to verify your email: "+verificationUrl);
         requestSenderService.sendEmailVerification(mail);
@@ -115,14 +113,15 @@ public class UserService {
         user.setEmailVerified(false);
     }
 
-    private Long getFileSize(InputStream inputStream){
+    private Long getFileSize(StoredFile storedFile){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            IOUtils.copy(inputStream,baos);
+            IOUtils.copy(storedFile.getInputStream(),baos);
         } catch (IOException e) {
             e.printStackTrace();
             return -1L;
         }
+        storedFile.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
         return Long.valueOf(baos.size());
     }
 }
