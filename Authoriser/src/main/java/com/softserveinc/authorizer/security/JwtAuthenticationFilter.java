@@ -1,5 +1,6 @@
 package com.softserveinc.authorizer.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.cross_api_objects.dao.UserDao;
 import io.jsonwebtoken.Jwts;
@@ -79,5 +80,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
                 mainConfig.getSecurity().getTokenPrefix()+token);
+
+        writeUserToResponse(userId,response);
+    }
+
+    private void writeUserToResponse(Long userId,HttpServletResponse response) throws IOException {
+        com.softserveinc.cross_api_objects.models.User user=userDao.findById(userId);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().print(
+                new ObjectMapper().writeValueAsString(user)
+        );
     }
 }
