@@ -1,5 +1,6 @@
 package com.softserveinc.cross_api_objects.dao;
 
+import com.softserveinc.cross_api_objects.models.Role;
 import com.softserveinc.cross_api_objects.models.User;
 import org.apache.ibatis.annotations.*;
 
@@ -21,7 +22,8 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
-            @Result(property = "verificationToken",column = "verification_token")
+            @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     List<User> findAll();
 
@@ -40,7 +42,8 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
-            @Result(property = "verificationToken",column = "verification_token")
+            @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByUsername(@Param("username") String username);
 
@@ -59,9 +62,16 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
-            @Result(property = "verificationToken",column = "verification_token")
+            @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findById(@Param("userId") Long userId);
+
+    @Select(" SELECT roles.* FROM roles " +
+            " INNER JOIN user_role ON user_role.role_id=roles.id" +
+            " INNER JOIN users ON user_role.user_id=users.id " +
+            " WHERE users.id=#{userId} ")
+    List<Role> findRolesByUser(@Param("userId") Long userId);
 
     @Select("SELECT * FROM users WHERE verification_token=#{verificationToken}")
     @Results(value = {
@@ -78,7 +88,8 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
-            @Result(property = "verificationToken",column = "verification_token")
+            @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByVerificationToken(@Param("verificationToken") String verificationToken);
 

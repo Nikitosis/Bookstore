@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
@@ -59,6 +60,9 @@ public class User {
 
     @JsonIgnore
     private String verificationToken;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private List<Role> roles;
 
 
     public User(){
@@ -176,6 +180,14 @@ public class User {
         this.verificationToken = verificationToken;
     }
 
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -200,6 +212,7 @@ public class User {
                 Objects.equals(user.password,this.password)&&
                 Objects.equals(user.isEmailVerified,this.isEmailVerified) &&
                 Objects.equals(user.verificationToken,this.verificationToken) &&
+                Objects.deepEquals(user.roles,this.roles)&&
                 Objects.equals(user.gender,this.gender);
     }
 }
