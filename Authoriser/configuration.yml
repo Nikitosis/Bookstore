@@ -16,7 +16,7 @@ tokenExpirationTime: 3600000
 authenticationUrl: "/authenticate"
 
 security:
-  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  jwtSecret: ${JWT_SECRET}
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"

@@ -24,7 +24,7 @@ mailSenderService:
   url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
 
 security:
-  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  jwtSecret: ${JWT_SECRET:-"n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"}
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
@@ -34,7 +34,7 @@ oktaOAuth:
   issuer: "https://dev-702765.okta.com/oauth2/default"
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1ep4cgrcPMejCk357"
-  clientSecret: "x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"
+  clientSecret: ${OKTA_LIBRARY_SECRET:-"x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"}
   scopes:
     - write
 
