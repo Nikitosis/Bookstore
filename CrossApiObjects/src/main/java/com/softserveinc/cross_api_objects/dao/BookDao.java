@@ -15,6 +15,7 @@ public interface BookDao {
             @Result(property="photoLink", column = "photo_link"),
             @Result(property = "filePath",column = "file_path"),
             @Result(property = "price",column = "price"),
+            @Result(property="description",column = "description")
     })
     List<Book> findAll();
 
@@ -26,10 +27,11 @@ public interface BookDao {
             @Result(property="photoLink", column = "photo_link"),
             @Result(property = "filePath",column = "file_path"),
             @Result(property = "price",column = "price"),
+            @Result(property="description",column = "description")
     })
     Book findById(@Param("id") Long id);
 
-    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{url},#{dailyPrice})")
+    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{filePath},#{price},#{description})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(Book book);
 
@@ -42,6 +44,7 @@ public interface BookDao {
                 "<if test='photoLink != null'>photo_link = #{photoLink},</if>",
                 "<if test='filePath != null'>file_path = #{filePath},</if>",
                 "<if test='price != null'>price = #{price},</if>",
+                "<if test='description != null'>description = #{description},</if>",
                 "</set>",
                 "WHERE id=#{id}",
                 "</script>"
@@ -62,6 +65,7 @@ public interface BookDao {
             @Result(property="photoLink", column = "photo_link"),
             @Result(property = "filePath",column = "file_path"),
             @Result(property = "price",column = "price"),
+            @Result(property="description",column = "description")
     })
     List<Book> findTakenByUser(@Param("userId") Long userId);
 

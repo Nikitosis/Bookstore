@@ -29,5 +29,6 @@
     <include file="db/2019-10-08-02-changed-money-types.xml"/>
     <include file="db/2019-10-15-added-isEmailVerified-to-user.xml"/>
     <include file="db/2019-10-16-01-default-roles-default-admin.xml"/>
+    <include file="db/2019-10-18-01-added-description-to-book.xml"/>
 
 </databaseChangeLog>

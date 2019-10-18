@@ -30,6 +30,8 @@ public class Book {
 
     private BigDecimal price;
 
+    private String description;
+
     public Book(){
 
     }
@@ -82,6 +84,14 @@ public class Book {
         this.price = price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -98,6 +108,7 @@ public class Book {
                 Objects.equals(book.isbn,this.isbn)&&
                 Objects.equals(book.photoLink,this.photoLink) &&
                 Objects.equals(book.filePath,this.filePath)&&
-                Objects.equals(book.price,this.price);
+                Objects.equals(book.price,this.price) &&
+                Objects.equals(book.description,this.description);
     }
 }
