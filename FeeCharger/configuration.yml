@@ -27,7 +27,7 @@ oktaOAuth:
   issuer: "https://dev-702765.okta.com/oauth2/default"
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1iyrvx8grc62vY357"
-  clientSecret: "Ku3MBSGH1-7r-8iV0KIen3WeoUSwFD_NISm5u0S7"
+  clientSecret: ${OKTA_FEECHARGER_SECRET}
   scopes:
     - write
 logging:

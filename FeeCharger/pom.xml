@@ -197,7 +197,7 @@
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.MainApp</mainClass>
+                            <mainClass>com.softserveinc.feecharger.MainApp</mainClass>
                         </transformer>
                     </transformers>
                     <!-- exclude signed Manifests -->

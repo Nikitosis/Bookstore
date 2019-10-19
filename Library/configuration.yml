@@ -12,14 +12,19 @@ database:
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
+verificationUrl: http://localhost:9004/verify
+
 clientBookLoggerService:
   url: http://${LOGGER_SERVICE_URL:-localhost:9002}
 
 feeChargerService:
   url: http://${FEE_CHARGER_SERVICE_URL:-localhost:9006}
 
+mailSenderService:
+  url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
+
 security:
-  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  jwtSecret: ${JWT_SECRET:-"n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"}
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
@@ -29,7 +34,7 @@ oktaOAuth:
   issuer: "https://dev-702765.okta.com/oauth2/default"
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1ep4cgrcPMejCk357"
-  clientSecret: "x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"
+  clientSecret: ${OKTA_LIBRARY_SECRET:-"x2ObRXn2tHLIjwKSe_Hwm8vT5DWHJPAYKG8JhwUQ"}
   scopes:
     - write
 
@@ -40,9 +45,9 @@ logging:
   level: INFO
 
 awsS3Config:
-  accessKey: AKIASVAFABVMDDSDW4OH
-  secretKey: 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
-  bucketName: bookstore.bucket
+  accessKey: ${AWS_S3_ACCESS_KEY}
+  secretKey: ${AWS_S3_SECRET_KEY}
+  bucketName: bookstorebucket
   allowedFileTypes:
     - pdf
     - txt

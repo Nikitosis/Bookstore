@@ -13,7 +13,7 @@ database:
   driverClass: com.mysql.cj.jdbc.Driver
 
 security:
-  jwtSecret: "n2r5u8xfdg02aPdSgVkYp3s6321gfdretewrhWmZq4t7w!z%C*F-Jdsfdsfq23234dsfds@NcRf"
+  jwtSecret: ${JWT_SECRET}
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
@@ -23,7 +23,7 @@ oktaOAuth:
   issuer: "https://dev-702765.okta.com/oauth2/default"
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1epfonjxBlFUoa357"
-  clientSecret: "Fx7CstTs71ssTxDGToqnHlgcalOH9UM5RHw3Zve5"
+  clientSecret: ${OKTA_LOGGER_SECRET}
 
 swagger:
   resourcePackage: com.resources
