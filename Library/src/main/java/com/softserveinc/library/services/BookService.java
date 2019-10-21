@@ -48,28 +48,28 @@ public class BookService {
     }
 
     public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
+        Long fileSize=getFileSize(file);
+        if(fileSize<=4 || fileSize>mainConfig.getAwsS3Config().getMaxFileSize())
+            throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsS3Config().getMaxFileSize());
+
+
         if(!awsStorageService.isAllowedFileType(file.getFileName())){
             throw new IllegalArgumentException("Wrong file type for book");
         }
-
-        Long fileSize=getFileSize(file);
-        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxFileSize())
-            throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsS3Config().getMaxFileSize());
-
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setFilePath(path);
         bookDao.update(book);
     }
 
     public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
+        Long fileSize=getFileSize(file);
+        if(fileSize<=4 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
+            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
+
+
         if(!awsStorageService.isAllowedImageType(file.getFileName())){
             throw new IllegalArgumentException("Wrong image type");
         }
-
-        Long fileSize=getFileSize(file);
-        if(fileSize==-1 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
-            throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
-
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
