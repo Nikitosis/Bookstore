@@ -77,7 +77,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers(HttpMethod.GET,"/users").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.POST,"/users").permitAll()
                 .regexMatchers(HttpMethod.PUT,"/users","/users/(\\d+)/books/(\\d+.*)","/users/(\\d+)/image").authenticated()
-                .regexMatchers(HttpMethod.GET,"/users/(\\d+)","/users/(\\d+)/books").authenticated()
+                .regexMatchers(HttpMethod.GET,"/users/(\\d+)","/users/(\\d+)/books","/users/(\\d+)/books/(\\d+)").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)/books/(\\d+)").authenticated()
                 .regexMatchers(HttpMethod.DELETE,"/users/(\\d+)").hasAnyRole("ADMIN")
 
@@ -87,7 +87,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers(HttpMethod.DELETE,"/books/(\\d+)").hasAnyRole("ADMIN")
 
                 //TODO: change to denyAll on production
-                .antMatchers("/**").permitAll()
+                .antMatchers("/**").denyAll()
                 .and()
                 .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),jwtVerifier()))
                 .addFilter(new JwtUserAuthorizationFilter(authenticationManager(),mainConfig.getSecurity()))
@@ -106,7 +106,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("HEAD",
                 "GET", "POST", "PUT", "DELETE", "PATCH","OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("origin","content-type","accept","x-requested-with","Authorization"));
+        configuration.addExposedHeader("Content-Disposition");
+        configuration.setAllowedHeaders(Arrays.asList("origin","content-type","accept", "x-requested-with","Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

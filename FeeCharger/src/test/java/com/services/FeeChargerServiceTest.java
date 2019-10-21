@@ -1,15 +1,16 @@
 package com.services;
 
-import com.MainConfig;
-import com.crossapi.configuration.DependencyService;
-import com.crossapi.configuration.FeeChargeConfig;
-import com.crossapi.models.Book;
-import com.crossapi.models.User;
-import com.crossapi.services.OktaService;
-import com.dao.BookDao;
-import com.dao.FeeChargerDao;
-import com.dao.UserDao;
-import com.models.UserBook;
+import com.softserveinc.cross_api_objects.configuration.DependencyService;
+import com.softserveinc.cross_api_objects.configuration.FeeChargeConfig;
+import com.softserveinc.cross_api_objects.models.Book;
+import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.cross_api_objects.services.OktaService;
+import com.softserveinc.feecharger.MainConfig;
+import com.softserveinc.feecharger.dao.BookDao;
+import com.softserveinc.feecharger.dao.FeeChargerDao;
+import com.softserveinc.feecharger.dao.UserDao;
+import com.softserveinc.feecharger.models.UserBook;
+import com.softserveinc.feecharger.services.FeeChargerService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
