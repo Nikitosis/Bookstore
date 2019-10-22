@@ -28,6 +28,7 @@ public class Book {
     @JsonIgnore
     private String filePath;
 
+    @NotNull
     private BigDecimal price;
 
     private String description;

@@ -31,7 +31,7 @@ public interface BookDao {
     })
     Book findById(@Param("id") Long id);
 
-    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{filePath},DEFAULT,#{description})")
+    @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{filePath},#{price},#{description})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(Book book);
 
