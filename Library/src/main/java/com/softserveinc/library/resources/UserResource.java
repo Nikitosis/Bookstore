@@ -1,6 +1,7 @@
 package com.softserveinc.library.resources;
 
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
+import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -208,8 +209,11 @@ public class UserResource {
 
         try {
             StoredFile storedFile=bookService.getStoredFile(bookId);
+            byte[] bytes = IOUtils.toByteArray(storedFile.getInputStream());
+            byte[] encoded = Base64.encode(bytes);
+            String encodedStr = new String(encoded);
             return Response.status(Response.Status.OK)
-                    .entity(IOUtils.toByteArray(storedFile.getInputStream()))
+                    .entity(encodedStr)
                     .header("Content-Disposition", "attachment; filename=" + storedFile.getFileName())
                     .build();
         } catch (Exception e) {
