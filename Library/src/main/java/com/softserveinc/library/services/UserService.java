@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -56,6 +57,8 @@ public class UserService {
     public Long save(User user){
         //setting password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        //setting money
+        user.setMoney(new BigDecimal("0.00"));
 
         //verifying email
         if(!StringUtils.isNullOrEmpty(user.getEmail()))

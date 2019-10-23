@@ -93,7 +93,7 @@ public interface UserDao {
     })
     User findByVerificationToken(@Param("verificationToken") String verificationToken);
 
-    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},DEFAULT,#{isEmailVerified},#{verificationToken})")
+    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
