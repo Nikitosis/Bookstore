@@ -2,6 +2,7 @@ package com.softserveinc.library.resources;
 
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.softserveinc.cross_api_objects.models.Book;
+import com.softserveinc.cross_api_objects.models.ResponseError;
 import com.softserveinc.library.services.BookService;
 import com.softserveinc.library.services.storage.StoredFile;
 import com.softserveinc.library.utils.ObjectValidator;
@@ -47,7 +48,8 @@ public class BookResource {
         Book book=bookService.findById(id);
         if(book==null){
             log.warn("Book cannot be found. BookId: "+id);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("Book cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         return Response.ok(book).build();
@@ -64,11 +66,14 @@ public class BookResource {
 
         if(book==null) {
             log.warn("Book cannot be found. BookId: " + bookId);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("Book cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         if(!tryAddFileToBook(book,fileStream,fileDisposition)){
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            log.warn("Cannot add file to book");
+            ResponseError error=new ResponseError().setCode(2).setMessage("Cannot add file to book");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         return Response.status(Response.Status.OK).entity(book).build();
@@ -85,11 +90,14 @@ public class BookResource {
 
         if(book==null) {
             log.warn("Book cannot be found. BookId: "+bookId);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("Book cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         if(!tryAddImageToBook(book,fileStream,fileDisposition)){
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            log.warn("Cannot add image to book");
+            ResponseError error=new ResponseError().setCode(2).setMessage("Cannot add image to book");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         return Response.status(Response.Status.OK).entity(book).build();
@@ -109,7 +117,8 @@ public class BookResource {
 
         if(book==null) {
             log.warn("BookInfo is not valid");
-            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid bookInfo").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("BookInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity(error).build();
         }
 
         bookService.save(book);
@@ -134,12 +143,14 @@ public class BookResource {
 
         if(book==null) {
             log.warn("BookInfo is not valid");
-            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid bookInfo").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("BookInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity(error).build();
         }
 
         if(bookService.findById(book.getId())==null){
             log.warn("Book cannot be found. BookId: "+book.getId());
-            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("Book cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         bookService.update(book);
@@ -156,7 +167,8 @@ public class BookResource {
     public Response deleteBook(@PathParam("id") Long id){
         if(bookService.findById(id)==null){
             log.warn("Book cannot be found. BookId: "+id);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("Book cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         bookService.delete(id);

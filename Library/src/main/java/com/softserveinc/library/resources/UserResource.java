@@ -5,6 +5,7 @@ import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.models.Book;
+import com.softserveinc.cross_api_objects.models.ResponseError;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.services.BookService;
 import com.softserveinc.library.services.UserService;
@@ -64,7 +65,8 @@ public class UserResource {
         User user = userService.findById(userId);
         if(user==null){
             log.warn("User cannot be found: "+userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         return Response.ok(user).build();
@@ -80,18 +82,21 @@ public class UserResource {
 
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         User user=userService.findById(userId);
         if(user==null) {
             log.warn("User cannot be found: " + userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         if(!tryAddImageToUser(user,fileStream,fileDisposition)){
             log.warn("Failed to add image to user");
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            ResponseError error=new ResponseError().setCode(3).setMessage("Failed to add image to user");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         return Response.status(Response.Status.OK).entity(user).build();
@@ -106,12 +111,14 @@ public class UserResource {
 
         if(user==null){
             log.warn("UserInfo is not valid");
-            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid userInfo").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("UserInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity(error).build();
         }
 
         if(userService.findByUsername(user.getUsername())!=null){
             log.warn("User already exists with this username: "+user.getUsername());
-            return Response.status(Response.Status.CONFLICT).build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("User already exists with this username");
+            return Response.status(Response.Status.CONFLICT).entity(error).build();
         }
 
         userService.save(user);
@@ -129,19 +136,22 @@ public class UserResource {
         User user= convertBodyPartToUser(userPart);
         if(user==null){
             log.warn("UserInfo is not valid");
-            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity("Invalid userInfo").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("UserInfo is not valid");
+            return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity(error).build();
         }
 
         User principalUser= getAuthenticatedUser();
 
         if(principalUser.getId()!=user.getId()){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+user.getId());
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         if(userService.findById(user.getId())==null){
             log.warn("User cannot be found: "+user.getId());
-            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+            ResponseError error=new ResponseError().setCode(3).setMessage("User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         tryAddImageToUser(user,imageStream,imageDisposition);
@@ -155,7 +165,8 @@ public class UserResource {
     public Response deleteUser(@PathParam("userId") Long userId){
         if(userService.findById(userId)==null){
             log.warn("User cannot be found: "+userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         userService.delete(userId);
@@ -170,12 +181,14 @@ public class UserResource {
         //if not admin and tries to view other's books
         if(!roleDao.findByUser(principalUser.getId()).stream().anyMatch(role -> role.getName().equals("ADMIN")) && principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         if(userService.findById(userId)==null){
             log.warn("User cannot be found: "+userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("User cannot be found").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         List<Book> takenBooks=bookService.findTakenByUser(userId);
@@ -191,19 +204,22 @@ public class UserResource {
 
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         //if book or user cannot be found
         if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("Book or User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         //if book is not taken
         if(!bookService.isTakenByUser(userId,bookId)){
             log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
-            return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
+            ResponseError error=new ResponseError().setCode(3).setMessage("Book is not taken by this user");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
 
@@ -218,6 +234,7 @@ public class UserResource {
                     .build();
         } catch (Exception e) {
             log.warn("Error processing the file");
+            ResponseError error=new ResponseError().setCode(4).setMessage("Error processing the file");
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -233,31 +250,36 @@ public class UserResource {
                 returnDate=LocalDate.parse(returnDateStr.get());
         }
         catch (DateTimeParseException e){
-            return Response.status(Response.Status.BAD_REQUEST).entity("Wrong format of returnDate").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("Wrong format of returnDate");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         Authentication auth=SecurityContextHolder.getContext().getAuthentication();
 
         if(!isAuthorisedManageBooks(auth,userId)){
             log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource.");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         //if book or user cannot be found
         if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
+            ResponseError error=new ResponseError().setCode(3).setMessage("Book or user cannot be found");
             return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
         }
 
         //if book is already taken
         if(bookService.isTakenByUser(userId,bookId)){
             log.warn("Book already taken by this user. BookId: "+bookId+" .UserId: "+userId);
-            return Response.status(Response.Status.BAD_REQUEST).entity("Book is already taken").build();
+            ResponseError error=new ResponseError().setCode(4).setMessage("Book is already taken");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         if(bookService.findById(bookId).getPrice().compareTo(userService.findById(userId).getMoney())==1){
             log.warn("Cannot take book. User doesn't have enough money");
-            return Response.status(Response.Status.BAD_REQUEST).entity("Not enough money").build();
+            ResponseError error=new ResponseError().setCode(5).setMessage("User doesn't have enough money");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         bookService.takeBook(userId,bookId,returnDate);
@@ -273,19 +295,22 @@ public class UserResource {
 
         if(!isAuthorisedManageBooks(auth,userId)){
             log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
-            return Response.status(Response.Status.FORBIDDEN).entity("User is not authorised to access this resource").build();
+            ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
         }
 
         //if book or user cannot be found
         if(bookService.findById(bookId)==null || userService.findById(userId)==null){
             log.warn("Book or User cannot be found. BookId: "+bookId+" .UserId: "+userId);
-            return Response.status(Response.Status.NOT_FOUND).entity("Book or user cannot be found").build();
+            ResponseError error=new ResponseError().setCode(2).setMessage("Book or User cannot be found");
+            return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
         //if book is not taken
         if(!bookService.isTakenByUser(userId,bookId)){
             log.warn("Book is not taken by this user. BookId: "+bookId+" .UserId: "+userId);
-            return Response.status(Response.Status.BAD_REQUEST).entity("Book is not taken by this user").build();
+            ResponseError error=new ResponseError().setCode(3).setMessage("Book is not taken by this user");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
 
