@@ -86,7 +86,7 @@ public class UserService {
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
         user.setAvatarLink(url);
-        userDao.update(user);
+        update(user);
     }
 
     public void update(User user){

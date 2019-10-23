@@ -58,7 +58,7 @@ public class BookService {
         }
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
         book.setFilePath(path);
-        bookDao.update(book);
+        update(book);
     }
 
     public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
@@ -74,7 +74,7 @@ public class BookService {
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
         book.setPhotoLink(url);
-        bookDao.update(book);
+        update(book);
     }
 
     public Long save(Book book){
