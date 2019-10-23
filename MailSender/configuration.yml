@@ -7,8 +7,8 @@ server:
       port: ${SERVICE_ADMINPORT:-9009}
 
 mailConfig:
-  username: bookstore.noreply.service@gmail.com
-  password: kmaowuxuwzlxmzsy
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
   fromName: Bookstore
   fromAddress: bookstore.noreply.service@gmail.com
 
