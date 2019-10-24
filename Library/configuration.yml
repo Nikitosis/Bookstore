@@ -12,7 +12,7 @@ database:
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
-verificationUrl: http://localhost:9004/verify
+verificationUrl: http://localhost:3000/verifyEmail
 
 clientBookLoggerService:
   url: http://${LOGGER_SERVICE_URL:-localhost:9002}
