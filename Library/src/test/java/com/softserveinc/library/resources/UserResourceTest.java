@@ -73,10 +73,10 @@ public class UserResourceTest {
 
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
-    private OktaService oktaService=new OktaService(configuration.getOktaOAuth());
+
     private RequestSenderService requestSenderService=mock(RequestSenderService.class);
     private UserService userService =new UserService(userDao,roleDao,awsStorageService,requestSenderService,passwordEncoder,configuration);
-    private BookService bookService=spy(new BookService(bookDao,configuration,requestSenderService,awsStorageService));
+    private BookService bookService=spy(new BookService(bookDao,configuration,requestSenderService,awsStorageService,userService));
 
     //Creating ResourceTestRule
     @Rule

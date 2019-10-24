@@ -1,5 +1,6 @@
 package com.softserveinc.library.services;
 
+import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -11,6 +12,8 @@ import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Entity;
@@ -30,21 +33,31 @@ public class BookService {
     private MainConfig mainConfig;
     private RequestSenderService requestSenderService;
     private AwsStorageService awsStorageService;
+    private UserService userService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderService requestSenderService, AwsStorageService awsStorageService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderService requestSenderService, AwsStorageService awsStorageService, UserService userService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
         this.requestSenderService = requestSenderService;
         this.awsStorageService = awsStorageService;
+        this.userService = userService;
     }
 
     public List<Book> findAll(){
-        return bookDao.findAll();
+        User authUser=getAuthenticatedUser();
+        if(authUser==null)
+            return bookDao.findAll();
+        else
+            return bookDao.findAllWithUser(authUser.getId());
     }
 
     public Book findById(Long id){
-        return bookDao.findById(id);
+        User authUser=getAuthenticatedUser();
+        if(authUser==null)
+            return bookDao.findById(id);
+        else
+            return bookDao.findByIdWithUser(id,authUser.getId());
     }
 
     public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
@@ -156,5 +169,10 @@ public class BookService {
         }
         storedFile.setInputStream(new ByteArrayInputStream(baos.toByteArray()));
         return Long.valueOf(baos.size());
+    }
+
+    private User getAuthenticatedUser(){
+        Authentication auth= SecurityContextHolder.getContext().getAuthentication();
+        return userService.findByUsername(auth.getName());
     }
 }

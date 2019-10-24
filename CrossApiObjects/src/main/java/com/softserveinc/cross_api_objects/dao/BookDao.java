@@ -19,6 +19,19 @@ public interface BookDao {
     })
     List<Book> findAll();
 
+    @Select("SELECT books.*,#{userId} as userId FROM books")
+    @Results(value = {
+            @Result(property = "id",column = "id"),
+            @Result(property = "name",column = "name"),
+            @Result(property = "isbn",column = "isbn"),
+            @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "filePath",column = "file_path"),
+            @Result(property = "price",column = "price"),
+            @Result(property="description",column = "description"),
+            @Result(property="isTaken",column = "bookId=id,userId=userId",javaType = Boolean.class,one = @One(select = "isTakenByUser"))
+    })
+    List<Book> findAllWithUser(@Param("userId")Long curUserId);
+
     @Select("SELECT * FROM books WHERE id=#{id}")
     @Results(value = {
             @Result(property = "id",column = "id"),
@@ -30,6 +43,20 @@ public interface BookDao {
             @Result(property="description",column = "description")
     })
     Book findById(@Param("id") Long id);
+
+    @Select("SELECT books.*,#{userId} as userId FROM books WHERE id=#{bookId}")
+    @Results(value = {
+            @Result(property = "id",column = "id"),
+            @Result(property = "name",column = "name"),
+            @Result(property = "isbn",column = "isbn"),
+            @Result(property="photoLink", column = "photo_link"),
+            @Result(property = "filePath",column = "file_path"),
+            @Result(property = "price",column = "price"),
+            @Result(property="description",column = "description"),
+            @Result(property="isTaken",column = "bookId=id,userId=userId",javaType = Boolean.class,one = @One(select = "isTakenByUser"))
+    })
+    Book findByIdWithUser(@Param("bookId") Long bookId,@Param("userId") Long curUserId);
+
 
     @Insert("INSERT INTO books VALUES(NULL,#{name},#{isbn},#{photoLink},#{filePath},#{price},#{description})")
     @Options(useGeneratedKeys = true,keyProperty = "id")

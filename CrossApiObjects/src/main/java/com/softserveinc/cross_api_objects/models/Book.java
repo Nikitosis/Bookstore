@@ -33,6 +33,8 @@ public class Book {
 
     private String description;
 
+    private Boolean isTaken;
+
     public Book(){
 
     }
@@ -91,6 +93,14 @@ public class Book {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getTaken() {
+        return isTaken;
+    }
+
+    public void setTaken(Boolean taken) {
+        isTaken = taken;
     }
 
     @Override
