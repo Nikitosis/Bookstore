@@ -15,13 +15,13 @@ database:
 verificationUrl: http://localhost:3000/verifyEmail
 
 loggerService:
-  url: http://${LOGGER_SERVICE_URL:-localhost:9002}
+  url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
 
 feeChargerService:
-  url: http://${FEE_CHARGER_SERVICE_URL:-localhost:9006}
+  url: http://${FEE_CHARGER_SERVICE_IP:-localhost}:${FEE_CHARGER_SERVICE_PORT:-9006}
 
 mailSenderService:
-  url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
+  url: http://${MAIL_SENDER_SERVICE_IP:-localhost}:${MAIL_SENDER_SERVICE_PORT:-9008}
 
 security:
   jwtSecret: ${JWT_SECRET}

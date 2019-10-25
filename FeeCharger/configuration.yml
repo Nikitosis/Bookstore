@@ -13,13 +13,13 @@ database:
   driverClass: com.mysql.cj.jdbc.Driver
 
 libraryService:
-  url: http://${LIBRARY_SERVICE_URL:-localhost:9000}
+  url: http://${LIBRARY_SERVICE_IP:-localhost}:${LIBRARY_SERVICE_PORT:-9000}
 
 mailSenderService:
-  url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
+  url: http://${MAIL_SENDER_SERVICE_IP:-localhost}:${MAIL_SENDER_SERVICE_PORT:-9008}
 
 loggerService:
-  url: http://${LOGGER_SERVICE_URL:-localhost:9002}
+  url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
 
 feeChargeConfig:
   rentPeriod: 1
