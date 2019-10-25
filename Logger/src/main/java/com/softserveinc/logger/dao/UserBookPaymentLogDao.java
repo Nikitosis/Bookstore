@@ -3,6 +3,7 @@ package com.softserveinc.logger.dao;
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import org.apache.ibatis.annotations.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserBookPaymentLogDao {
@@ -50,4 +51,7 @@ public interface UserBookPaymentLogDao {
     @Insert("INSERT INTO user_book_payment_log VALUES(NULL,#{userId},#{bookId},#{date},#{payment})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(UserBookPaymentLog userBookLog);
+
+    @Select("SELECT COALESCE(SUM(payment),0) FROM user_book_payment_log WHERE book_id=#{bookId} GROUP BY book_id")
+    BigDecimal getBookTotalPayments(@Param("bookId") Long bookId);
 }

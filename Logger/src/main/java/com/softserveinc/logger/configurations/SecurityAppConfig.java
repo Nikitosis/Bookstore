@@ -72,7 +72,11 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/actions").hasAnyAuthority("write")
-                .antMatchers("/actions").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/actions").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/payments").hasAnyAuthority("write")
+                .antMatchers(HttpMethod.GET,"/payments").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/statistics/**").hasAnyRole("ADMIN")
+                .antMatchers("/**").denyAll()
                 .and()
                 .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),jwtVerifier()))
                 .addFilter(new JwtUserAuthorizationFilter(authenticationManager(),mainConfig.getSecurity()))
