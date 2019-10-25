@@ -7,5 +7,5 @@ public enum Action {
     TAKE,
 
     @JsonProperty("RETURN")
-    RETURN;
+    RETURN,
 }

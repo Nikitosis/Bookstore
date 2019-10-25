@@ -35,16 +35,16 @@ public class FeeChargerService {
     private FeeChargerDao feeChargerDao;
     private UserDao userDao;
     private MainConfig mainConfig;
-    private OktaService oktaService;
+    private RequestSenderService requestSenderService;
     private Timer timer;
 
     @Autowired
-    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, OktaService oktaService) {
+    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderService requestSenderService) {
         this.bookDao = bookDao;
         this.feeChargerDao = feeChargerDao;
         this.userDao = userDao;
         this.mainConfig = mainConfig;
-        this.oktaService = oktaService;
+        this.requestSenderService = requestSenderService;
     }
 
     //starting timer that will extend expired book rents every n minutes
@@ -83,8 +83,8 @@ public class FeeChargerService {
         }
         else{
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
-            sendReturnBookNotification(rent);
-            sendReturnBook(rent);
+            requestSenderService.sendReturnBookNotification(rent);
+            requestSenderService.sendReturnBook(rent);
         }
     }
 
@@ -106,47 +106,11 @@ public class FeeChargerService {
     private void extendBookRent(UserBook rent){
         Book book=bookDao.findById(rent.getBookId());
         feeChargerDao.chargeFee(rent.getUserId(),book.getPrice());
+        requestSenderService.sendPaymentLog(rent,book.getPrice(),LocalDateTime.now());
 
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
-    }
 
-    private Future<Response> sendReturnBookNotification(UserBook rent){
-        User curUser=userDao.findById(rent.getUserId());
-        Book book=bookDao.findById(rent.getBookId());
-
-        if(curUser==null || curUser.getEmail()==null || !curUser.getEmailVerified())
-            return null;
-
-        OAuth2AccessToken accessToken = oktaService.getOktaToken();
-        Client client = ClientBuilder.newClient();
-
-        Mail mail = new Mail(
-                curUser.getEmail(),
-                "Cannot extend book's rent",
-                "Unfortunately, you don't have enough money on your account to extend " +
-                        book.getName() + " rent. Book cost is " + book.getPrice() +
-                        " but your current balance is " + curUser.getMoney()
-        );
-
-        return client.target(mainConfig.getMailSenderService().getUrl())
-                .path("/mail")
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken.getValue())
-                .async()
-                .post(Entity.entity(mail, MediaType.APPLICATION_JSON));
-    }
-
-    private Future<Response> sendReturnBook(UserBook rent){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-        Client client= ClientBuilder.newClient();
-
-        return client.target(mainConfig.getLibraryService().getUrl())
-                .path("/users/"+rent.getUserId()+"/books/"+rent.getBookId())
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization","Bearer "+accessToken.getValue())
-                .async()
-                .delete();
     }
 }

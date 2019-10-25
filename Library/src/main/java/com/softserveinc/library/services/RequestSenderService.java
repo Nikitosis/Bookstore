@@ -35,7 +35,7 @@ public class RequestSenderService {
         log.info("Sending request to Logger service. Sending logs.");
 
         Client client = ClientBuilder.newClient();
-        return client.target(mainConfig.getClientBookLoggerService().getUrl())
+        return client.target(mainConfig.getLoggerService().getUrl())
                 .path("/actions")
                 .request(MediaType.APPLICATION_JSON)
                 .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())

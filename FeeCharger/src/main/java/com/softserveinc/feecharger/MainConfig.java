@@ -14,6 +14,8 @@ public class MainConfig extends Configuration {
 
     private DependencyService mailSenderService;
 
+    private DependencyService loggerService;
+
     private FeeChargeConfig feeChargeConfig;
 
     private OktaOAuthConfig oktaOAuth;
@@ -56,5 +58,13 @@ public class MainConfig extends Configuration {
 
     public void setMailSenderService(DependencyService mailSenderService) {
         this.mailSenderService = mailSenderService;
+    }
+
+    public DependencyService getLoggerService() {
+        return loggerService;
+    }
+
+    public void setLoggerService(DependencyService loggerService) {
+        this.loggerService = loggerService;
     }
 }

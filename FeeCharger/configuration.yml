@@ -18,6 +18,9 @@ libraryService:
 mailSenderService:
   url: http://${MAIL_SENDER_SERVICE:-localhost:9008}
 
+loggerService:
+  url: http://${LOGGER_SERVICE_URL:-localhost:9002}
+
 feeChargeConfig:
   rentPeriod: 1
   checkExpirationInterval: 1

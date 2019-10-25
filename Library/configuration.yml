@@ -14,7 +14,7 @@ database:
 
 verificationUrl: http://localhost:3000/verifyEmail
 
-clientBookLoggerService:
+loggerService:
   url: http://${LOGGER_SERVICE_URL:-localhost:9002}
 
 feeChargerService:

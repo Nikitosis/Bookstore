@@ -12,7 +12,7 @@ public class MainConfig extends Configuration {
 
     private DataSourceFactory database;
 
-    private DependencyService clientBookLoggerService;
+    private DependencyService loggerService;
 
     private DependencyService feeChargerService;
 
@@ -36,12 +36,12 @@ public class MainConfig extends Configuration {
         this.database = database;
     }
 
-    public DependencyService getClientBookLoggerService() {
-        return clientBookLoggerService;
+    public DependencyService getLoggerService() {
+        return loggerService;
     }
 
-    public void setClientBookLoggerService(DependencyService clientBookLoggerService) {
-        this.clientBookLoggerService = clientBookLoggerService;
+    public void setLoggerService(DependencyService loggerService) {
+        this.loggerService = loggerService;
     }
 
     public DependencyService getFeeChargerService() {
