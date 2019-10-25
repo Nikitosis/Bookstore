@@ -107,7 +107,7 @@ public class BookService {
     }
 
     public StoredFile getStoredFile(Long bookId){
-        Book book=bookDao.findById(bookId);
+        Book book=findById(bookId);
         InputStream inputStream=awsStorageService.getFileInputStream(book.getFilePath());
         String fileName=book.getName()+"."+book.getFilePath().substring(book.getFilePath().lastIndexOf(".")+1);
         return new StoredFile(inputStream,fileName);

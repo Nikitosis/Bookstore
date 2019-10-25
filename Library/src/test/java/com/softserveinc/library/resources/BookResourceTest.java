@@ -23,6 +23,9 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
@@ -48,10 +51,11 @@ public class BookResourceTest {
     final Validator validator = Validators.newValidator();
     final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
     final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
-    final MainConfig configuration=factory.build(yaml);
 
     //Creating mocks
     private BookDao bookDao=mock(BookDao.class);
+    final MainConfig configuration=factory.build(yaml);
+    private Authentication authentication=mock(Authentication.class);
 
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
@@ -91,6 +95,11 @@ public class BookResourceTest {
         testFilePart=new FileDataBodyPart("file",new File("src/test/resources/testFile.pdf"));
         testImagePart=new FileDataBodyPart("image",new File("src/test/resources/testImage.png"));
         testBookPart=new FormDataBodyPart("bookInfo",testBook,MediaType.APPLICATION_JSON_TYPE);
+
+        //building security mocks
+        SecurityContext securityContext=mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
 
@@ -245,6 +254,7 @@ public class BookResourceTest {
         FormDataMultiPart multiPart=new FormDataMultiPart();
         multiPart
                 .bodyPart(testBookPart);
+        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus= resources.target("/books")
                 .register(MultiPartFeature.class)
@@ -261,7 +271,7 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testFilePart);
 
-        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(bookDao.findById(anyLong())).thenReturn(testBook);
         when(awsStorageService.isAllowedFileType(any())).thenReturn(true);
 
         Book responseBook=resources.target("/books")
@@ -285,8 +295,6 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testFilePart);
 
-        when(bookService.findById(anyLong())).thenReturn(null);
-
         Response.StatusType responseStatus=resources.target("/books")
                 .path(testBook.getId()+"/file")
                 .register(MultiPartFeature.class)
@@ -305,7 +313,7 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testFilePart);
 
-        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(bookDao.findById(anyLong())).thenReturn(testBook);
         when(awsStorageService.isAllowedFileType(any())).thenReturn(false);
 
         Response.StatusType responseStatus=resources.target("/books")
@@ -326,7 +334,7 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testImagePart);
 
-        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(bookDao.findById(anyLong())).thenReturn(testBook);
         when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
 
         Book responseBook=resources.target("/books")
@@ -350,7 +358,7 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testImagePart);
 
-        when(bookService.findById(anyLong())).thenReturn(null);
+        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/books")
                 .path(testBook.getId()+"/image")
@@ -370,7 +378,7 @@ public class BookResourceTest {
         multiPart
                 .bodyPart(testImagePart);
 
-        when(bookService.findById(anyLong())).thenReturn(testBook);
+        when(bookDao.findById(anyLong())).thenReturn(testBook);
 
         Response.StatusType responseStatus=resources.target("/books")
                 .path(testBook.getId()+"/image")

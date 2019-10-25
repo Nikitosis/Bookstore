@@ -11,6 +11,7 @@ import com.softserveinc.feecharger.dao.FeeChargerDao;
 import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
 import com.softserveinc.feecharger.services.FeeChargerService;
+import com.softserveinc.feecharger.services.RequestSenderService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,9 @@ public class FeeChargerServiceTest {
 
     @Mock
     private OktaService oktaService;
+
+    @Mock
+    private RequestSenderService requestSenderService;
 
     @InjectMocks
     private FeeChargerService feeChargerService;
@@ -92,6 +96,10 @@ public class FeeChargerServiceTest {
         DependencyService libraryService=mock(DependencyService.class);
         when(mainConfig.getLibraryService()).thenReturn(libraryService);
         when(libraryService.getUrl()).thenReturn("libraryServiceUrl");
+
+        DependencyService loggerService=mock(DependencyService.class);
+        when(mainConfig.getLoggerService()).thenReturn(loggerService);
+        when(loggerService.getUrl()).thenReturn("loggerServiceUrl");
 
         FeeChargeConfig feeChargeConfig=mock(FeeChargeConfig.class);
         when(mainConfig.getFeeChargeConfig()).thenReturn(feeChargeConfig);

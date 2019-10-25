@@ -1,5 +1,6 @@
 package com.softserveinc.library.resources;
 
+import com.amazonaws.util.Base64;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
@@ -433,7 +434,7 @@ public class UserResourceTest {
 
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(userDao.findById(testUser.getId())).thenReturn(testUser);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
         when(awsStorageService.getFileInputStream(eq(testBook.getFilePath()))).thenReturn(fileInputStream);
@@ -443,8 +444,10 @@ public class UserResourceTest {
                 .get()
                 .getEntity();
 
+        byte[] bytes = IOUtils.toByteArray(new FileInputStream(testFilePart.getFileEntity().getPath()));
+        byte[] encoded = Base64.encode(bytes);
         Assert.assertArrayEquals(
-                IOUtils.toByteArray(new FileInputStream(testFilePart.getFileEntity().getPath())),
+                encoded,
                 IOUtils.toByteArray(resposeInputStream)
         );
     }
@@ -466,8 +469,6 @@ public class UserResourceTest {
     public void getBookTest_userNotFound(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-        when(userDao.findById(testUser.getId())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -481,7 +482,6 @@ public class UserResourceTest {
     public void getBookTest_bookNotFound(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -495,7 +495,7 @@ public class UserResourceTest {
     public void getBookTest_bookNotTaken(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(userDao.findById(testUser.getId())).thenReturn(testUser);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
 
@@ -511,7 +511,7 @@ public class UserResourceTest {
     public void getBookTest_cannotLoadBook(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(userDao.findById(testUser.getId())).thenReturn(testUser);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
         when(awsStorageService.getFileInputStream(eq(testBook.getFilePath()))).thenReturn(null);
@@ -619,7 +619,7 @@ public class UserResourceTest {
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
 
 
 
@@ -668,9 +668,6 @@ public class UserResourceTest {
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        when(userDao.findById(testUser.getId())).thenReturn(null);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .put(Entity.json(""))
@@ -684,8 +681,6 @@ public class UserResourceTest {
     public void takeBookTest_bookNotFound(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-
-        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -702,7 +697,7 @@ public class UserResourceTest {
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
@@ -720,7 +715,7 @@ public class UserResourceTest {
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
         testUser.setMoney(new BigDecimal("0"));
         testBook.setPrice(new BigDecimal("10"));
@@ -741,7 +736,7 @@ public class UserResourceTest {
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(true);
 
         resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
@@ -771,9 +766,6 @@ public class UserResourceTest {
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
-        when(userDao.findById(anyLong())).thenReturn(null);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
-
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
                 .delete()
@@ -787,8 +779,6 @@ public class UserResourceTest {
     public void returnBookTest_bookNotFound(){
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
-
-        when(bookDao.findById(anyLong())).thenReturn(null);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())
                 .request()
@@ -805,7 +795,7 @@ public class UserResourceTest {
         when(userService.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
 
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
-        when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
+        when(bookDao.findByIdWithUser(eq(testBook.getId()),eq(testUser.getId()))).thenReturn(testBook);
         when(bookDao.isTakenByUser(eq(testUser.getId()),eq(testBook.getId()))).thenReturn(false);
 
         Response.StatusType responseStatus=resources.target("/users/"+ testUser.getId()+"/books/"+testBook.getId())

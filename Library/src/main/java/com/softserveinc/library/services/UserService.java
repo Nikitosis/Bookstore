@@ -58,7 +58,8 @@ public class UserService {
         //setting password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         //setting money
-        user.setMoney(new BigDecimal("0.00"));
+        if(user.getMoney()==null)
+            user.setMoney(new BigDecimal("0.00"));
 
         //verifying email
         if(!StringUtils.isNullOrEmpty(user.getEmail()))
@@ -86,7 +87,7 @@ public class UserService {
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
         user.setAvatarLink(url);
-        update(user);
+        userDao.update(user);
     }
 
     public void update(User user){

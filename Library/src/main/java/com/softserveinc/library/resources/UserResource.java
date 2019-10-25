@@ -153,10 +153,10 @@ public class UserResource {
             ResponseError error=new ResponseError().setCode(3).setMessage("User cannot be found");
             return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
+        userService.update(user);
 
         tryAddImageToUser(user,imageStream,imageDisposition);
 
-        userService.update(user);
         return Response.ok(userService.findById(user.getId())).build();
     }
 
@@ -197,7 +197,6 @@ public class UserResource {
 
     @GET
     @Path("/{userId}/books/{bookId}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getBook(@PathParam("userId") Long userId,
                              @PathParam("bookId") Long bookId){
         User principalUser= getAuthenticatedUser();
