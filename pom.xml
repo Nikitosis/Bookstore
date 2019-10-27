@@ -15,6 +15,7 @@
         <module>CrossApiObjects</module>
         <module>Authoriser</module>
         <module>MailSender</module>
+		<module>FeeCharger</module>
     </modules>
 
 
