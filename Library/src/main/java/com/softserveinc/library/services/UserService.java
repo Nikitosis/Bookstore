@@ -9,6 +9,7 @@ import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.dao.UserDao;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.library.models.Deposit;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,11 @@ public class UserService {
         }
 
         userDao.update(user);
+    }
+
+    public void depositMoney(User user, Deposit deposit){
+        user.setMoney(user.getMoney().add(deposit.getMoney()));
+        update(user);
     }
 
     public void delete(Long userId){

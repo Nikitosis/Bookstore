@@ -3,10 +3,12 @@ package com.softserveinc.library.resources;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.ResponseError;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.library.models.Deposit;
 import com.softserveinc.library.services.BookService;
 import com.softserveinc.library.services.UserService;
 import com.softserveinc.library.services.storage.StoredFile;
@@ -22,12 +24,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -158,6 +162,22 @@ public class UserResource {
         tryAddImageToUser(user,imageStream,imageDisposition);
 
         return Response.ok(userService.findById(user.getId())).build();
+    }
+
+    @PUT
+    @Path("/{userId}/money")
+    public Response depositMoney(@PathParam("userId") Long userId,
+                                 Deposit deposit) throws IOException {
+        User principalUser=getAuthenticatedUser();
+        if(principalUser.getId()!=userId){
+            log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
+            ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource");
+            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+        }
+
+        userService.depositMoney(principalUser,deposit);
+
+        return Response.ok(principalUser).build();
     }
 
     @DELETE
