@@ -52,9 +52,9 @@ public interface UserBookLogDao {
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(UserBookLog userBookLog);
 
-    @Select("SELECT count(*) FROM user_book_log WHERE book_id=#{bookId}")
+    @Select("SELECT count(*) FROM user_book_log WHERE book_id=#{bookId} AND log_action='TAKE'")
     Long getBookTakenAmount(@Param("bookId") Long bookId);
 
-    @Select("SELECT count(*) FROM user_book_log WHERE book_id=#{bookId}")
+    @Select("SELECT count(*) FROM user_book_log WHERE book_id=#{bookId} AND log_action='RETURN'")
     Long getBookReturnedAmount(@Param("bookId") Long bookId);
 }
