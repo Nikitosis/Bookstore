@@ -93,7 +93,7 @@ public class UserService {
 
     public void update(User user){
         User originalUser=userDao.findById(user.getId());
-        if(user.getPassword()!=null)
+        if(user.getPassword()!=null && !originalUser.getPassword().equals(user.getPassword()))
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         if(!Objects.equals(originalUser.getEmail(),user.getEmail()) && !StringUtils.isNullOrEmpty(user.getEmail())){

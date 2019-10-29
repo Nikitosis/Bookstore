@@ -17,7 +17,7 @@ public class Book {
     @Length(max = 255)
     private String name;
 
-    @Length(max=13)
+    @Length(max=17)
     private String isbn;
 
     @Length(max=255)
