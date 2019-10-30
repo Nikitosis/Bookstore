@@ -31,5 +31,6 @@
     <include file="db/2019-10-16-01-default-roles-default-admin.xml"/>
     <include file="db/2019-10-18-01-added-description-to-book.xml"/>
     <include file="db/2019-10-25-added-user-book-payment-log.xml"/>
+    <include file="db/2019-10-30-01-added-unique-email.xml"/>
 
 </databaseChangeLog>

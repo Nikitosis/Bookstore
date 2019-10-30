@@ -3,6 +3,7 @@ package com.softserveinc.library.resources;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
+import com.amazonaws.util.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -25,6 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
+import sun.plugin.util.UIUtil;
 
 
 import javax.ws.rs.*;
@@ -87,7 +89,7 @@ public class UserResource {
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         User user=userService.findById(userId);
@@ -125,6 +127,12 @@ public class UserResource {
             return Response.status(Response.Status.CONFLICT).entity(error).build();
         }
 
+        if(userService.findByEmail(user.getEmail())!=null){
+            log.warn("This email is already in use");
+            ResponseError error=new ResponseError().setCode(3).setMessage("Email already in use");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
         userService.save(user);
 
         tryAddImageToUser(user,imageStream,imageDisposition);
@@ -149,13 +157,20 @@ public class UserResource {
         if(principalUser.getId()!=user.getId()){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+user.getId());
             ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         if(userService.findById(user.getId())==null){
             log.warn("User cannot be found: "+user.getId());
             ResponseError error=new ResponseError().setCode(3).setMessage("User cannot be found");
             return Response.status(Response.Status.NOT_FOUND).entity(error).build();
+        }
+
+        User userByEmail=userService.findByEmail(user.getEmail());
+        if(userByEmail!=null && userByEmail.getId()!=user.getId()){
+            log.warn("This email is already in use");
+            ResponseError error=new ResponseError().setCode(4).setMessage("Email already in use");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
         userService.update(user);
 
@@ -172,7 +187,7 @@ public class UserResource {
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         userService.depositMoney(principalUser,deposit);
@@ -202,7 +217,7 @@ public class UserResource {
         if(!roleDao.findByUser(principalUser.getId()).stream().anyMatch(role -> role.getName().equals("ADMIN")) && principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         if(userService.findById(userId)==null){
@@ -224,7 +239,7 @@ public class UserResource {
         if(principalUser.getId()!=userId){
             log.warn("User is not authorised to access this resource. Principal id: "+principalUser.getId()+". Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         //if book or user cannot be found
@@ -278,7 +293,7 @@ public class UserResource {
         if(!isAuthorisedManageBooks(auth,userId)){
             log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(2).setMessage("User is not authorised to access this resource.");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         //if book or user cannot be found
@@ -315,7 +330,7 @@ public class UserResource {
         if(!isAuthorisedManageBooks(auth,userId)){
             log.warn("User is not authorised to access this resource. Resource's User id: "+userId);
             ResponseError error=new ResponseError().setCode(1).setMessage("User is not authorised to access this resource");
-            return Response.status(Response.Status.FORBIDDEN).entity(error).build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
         //if book or user cannot be found

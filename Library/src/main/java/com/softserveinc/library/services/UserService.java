@@ -55,6 +55,12 @@ public class UserService {
         return userDao.findById(userId);
     }
 
+    public User findByEmail(String email){
+        if(StringUtils.isNullOrEmpty(email))
+            return null;
+        return userDao.findByEmail(email);
+    }
+
     public Long save(User user){
         //setting password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
