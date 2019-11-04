@@ -25,7 +25,7 @@ public class MainConfig extends Configuration {
 
     private AwsConfig awsS3Config;
 
-    private KafkaConfig kafkaConfig;
+    private KafkaConfig kafkaMailConfig;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -99,11 +99,11 @@ public class MainConfig extends Configuration {
         this.mailSenderService = mailSenderService;
     }
 
-    public KafkaConfig getKafkaConfig() {
-        return kafkaConfig;
+    public KafkaConfig getKafkaMailConfig() {
+        return kafkaMailConfig;
     }
 
-    public void setKafkaConfig(KafkaConfig kafkaConfig) {
-        this.kafkaConfig = kafkaConfig;
+    public void setKafkaMailConfig(KafkaConfig kafkaMailConfig) {
+        this.kafkaMailConfig = kafkaMailConfig;
     }
 }
