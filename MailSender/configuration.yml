@@ -18,3 +18,8 @@ oktaOAuth:
   tokenPath: "https://dev-702765.okta.com/oauth2/default/v1/token"
   clientId: "0oa1j89ftf8jgPY1Q357"
   clientSecret: ${OKTA_MAILSENDER_SECRET}
+
+kafkaConfig:
+  brokerUrl: http://localhost:9092
+  schemaRegistryUrl: http://localhost:8081
+  topic: MailTopic
