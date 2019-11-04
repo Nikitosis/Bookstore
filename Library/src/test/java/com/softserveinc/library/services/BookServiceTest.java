@@ -4,6 +4,7 @@ import com.softserveinc.library.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class BookServiceTest {
     @Mock
     private MainConfig mainConfig;
     @Mock
-    private RequestSenderService requestSenderService;
+    private RequestSenderHttpService requestSenderHttpService;
     @Mock
     private AwsStorageService awsStorageService;
 
@@ -64,8 +65,8 @@ public class BookServiceTest {
 
         bookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
 
-        verify(requestSenderService).postUserBookLog(any());
-        verify(requestSenderService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
     }
 
@@ -74,7 +75,7 @@ public class BookServiceTest {
 
         bookService.returnBook(testUser.getId(),testBook.getId());
 
-        verify(requestSenderService).postUserBookLog(any());
+        verify(requestSenderHttpService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }

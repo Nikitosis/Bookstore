@@ -5,7 +5,6 @@ import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.services.OktaService;
 import com.softserveinc.cross_api_objects.mixins.MixinModule;
 import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
@@ -14,8 +13,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.cross_api_objects.models.Role;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.services.BookService;
-import com.softserveinc.library.services.RequestSenderService;
+import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.UserService;
+import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import io.dropwizard.configuration.ConfigurationException;
@@ -75,9 +75,10 @@ public class UserResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
 
-    private RequestSenderService requestSenderService=mock(RequestSenderService.class);
-    private UserService userService =new UserService(userDao,roleDao,awsStorageService,requestSenderService,passwordEncoder,configuration);
-    private BookService bookService=spy(new BookService(bookDao,configuration,requestSenderService,awsStorageService,userService));
+    private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
+    private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
+    private UserService userService =new UserService(userDao,roleDao,awsStorageService, requestSenderKafkaService,passwordEncoder,configuration);
+    private BookService bookService=spy(new BookService(bookDao,configuration, requestSenderHttpService,awsStorageService,userService));
 
     //Creating ResourceTestRule
     @Rule
@@ -231,7 +232,7 @@ public class UserResourceTest {
                 .put(Entity.entity(multiPart, MediaType.MULTIPART_FORM_DATA))
                 .getStatusInfo();
 
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
         verify(userDao,times(0)).update(any());
     }
 
@@ -403,7 +404,7 @@ public class UserResourceTest {
                 .getStatusInfo();
 
         verify(userDao,times(0)).update(any());
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test
@@ -462,7 +463,7 @@ public class UserResourceTest {
                 .get()
                 .getStatusInfo();
 
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test
@@ -578,7 +579,7 @@ public class UserResourceTest {
                 .get()
                 .getStatusInfo();
 
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test
@@ -629,8 +630,8 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(requestSenderService).postUserBookLog(any());
-        verify(requestSenderService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
@@ -659,7 +660,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
         verify(bookService,times(0)).takeBook(any(),any(),any());
     }
 
@@ -743,7 +744,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        verify(requestSenderService).postUserBookLog(any());
+        verify(requestSenderHttpService).postUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
@@ -758,7 +759,7 @@ public class UserResourceTest {
                 .getStatusInfo();
 
         verify(bookDao,times(0)).returnBook(eq(testUser.getId()),eq(testBook.getId()));
-        Assert.assertEquals(Response.Status.FORBIDDEN,responseStatus);
+        Assert.assertEquals(Response.Status.BAD_REQUEST,responseStatus);
     }
 
     @Test

@@ -9,6 +9,8 @@ import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
+import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
+import com.softserveinc.library.services.request_senders.RequestSenderService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,7 @@ public class BookService {
     private UserService userService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderService requestSenderService, AwsStorageService awsStorageService, UserService userService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService requestSenderService, AwsStorageService awsStorageService, UserService userService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
         this.requestSenderService = requestSenderService;

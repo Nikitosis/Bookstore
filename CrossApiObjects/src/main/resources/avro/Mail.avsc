@@ -1,0 +1,10 @@
+{
+  "type":"record",
+  "name":"Mail",
+  "namespace":"com.softserveinc.cross_api_objects.avro",
+  "fields":[
+    {"name":"receiverEmaill","type":"string"},
+    {"name":"subject","type":"string"},
+    {"name":"body","type":"string"}
+  ]
+}

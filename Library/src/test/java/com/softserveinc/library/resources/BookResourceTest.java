@@ -3,12 +3,11 @@ package com.softserveinc.library.resources;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.services.OktaService;
 import com.softserveinc.cross_api_objects.mixins.MixinModule;
 import com.softserveinc.library.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.library.services.BookService;
-import com.softserveinc.library.services.RequestSenderService;
+import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.UserService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
@@ -60,8 +59,8 @@ public class BookResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
     private UserService userService=mock(UserService.class);
-    private RequestSenderService requestSenderService=mock(RequestSenderService.class);
-    private BookService bookService=new BookService(bookDao,configuration,requestSenderService,awsStorageService,userService);
+    private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
+    private BookService bookService=new BookService(bookDao,configuration, requestSenderHttpService,awsStorageService,userService);
 
     //Creating ResourceTestRule
     @Rule

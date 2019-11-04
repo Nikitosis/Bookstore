@@ -10,6 +10,9 @@ import com.softserveinc.cross_api_objects.dao.UserDao;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.models.Deposit;
+import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
+import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
+import com.softserveinc.library.services.request_senders.RequestSenderService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public class UserService {
     private MainConfig mainConfig;
 
     @Autowired
-    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderService requestSenderService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
+    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderKafkaService requestSenderService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.awsStorageService = awsStorageService;

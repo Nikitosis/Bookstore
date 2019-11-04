@@ -1,9 +1,6 @@
 package com.softserveinc.library;
 
-import com.softserveinc.cross_api_objects.configuration.AwsConfig;
-import com.softserveinc.cross_api_objects.configuration.DependencyService;
-import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
-import com.softserveinc.cross_api_objects.configuration.SecurityConfig;
+import com.softserveinc.cross_api_objects.configuration.*;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
@@ -27,6 +24,8 @@ public class MainConfig extends Configuration {
     private SwaggerBundleConfiguration swagger;
 
     private AwsConfig awsS3Config;
+
+    private KafkaConfig kafkaConfig;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -98,5 +97,13 @@ public class MainConfig extends Configuration {
 
     public void setMailSenderService(DependencyService mailSenderService) {
         this.mailSenderService = mailSenderService;
+    }
+
+    public KafkaConfig getKafkaConfig() {
+        return kafkaConfig;
+    }
+
+    public void setKafkaConfig(KafkaConfig kafkaConfig) {
+        this.kafkaConfig = kafkaConfig;
     }
 }
