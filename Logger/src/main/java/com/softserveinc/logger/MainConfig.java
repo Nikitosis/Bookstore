@@ -1,5 +1,6 @@
 package com.softserveinc.logger;
 
+import com.softserveinc.cross_api_objects.configuration.KafkaConfig;
 import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
 import com.softserveinc.cross_api_objects.configuration.SecurityConfig;
 import io.dropwizard.Configuration;
@@ -15,6 +16,12 @@ public class MainConfig extends Configuration {
     private SecurityConfig security;
 
     private SwaggerBundleConfiguration swagger;
+
+    private KafkaConfig kafkaConfig;
+
+    private String kafkaUserBookPaymentLogTopic;
+
+    private String kafkaUserBookLogTopic;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -46,5 +53,29 @@ public class MainConfig extends Configuration {
 
     public void setSwagger(SwaggerBundleConfiguration swagger) {
         this.swagger = swagger;
+    }
+
+    public KafkaConfig getKafkaConfig() {
+        return kafkaConfig;
+    }
+
+    public void setKafkaConfig(KafkaConfig kafkaConfig) {
+        this.kafkaConfig = kafkaConfig;
+    }
+
+    public String getKafkaUserBookPaymentLogTopic() {
+        return kafkaUserBookPaymentLogTopic;
+    }
+
+    public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
+        this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
+    }
+
+    public String getKafkaUserBookLogTopic() {
+        return kafkaUserBookLogTopic;
+    }
+
+    public void setKafkaUserBookLogTopic(String kafkaUserBookLogTopic) {
+        this.kafkaUserBookLogTopic = kafkaUserBookLogTopic;
     }
 }
