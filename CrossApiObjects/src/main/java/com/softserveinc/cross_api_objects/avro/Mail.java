@@ -181,7 +181,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
     private java.lang.CharSequence body;
 
     /** Creates a new Builder */
-    private Builder() {
+    Builder() {
       super(SCHEMA$);
     }
 
