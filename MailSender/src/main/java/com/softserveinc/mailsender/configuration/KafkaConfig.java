@@ -28,7 +28,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,AvroMail> consumerFactory(){
+    public Map<String,Object> consumerConfig(){
         Map<String,Object> props=new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,mainConfig.getKafkaConfig().getBrokerUrl());
         props.put(ConsumerConfig.GROUP_ID_CONFIG,"MailConsumers");
@@ -36,8 +36,14 @@ public class KafkaConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put("schema.registry.url",mainConfig.getKafkaConfig().getSchemaRegistryUrl());
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
-        return new DefaultKafkaConsumerFactory<String, AvroMail>(props);
+        return props;
     }
+
+    @Bean
+    public ConsumerFactory<String,AvroMail> consumerFactory(){
+        return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
+    }
+
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String,AvroMail> kafkaListenerContainerFactory(){
