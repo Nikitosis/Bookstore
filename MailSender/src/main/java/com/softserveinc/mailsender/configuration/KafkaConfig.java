@@ -1,6 +1,5 @@
 package com.softserveinc.mailsender.configuration;
 
-import com.softserveinc.cross_api_objects.avro.Mail;
 import com.softserveinc.mailsender.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;

@@ -12,23 +12,23 @@ import org.apache.avro.message.SchemaStore;
 
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -3333914528369423521L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"UserBookLog\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"long\"},{\"name\":\"action\",\"type\":{\"type\":\"enum\",\"name\":\"Action\",\"symbols\":[\"TAKE\",\"RETURN\"]}}]}");
+public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = -5857796451892978746L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookLog\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"long\"},{\"name\":\"action\",\"type\":{\"type\":\"enum\",\"name\":\"AvroAction\",\"symbols\":[\"TAKE\",\"RETURN\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<UserBookLog> ENCODER =
-      new BinaryMessageEncoder<UserBookLog>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<AvroUserBookLog> ENCODER =
+      new BinaryMessageEncoder<AvroUserBookLog>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<UserBookLog> DECODER =
-      new BinaryMessageDecoder<UserBookLog>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<AvroUserBookLog> DECODER =
+      new BinaryMessageDecoder<AvroUserBookLog>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageDecoder instance used by this class.
    */
-  public static BinaryMessageDecoder<UserBookLog> getDecoder() {
+  public static BinaryMessageDecoder<AvroUserBookLog> getDecoder() {
     return DECODER;
   }
 
@@ -36,17 +36,17 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
    * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    */
-  public static BinaryMessageDecoder<UserBookLog> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<UserBookLog>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<AvroUserBookLog> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<AvroUserBookLog>(MODEL$, SCHEMA$, resolver);
   }
 
-  /** Serializes this UserBookLog to a ByteBuffer. */
+  /** Serializes this AvroUserBookLog to a ByteBuffer. */
   public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
     return ENCODER.encode(this);
   }
 
-  /** Deserializes a UserBookLog from a ByteBuffer. */
-  public static UserBookLog fromByteBuffer(
+  /** Deserializes a AvroUserBookLog from a ByteBuffer. */
+  public static AvroUserBookLog fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
@@ -55,14 +55,14 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
   @Deprecated public long userId;
   @Deprecated public long bookId;
   @Deprecated public long date;
-  @Deprecated public com.softserveinc.cross_api_objects.avro.Action action;
+  @Deprecated public com.softserveinc.cross_api_objects.avro.AvroAction action;
 
   /**
    * Default constructor.  Note that this does not initialize fields
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public UserBookLog() {}
+  public AvroUserBookLog() {}
 
   /**
    * All-args constructor.
@@ -72,7 +72,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
    * @param date The new value for date
    * @param action The new value for action
    */
-  public UserBookLog(java.lang.Long id, java.lang.Long userId, java.lang.Long bookId, java.lang.Long date, com.softserveinc.cross_api_objects.avro.Action action) {
+  public AvroUserBookLog(java.lang.Long id, java.lang.Long userId, java.lang.Long bookId, java.lang.Long date, com.softserveinc.cross_api_objects.avro.AvroAction action) {
     this.id = id;
     this.userId = userId;
     this.bookId = bookId;
@@ -101,7 +101,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
     case 1: userId = (java.lang.Long)value$; break;
     case 2: bookId = (java.lang.Long)value$; break;
     case 3: date = (java.lang.Long)value$; break;
-    case 4: action = (com.softserveinc.cross_api_objects.avro.Action)value$; break;
+    case 4: action = (com.softserveinc.cross_api_objects.avro.AvroAction)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -174,7 +174,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
    * Gets the value of the 'action' field.
    * @return The value of the 'action' field.
    */
-  public com.softserveinc.cross_api_objects.avro.Action getAction() {
+  public com.softserveinc.cross_api_objects.avro.AvroAction getAction() {
     return action;
   }
 
@@ -182,47 +182,47 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
    * Sets the value of the 'action' field.
    * @param value the value to set.
    */
-  public void setAction(com.softserveinc.cross_api_objects.avro.Action value) {
+  public void setAction(com.softserveinc.cross_api_objects.avro.AvroAction value) {
     this.action = value;
   }
 
   /**
-   * Creates a new UserBookLog RecordBuilder.
-   * @return A new UserBookLog RecordBuilder
+   * Creates a new AvroUserBookLog RecordBuilder.
+   * @return A new AvroUserBookLog RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.UserBookLog.Builder newBuilder() {
-    return new com.softserveinc.cross_api_objects.avro.UserBookLog.Builder();
+  public static com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder newBuilder() {
+    return new com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder();
   }
 
   /**
-   * Creates a new UserBookLog RecordBuilder by copying an existing Builder.
+   * Creates a new AvroUserBookLog RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new UserBookLog RecordBuilder
+   * @return A new AvroUserBookLog RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.UserBookLog.Builder newBuilder(com.softserveinc.cross_api_objects.avro.UserBookLog.Builder other) {
-    return new com.softserveinc.cross_api_objects.avro.UserBookLog.Builder(other);
+  public static com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder newBuilder(com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder other) {
+    return new com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder(other);
   }
 
   /**
-   * Creates a new UserBookLog RecordBuilder by copying an existing UserBookLog instance.
+   * Creates a new AvroUserBookLog RecordBuilder by copying an existing AvroUserBookLog instance.
    * @param other The existing instance to copy.
-   * @return A new UserBookLog RecordBuilder
+   * @return A new AvroUserBookLog RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.UserBookLog.Builder newBuilder(com.softserveinc.cross_api_objects.avro.UserBookLog other) {
-    return new com.softserveinc.cross_api_objects.avro.UserBookLog.Builder(other);
+  public static com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder newBuilder(com.softserveinc.cross_api_objects.avro.AvroUserBookLog other) {
+    return new com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder(other);
   }
 
   /**
-   * RecordBuilder for UserBookLog instances.
+   * RecordBuilder for AvroUserBookLog instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<UserBookLog>
-    implements org.apache.avro.data.RecordBuilder<UserBookLog> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<AvroUserBookLog>
+    implements org.apache.avro.data.RecordBuilder<AvroUserBookLog> {
 
     private long id;
     private long userId;
     private long bookId;
     private long date;
-    private com.softserveinc.cross_api_objects.avro.Action action;
+    private com.softserveinc.cross_api_objects.avro.AvroAction action;
 
     /** Creates a new Builder */
     Builder() {
@@ -233,7 +233,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.softserveinc.cross_api_objects.avro.UserBookLog.Builder other) {
+    private Builder(com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
@@ -258,10 +258,10 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
     }
 
     /**
-     * Creates a Builder by copying an existing UserBookLog instance
+     * Creates a Builder by copying an existing AvroUserBookLog instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.softserveinc.cross_api_objects.avro.UserBookLog other) {
+    private Builder(com.softserveinc.cross_api_objects.avro.AvroUserBookLog other) {
             super(SCHEMA$);
       if (isValidValue(fields()[0], other.id)) {
         this.id = data().deepCopy(fields()[0].schema(), other.id);
@@ -298,7 +298,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'id'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder setId(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setId(long value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -318,7 +318,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'id' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder clearId() {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearId() {
       fieldSetFlags()[0] = false;
       return this;
     }
@@ -336,7 +336,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'userId'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder setUserId(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setUserId(long value) {
       validate(fields()[1], value);
       this.userId = value;
       fieldSetFlags()[1] = true;
@@ -356,7 +356,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'userId' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder clearUserId() {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearUserId() {
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -374,7 +374,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'bookId'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder setBookId(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setBookId(long value) {
       validate(fields()[2], value);
       this.bookId = value;
       fieldSetFlags()[2] = true;
@@ -394,7 +394,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'bookId' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder clearBookId() {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearBookId() {
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -412,7 +412,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'date'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder setDate(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setDate(long value) {
       validate(fields()[3], value);
       this.date = value;
       fieldSetFlags()[3] = true;
@@ -432,7 +432,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'date' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder clearDate() {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearDate() {
       fieldSetFlags()[3] = false;
       return this;
     }
@@ -441,7 +441,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Gets the value of the 'action' field.
       * @return The value.
       */
-    public com.softserveinc.cross_api_objects.avro.Action getAction() {
+    public com.softserveinc.cross_api_objects.avro.AvroAction getAction() {
       return action;
     }
 
@@ -450,7 +450,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * @param value The value of 'action'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder setAction(com.softserveinc.cross_api_objects.avro.Action value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setAction(com.softserveinc.cross_api_objects.avro.AvroAction value) {
       validate(fields()[4], value);
       this.action = value;
       fieldSetFlags()[4] = true;
@@ -470,7 +470,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
       * Clears the value of the 'action' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.UserBookLog.Builder clearAction() {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearAction() {
       action = null;
       fieldSetFlags()[4] = false;
       return this;
@@ -478,14 +478,14 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
 
     @Override
     @SuppressWarnings("unchecked")
-    public UserBookLog build() {
+    public AvroUserBookLog build() {
       try {
-        UserBookLog record = new UserBookLog();
+        AvroUserBookLog record = new AvroUserBookLog();
         record.id = fieldSetFlags()[0] ? this.id : (java.lang.Long) defaultValue(fields()[0]);
         record.userId = fieldSetFlags()[1] ? this.userId : (java.lang.Long) defaultValue(fields()[1]);
         record.bookId = fieldSetFlags()[2] ? this.bookId : (java.lang.Long) defaultValue(fields()[2]);
         record.date = fieldSetFlags()[3] ? this.date : (java.lang.Long) defaultValue(fields()[3]);
-        record.action = fieldSetFlags()[4] ? this.action : (com.softserveinc.cross_api_objects.avro.Action) defaultValue(fields()[4]);
+        record.action = fieldSetFlags()[4] ? this.action : (com.softserveinc.cross_api_objects.avro.AvroAction) defaultValue(fields()[4]);
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
@@ -494,8 +494,8 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<UserBookLog>
-    WRITER$ = (org.apache.avro.io.DatumWriter<UserBookLog>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<AvroUserBookLog>
+    WRITER$ = (org.apache.avro.io.DatumWriter<AvroUserBookLog>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -503,8 +503,8 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<UserBookLog>
-    READER$ = (org.apache.avro.io.DatumReader<UserBookLog>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<AvroUserBookLog>
+    READER$ = (org.apache.avro.io.DatumReader<AvroUserBookLog>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {

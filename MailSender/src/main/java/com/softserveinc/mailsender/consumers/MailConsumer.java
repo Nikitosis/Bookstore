@@ -1,6 +1,5 @@
 package com.softserveinc.mailsender.consumers;
 
-import com.softserveinc.cross_api_objects.avro.Mail;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;

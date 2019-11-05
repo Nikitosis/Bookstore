@@ -12,23 +12,23 @@ import org.apache.avro.message.SchemaStore;
 
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
-public class Mail extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -2095831788931459775L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"Mail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}");
+public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
+  private static final long serialVersionUID = 941018234998598676L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroMail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
 
-  private static final BinaryMessageEncoder<Mail> ENCODER =
-      new BinaryMessageEncoder<Mail>(MODEL$, SCHEMA$);
+  private static final BinaryMessageEncoder<AvroMail> ENCODER =
+      new BinaryMessageEncoder<AvroMail>(MODEL$, SCHEMA$);
 
-  private static final BinaryMessageDecoder<Mail> DECODER =
-      new BinaryMessageDecoder<Mail>(MODEL$, SCHEMA$);
+  private static final BinaryMessageDecoder<AvroMail> DECODER =
+      new BinaryMessageDecoder<AvroMail>(MODEL$, SCHEMA$);
 
   /**
    * Return the BinaryMessageDecoder instance used by this class.
    */
-  public static BinaryMessageDecoder<Mail> getDecoder() {
+  public static BinaryMessageDecoder<AvroMail> getDecoder() {
     return DECODER;
   }
 
@@ -36,17 +36,17 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
    * Create a new BinaryMessageDecoder instance for this class that uses the specified {@link SchemaStore}.
    * @param resolver a {@link SchemaStore} used to find schemas by fingerprint
    */
-  public static BinaryMessageDecoder<Mail> createDecoder(SchemaStore resolver) {
-    return new BinaryMessageDecoder<Mail>(MODEL$, SCHEMA$, resolver);
+  public static BinaryMessageDecoder<AvroMail> createDecoder(SchemaStore resolver) {
+    return new BinaryMessageDecoder<AvroMail>(MODEL$, SCHEMA$, resolver);
   }
 
-  /** Serializes this Mail to a ByteBuffer. */
+  /** Serializes this AvroMail to a ByteBuffer. */
   public java.nio.ByteBuffer toByteBuffer() throws java.io.IOException {
     return ENCODER.encode(this);
   }
 
-  /** Deserializes a Mail from a ByteBuffer. */
-  public static Mail fromByteBuffer(
+  /** Deserializes a AvroMail from a ByteBuffer. */
+  public static AvroMail fromByteBuffer(
       java.nio.ByteBuffer b) throws java.io.IOException {
     return DECODER.decode(b);
   }
@@ -60,7 +60,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
    * to their default values from the schema.  If that is desired then
    * one should use <code>newBuilder()</code>.
    */
-  public Mail() {}
+  public AvroMail() {}
 
   /**
    * All-args constructor.
@@ -68,7 +68,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
    * @param subject The new value for subject
    * @param body The new value for body
    */
-  public Mail(java.lang.CharSequence receiverEmaill, java.lang.CharSequence subject, java.lang.CharSequence body) {
+  public AvroMail(java.lang.CharSequence receiverEmaill, java.lang.CharSequence subject, java.lang.CharSequence body) {
     this.receiverEmaill = receiverEmaill;
     this.subject = subject;
     this.body = body;
@@ -145,36 +145,36 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
   }
 
   /**
-   * Creates a new Mail RecordBuilder.
-   * @return A new Mail RecordBuilder
+   * Creates a new AvroMail RecordBuilder.
+   * @return A new AvroMail RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.Mail.Builder newBuilder() {
-    return new com.softserveinc.cross_api_objects.avro.Mail.Builder();
+  public static com.softserveinc.cross_api_objects.avro.AvroMail.Builder newBuilder() {
+    return new com.softserveinc.cross_api_objects.avro.AvroMail.Builder();
   }
 
   /**
-   * Creates a new Mail RecordBuilder by copying an existing Builder.
+   * Creates a new AvroMail RecordBuilder by copying an existing Builder.
    * @param other The existing builder to copy.
-   * @return A new Mail RecordBuilder
+   * @return A new AvroMail RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.Mail.Builder newBuilder(com.softserveinc.cross_api_objects.avro.Mail.Builder other) {
-    return new com.softserveinc.cross_api_objects.avro.Mail.Builder(other);
+  public static com.softserveinc.cross_api_objects.avro.AvroMail.Builder newBuilder(com.softserveinc.cross_api_objects.avro.AvroMail.Builder other) {
+    return new com.softserveinc.cross_api_objects.avro.AvroMail.Builder(other);
   }
 
   /**
-   * Creates a new Mail RecordBuilder by copying an existing Mail instance.
+   * Creates a new AvroMail RecordBuilder by copying an existing AvroMail instance.
    * @param other The existing instance to copy.
-   * @return A new Mail RecordBuilder
+   * @return A new AvroMail RecordBuilder
    */
-  public static com.softserveinc.cross_api_objects.avro.Mail.Builder newBuilder(com.softserveinc.cross_api_objects.avro.Mail other) {
-    return new com.softserveinc.cross_api_objects.avro.Mail.Builder(other);
+  public static com.softserveinc.cross_api_objects.avro.AvroMail.Builder newBuilder(com.softserveinc.cross_api_objects.avro.AvroMail other) {
+    return new com.softserveinc.cross_api_objects.avro.AvroMail.Builder(other);
   }
 
   /**
-   * RecordBuilder for Mail instances.
+   * RecordBuilder for AvroMail instances.
    */
-  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<Mail>
-    implements org.apache.avro.data.RecordBuilder<Mail> {
+  public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<AvroMail>
+    implements org.apache.avro.data.RecordBuilder<AvroMail> {
 
     private java.lang.CharSequence receiverEmaill;
     private java.lang.CharSequence subject;
@@ -189,7 +189,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
      * Creates a Builder by copying an existing Builder.
      * @param other The existing Builder to copy.
      */
-    private Builder(com.softserveinc.cross_api_objects.avro.Mail.Builder other) {
+    private Builder(com.softserveinc.cross_api_objects.avro.AvroMail.Builder other) {
       super(other);
       if (isValidValue(fields()[0], other.receiverEmaill)) {
         this.receiverEmaill = data().deepCopy(fields()[0].schema(), other.receiverEmaill);
@@ -206,10 +206,10 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
     }
 
     /**
-     * Creates a Builder by copying an existing Mail instance
+     * Creates a Builder by copying an existing AvroMail instance
      * @param other The existing instance to copy.
      */
-    private Builder(com.softserveinc.cross_api_objects.avro.Mail other) {
+    private Builder(com.softserveinc.cross_api_objects.avro.AvroMail other) {
             super(SCHEMA$);
       if (isValidValue(fields()[0], other.receiverEmaill)) {
         this.receiverEmaill = data().deepCopy(fields()[0].schema(), other.receiverEmaill);
@@ -238,7 +238,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'receiverEmaill'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder setReceiverEmaill(java.lang.CharSequence value) {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder setReceiverEmaill(java.lang.CharSequence value) {
       validate(fields()[0], value);
       this.receiverEmaill = value;
       fieldSetFlags()[0] = true;
@@ -258,7 +258,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'receiverEmaill' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder clearReceiverEmaill() {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder clearReceiverEmaill() {
       receiverEmaill = null;
       fieldSetFlags()[0] = false;
       return this;
@@ -277,7 +277,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'subject'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder setSubject(java.lang.CharSequence value) {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder setSubject(java.lang.CharSequence value) {
       validate(fields()[1], value);
       this.subject = value;
       fieldSetFlags()[1] = true;
@@ -297,7 +297,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'subject' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder clearSubject() {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder clearSubject() {
       subject = null;
       fieldSetFlags()[1] = false;
       return this;
@@ -316,7 +316,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * @param value The value of 'body'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder setBody(java.lang.CharSequence value) {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder setBody(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.body = value;
       fieldSetFlags()[2] = true;
@@ -336,7 +336,7 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
       * Clears the value of the 'body' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.Mail.Builder clearBody() {
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder clearBody() {
       body = null;
       fieldSetFlags()[2] = false;
       return this;
@@ -344,9 +344,9 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
 
     @Override
     @SuppressWarnings("unchecked")
-    public Mail build() {
+    public AvroMail build() {
       try {
-        Mail record = new Mail();
+        AvroMail record = new AvroMail();
         record.receiverEmaill = fieldSetFlags()[0] ? this.receiverEmaill : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.subject = fieldSetFlags()[1] ? this.subject : (java.lang.CharSequence) defaultValue(fields()[1]);
         record.body = fieldSetFlags()[2] ? this.body : (java.lang.CharSequence) defaultValue(fields()[2]);
@@ -358,8 +358,8 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumWriter<Mail>
-    WRITER$ = (org.apache.avro.io.DatumWriter<Mail>)MODEL$.createDatumWriter(SCHEMA$);
+  private static final org.apache.avro.io.DatumWriter<AvroMail>
+    WRITER$ = (org.apache.avro.io.DatumWriter<AvroMail>)MODEL$.createDatumWriter(SCHEMA$);
 
   @Override public void writeExternal(java.io.ObjectOutput out)
     throws java.io.IOException {
@@ -367,8 +367,8 @@ public class Mail extends org.apache.avro.specific.SpecificRecordBase implements
   }
 
   @SuppressWarnings("unchecked")
-  private static final org.apache.avro.io.DatumReader<Mail>
-    READER$ = (org.apache.avro.io.DatumReader<Mail>)MODEL$.createDatumReader(SCHEMA$);
+  private static final org.apache.avro.io.DatumReader<AvroMail>
+    READER$ = (org.apache.avro.io.DatumReader<AvroMail>)MODEL$.createDatumReader(SCHEMA$);
 
   @Override public void readExternal(java.io.ObjectInput in)
     throws java.io.IOException {

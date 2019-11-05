@@ -1,6 +1,6 @@
 {
   "type":"record",
-  "name":"Mail",
+  "name":"AvroMail",
   "namespace":"com.softserveinc.cross_api_objects.avro",
   "fields":[
     {"name":"receiverEmaill","type":"string"},
