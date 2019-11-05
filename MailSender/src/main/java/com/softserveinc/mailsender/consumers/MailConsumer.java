@@ -1,5 +1,7 @@
 package com.softserveinc.mailsender.consumers;
 
+import com.softserveinc.cross_api_objects.avro.AvroConverter;
+import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,8 @@ public class MailConsumer {
     }
 
     @KafkaListener(topics = "MailTopic")
-    public void consumeMail(ConsumerRecord<String,Mail> record){
-        mailSenderService.sendMail(buildMail(record.value()));
+    public void consumeMail(ConsumerRecord<String,AvroMail> record){
+        mailSenderService.sendMail(AvroConverter.buildMail(record.value()));
     }
 
-    private com.softserveinc.cross_api_objects.models.Mail buildMail(Mail avroMail){
-        com.softserveinc.cross_api_objects.models.Mail mail=new com.softserveinc.cross_api_objects.models.Mail();
-        mail.setBody(avroMail.getBody().toString());
-        mail.setReceiverEmail(avroMail.getReceiverEmaill().toString());
-        mail.setSubject(avroMail.getSubject().toString());
-        return mail;
-    }
 }

@@ -1,5 +1,6 @@
 package com.softserveinc.mailsender.configuration;
 
+import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.mailsender.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -27,7 +28,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,Mail> consumerFactory(){
+    public ConsumerFactory<String,AvroMail> consumerFactory(){
         Map<String,Object> props=new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,mainConfig.getKafkaConfig().getBrokerUrl());
         props.put(ConsumerConfig.GROUP_ID_CONFIG,"MailConsumers");
@@ -35,15 +36,14 @@ public class KafkaConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put("schema.registry.url",mainConfig.getKafkaConfig().getSchemaRegistryUrl());
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, "true");
-        return new DefaultKafkaConsumerFactory<String, Mail>(props);
+        return new DefaultKafkaConsumerFactory<String, AvroMail>(props);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,Mail> kafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String,Mail> factory=new ConcurrentKafkaListenerContainerFactory<String,Mail>();
+    public ConcurrentKafkaListenerContainerFactory<String,AvroMail> kafkaListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<String,AvroMail> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroMail>();
         factory.setConsumerFactory(consumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
-
 }
