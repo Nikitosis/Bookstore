@@ -13,6 +13,8 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
+    private String kafkaMailTopic;
+
     public MailConfig getMailConfig() {
         return mailConfig;
     }
@@ -35,5 +37,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaConfig(KafkaConfig kafkaConfig) {
         this.kafkaConfig = kafkaConfig;
+    }
+
+    public String getKafkaMailTopic() {
+        return kafkaMailTopic;
+    }
+
+    public void setKafkaMailTopic(String kafkaMailTopic) {
+        this.kafkaMailTopic = kafkaMailTopic;
     }
 }

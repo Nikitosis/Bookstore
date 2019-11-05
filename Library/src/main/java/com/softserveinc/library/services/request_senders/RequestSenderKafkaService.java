@@ -34,7 +34,7 @@ public class RequestSenderKafkaService implements RequestSenderService {
         com.softserveinc.cross_api_objects.avro.Mail avroMail=buildAvroMail(mail);
 
         kafkaProducer.send(new ProducerRecord<String, com.softserveinc.cross_api_objects.avro.Mail>(
-                mainConfig.getKafkaMailConfig().getTopic(),
+                mainConfig.getKafkaMailTopic(),
                 avroMail
         ));
     }

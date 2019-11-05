@@ -27,6 +27,8 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaMailConfig;
 
+    private String kafkaMailTopic;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -105,5 +107,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaMailConfig(KafkaConfig kafkaMailConfig) {
         this.kafkaMailConfig = kafkaMailConfig;
+    }
+
+    public String getKafkaMailTopic() {
+        return kafkaMailTopic;
+    }
+
+    public void setKafkaMailTopic(String kafkaMailTopic) {
+        this.kafkaMailTopic = kafkaMailTopic;
     }
 }

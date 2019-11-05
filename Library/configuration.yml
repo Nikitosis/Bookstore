@@ -60,4 +60,5 @@ awsS3Config:
 kafkaMailConfig:
   brokerUrl: http://localhost:9092
   schemaRegistryUrl: http://localhost:8081
-  topic: MailTopic
+
+kafkaMailTopic: MailTopic
