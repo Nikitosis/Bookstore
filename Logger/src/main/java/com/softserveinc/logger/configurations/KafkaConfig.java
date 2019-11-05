@@ -65,4 +65,14 @@ public class KafkaConfig {
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
+
+    @Bean
+    public String userBookLogTopic(){
+        return mainConfig.getKafkaUserBookLogTopic();
+    }
+
+    @Bean
+    public String userBookPaymentLogTopic(){
+        return mainConfig.getKafkaUserBookPaymentLogTopic();
+    }
 }

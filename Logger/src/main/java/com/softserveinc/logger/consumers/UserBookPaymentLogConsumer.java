@@ -17,7 +17,7 @@ public class UserBookPaymentLogConsumer {
         this.userBookPaymentLogDao = userBookPaymentLogDao;
     }
 
-    @KafkaListener(topics = "UserBookPaymentLogTopic",containerFactory = "userBookPaymentLogListener")
+    @KafkaListener(topics = "#{@userBookPaymentLogTopic}",containerFactory = "userBookPaymentLogListener")
     public void consumeUserBookPaymentLogTopic(ConsumerRecord<String,AvroUserBookPaymentLog> record){
         userBookPaymentLogDao.save(AvroConverter.buildUserBookPaymentLog(record.value()));
     }

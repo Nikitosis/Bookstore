@@ -17,7 +17,7 @@ public class MailConsumer {
         this.mailSenderService = mailSenderService;
     }
 
-    @KafkaListener(topics = "MailTopic",containerFactory = "consumerFactory")
+    @KafkaListener(topics = "#{@mailTopic}",containerFactory = "kafkaListenerContainerFactory")
     public void consumeMail(ConsumerRecord<String,AvroMail> record){
         mailSenderService.sendMail(AvroConverter.buildMail(record.value()));
     }

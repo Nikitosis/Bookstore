@@ -3,6 +3,7 @@ package com.softserveinc.logger.consumers;
 import com.softserveinc.cross_api_objects.avro.AvroConverter;
 import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
+import com.softserveinc.logger.MainConfig;
 import com.softserveinc.logger.dao.UserBookLogDao;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -28,7 +29,7 @@ public class UserBookLogConsumer {
         this.userBookLogDao = userBookLogDao;
     }
 
-    @KafkaListener(topics = "UserBookLogTopic",containerFactory = "userBookLogListener")
+    @KafkaListener(topics = "#{@userBookLogTopic}",containerFactory = "userBookLogListener")
     public void consumeUserBookLog(ConsumerRecord<String,AvroUserBookLog> record){
         userBookLogDao.save(AvroConverter.buildUserBookLog(record.value()));
     }

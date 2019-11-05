@@ -52,4 +52,9 @@ public class KafkaConfig {
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
+
+    @Bean
+    public String mailTopic(){
+        return mainConfig.getKafkaMailTopic();
+    }
 }
