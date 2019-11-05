@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("requestSenderKafkaService")
-public class RequestSenderKafkaService implements RequestSenderService {
+public class RequestSenderKafkaService implements MailSenderService {
     private MainConfig mainConfig;
     private Producer<String, com.softserveinc.cross_api_objects.avro.Mail> kafkaProducer;
 
@@ -20,17 +20,7 @@ public class RequestSenderKafkaService implements RequestSenderService {
     }
 
     @Override
-    public void postUserBookLog(UserBookLog userBookLog) {
-
-    }
-
-    @Override
-    public void postChargeBookFee(Long userId, Long bookId) {
-
-    }
-
-    @Override
-    public void sendEmailVerification(Mail mail) {
+    public void sendEmail(Mail mail) {
         com.softserveinc.cross_api_objects.avro.Mail avroMail=buildAvroMail(mail);
 
         kafkaProducer.send(new ProducerRecord<String, com.softserveinc.cross_api_objects.avro.Mail>(

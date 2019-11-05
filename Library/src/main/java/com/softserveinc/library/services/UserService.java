@@ -10,9 +10,8 @@ import com.softserveinc.cross_api_objects.dao.UserDao;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.models.Deposit;
-import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
+import com.softserveinc.library.services.request_senders.MailSenderService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
-import com.softserveinc.library.services.request_senders.RequestSenderService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +29,17 @@ public class UserService {
     private UserDao userDao;
     private RoleDao roleDao;
     private AwsStorageService awsStorageService;
-    private RequestSenderService requestSenderService;
+    private MailSenderService mailSenderService;
 
     private PasswordEncoder passwordEncoder;
 
     private MainConfig mainConfig;
 
-    @Autowired
-    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderKafkaService requestSenderService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
+    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderKafkaService mailSenderService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.awsStorageService = awsStorageService;
-        this.requestSenderService = requestSenderService;
+        this.mailSenderService = mailSenderService;
         this.passwordEncoder = passwordEncoder;
         this.mainConfig = mainConfig;
     }
@@ -126,7 +124,7 @@ public class UserService {
         String verificationUrl=mainConfig.getVerificationUrl()+"/"+verificationToken;
         Mail mail=new Mail(user.getEmail(),"Please,verify your email",
                 "Email verification is required. Follow this link to verify your email: "+verificationUrl);
-        requestSenderService.sendEmailVerification(mail);
+        mailSenderService.sendEmail(mail);
 
         user.setVerificationToken(verificationToken);
         user.setEmailVerified(false);

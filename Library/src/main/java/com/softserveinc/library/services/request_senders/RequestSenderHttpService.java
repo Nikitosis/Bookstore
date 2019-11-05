@@ -16,7 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 @Service("requestSenderHttpService")
-public class RequestSenderHttpService implements RequestSenderService {
+public class RequestSenderHttpService implements FeeSenderService,LogSenderService {
     private OktaService oktaService;
     private MainConfig mainConfig;
     private static final Logger log= LoggerFactory.getLogger(RequestSenderHttpService.class);
@@ -27,6 +27,7 @@ public class RequestSenderHttpService implements RequestSenderService {
         this.mainConfig = mainConfig;
     }
 
+    @Override
     public void postUserBookLog(UserBookLog userBookLog){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
 
@@ -41,6 +42,7 @@ public class RequestSenderHttpService implements RequestSenderService {
                 .post(Entity.entity(userBookLog, MediaType.APPLICATION_JSON));
     }
 
+    @Override
     public void postChargeBookFee(Long userId,Long bookId){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
 
@@ -53,19 +55,5 @@ public class RequestSenderHttpService implements RequestSenderService {
                 .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
                 .async()
                 .put(Entity.json(""));
-    }
-
-    public void sendEmailVerification(Mail mail){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-
-        log.info("Sending request to Mail service. Verify email.");
-
-        Client client=ClientBuilder.newClient();
-        client.target(mainConfig.getMailSenderService().getUrl())
-                .path("/mail")
-                .request(MediaType.APPLICATION_JSON)
-                .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
-                .async()
-                .post(Entity.entity(mail,MediaType.APPLICATION_JSON));
     }
 }

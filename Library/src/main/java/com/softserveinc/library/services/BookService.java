@@ -9,8 +9,9 @@ import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
+import com.softserveinc.library.services.request_senders.FeeSenderService;
+import com.softserveinc.library.services.request_senders.LogSenderService;
 import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
-import com.softserveinc.library.services.request_senders.RequestSenderService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,17 @@ public class BookService {
 
     private BookDao bookDao;
     private MainConfig mainConfig;
-    private RequestSenderService requestSenderService;
+    private FeeSenderService feeSenderService;
+    private LogSenderService logSenderService;
     private AwsStorageService awsStorageService;
     private UserService userService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService requestSenderService, AwsStorageService awsStorageService, UserService userService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService feeSenderService, RequestSenderHttpService logSenderService, AwsStorageService awsStorageService, UserService userService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
-        this.requestSenderService = requestSenderService;
+        this.feeSenderService = feeSenderService;
+        this.logSenderService = logSenderService;
         this.awsStorageService = awsStorageService;
         this.userService = userService;
     }
@@ -123,7 +126,7 @@ public class BookService {
         bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
 
         try {
-            requestSenderService.postChargeBookFee(userId, bookId);
+            feeSenderService.postChargeBookFee(userId, bookId);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -135,7 +138,7 @@ public class BookService {
         userBookLog.setDate(LocalDateTime.now());
 
         try {
-            requestSenderService.postUserBookLog(userBookLog);
+            logSenderService.postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -154,7 +157,7 @@ public class BookService {
         System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
 
         try {
-           requestSenderService.postUserBookLog(userBookLog);
+           logSenderService.postUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
