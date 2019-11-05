@@ -1,31 +1,24 @@
 package com.softserveinc.feecharger.services;
 
+import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
-import com.softserveinc.cross_api_objects.services.OktaService;
 import com.softserveinc.feecharger.dao.BookDao;
 import com.softserveinc.feecharger.dao.FeeChargerDao;
 import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
+import com.softserveinc.feecharger.services.request_senders.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Future;
 
 @Service
 public class FeeChargerService {
@@ -35,16 +28,20 @@ public class FeeChargerService {
     private FeeChargerDao feeChargerDao;
     private UserDao userDao;
     private MainConfig mainConfig;
-    private RequestSenderService requestSenderService;
+    private BookSenderService bookSenderService;
+    private LogSenderService logSenderService;
+    private MailSenderService mailSenderService;
     private Timer timer;
 
     @Autowired
-    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderService requestSenderService) {
+    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderHttpService logSenderService, RequestSenderKafkaService mailSenderService) {
         this.bookDao = bookDao;
         this.feeChargerDao = feeChargerDao;
         this.userDao = userDao;
         this.mainConfig = mainConfig;
-        this.requestSenderService = requestSenderService;
+        this.bookSenderService = bookSenderService;
+        this.logSenderService = logSenderService;
+        this.mailSenderService = mailSenderService;
     }
 
     //starting timer that will extend expired book rents every n minutes
@@ -83,8 +80,14 @@ public class FeeChargerService {
         }
         else{
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
-            requestSenderService.sendReturnBookNotification(rent);
-            requestSenderService.sendReturnBook(rent);
+            mailSenderService.sendEmail(createReturnMailNotification(
+                    userDao.findById(rent.getUserId()),
+                    bookDao.findById(rent.getBookId())
+            ));
+            bookSenderService.sendReturnBook(
+                    userDao.findById(rent.getUserId()),
+                    bookDao.findById(rent.getBookId())
+            );
         }
     }
 
@@ -106,11 +109,21 @@ public class FeeChargerService {
     private void extendBookRent(UserBook rent){
         Book book=bookDao.findById(rent.getBookId());
         feeChargerDao.chargeFee(rent.getUserId(),book.getPrice());
-        requestSenderService.sendPaymentLog(rent,book.getPrice(),LocalDateTime.now());
+        logSenderService.sendPaymentLog(rent,book.getPrice(),LocalDateTime.now());
 
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
 
+    }
+
+    private Mail createReturnMailNotification(User user,Book book){
+        return new Mail(
+                user.getEmail(),
+                "Cannot extend book's rent",
+                "Unfortunately, you don't have enough money on your account to extend " +
+                        book.getName() + " rent. Book cost is " + book.getPrice() +
+                        " but your current balance is " + user.getMoney()
+        );
     }
 }

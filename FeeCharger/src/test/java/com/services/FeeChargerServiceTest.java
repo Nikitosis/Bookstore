@@ -11,7 +11,7 @@ import com.softserveinc.feecharger.dao.FeeChargerDao;
 import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
 import com.softserveinc.feecharger.services.FeeChargerService;
-import com.softserveinc.feecharger.services.RequestSenderService;
+import com.softserveinc.feecharger.services.request_senders.RequestSenderHttpService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +21,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.*;
@@ -44,7 +43,7 @@ public class FeeChargerServiceTest {
     private OktaService oktaService;
 
     @Mock
-    private RequestSenderService requestSenderService;
+    private RequestSenderHttpService requestSenderHttpService;
 
     @InjectMocks
     private FeeChargerService feeChargerService;

@@ -1,4 +1,4 @@
-package com.softserveinc.feecharger.services;
+package com.softserveinc.feecharger.services.request_senders;
 
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -17,46 +17,26 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.concurrent.Future;
 
-@Service
-public class RequestSenderService {
-
-    private UserDao userDao;
-    private BookDao bookDao;
+@Service("requestSenderHttpService")
+public class RequestSenderHttpService implements BookSenderService,LogSenderService,MailSenderService{
     private OktaService oktaService;
     private MainConfig mainConfig;
 
     @Autowired
-    public RequestSenderService(UserDao userDao, BookDao bookDao, OktaService oktaService, MainConfig mainConfig) {
-        this.userDao = userDao;
-        this.bookDao = bookDao;
+    public RequestSenderHttpService(OktaService oktaService, MainConfig mainConfig) {
         this.oktaService = oktaService;
         this.mainConfig = mainConfig;
     }
 
-    public Future<Response> sendReturnBookNotification(UserBook rent){
-        User curUser=userDao.findById(rent.getUserId());
-        Book book=bookDao.findById(rent.getBookId());
-
-        if(curUser==null || curUser.getEmail()==null || !curUser.getEmailVerified())
-            return null;
-
+    @Override
+    public void sendEmail(Mail mail){
         OAuth2AccessToken accessToken = oktaService.getOktaToken();
         Client client = ClientBuilder.newClient();
 
-        Mail mail = new Mail(
-                curUser.getEmail(),
-                "Cannot extend book's rent",
-                "Unfortunately, you don't have enough money on your account to extend " +
-                        book.getName() + " rent. Book cost is " + book.getPrice() +
-                        " but your current balance is " + curUser.getMoney()
-        );
-
-        return client.target(mainConfig.getMailSenderService().getUrl())
+        client.target(mainConfig.getMailSenderService().getUrl())
                 .path("/mail")
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken.getValue())
@@ -64,19 +44,19 @@ public class RequestSenderService {
                 .post(Entity.entity(mail, MediaType.APPLICATION_JSON));
     }
 
-    public Future<Response> sendReturnBook(UserBook rent){
+    public void sendReturnBook(User user,Book book){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
         Client client= ClientBuilder.newClient();
 
-        return client.target(mainConfig.getLibraryService().getUrl())
-                .path("/users/"+rent.getUserId()+"/books/"+rent.getBookId())
+        client.target(mainConfig.getLibraryService().getUrl())
+                .path("/users/"+user.getId()+"/books/"+book.getId())
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+accessToken.getValue())
                 .async()
                 .delete();
     }
 
-    public Future<Response> sendPaymentLog(UserBook rent, BigDecimal payment, LocalDateTime dateTime){
+    public void sendPaymentLog(UserBook rent, BigDecimal payment, LocalDateTime dateTime){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
         Client client=ClientBuilder.newClient();
 
@@ -86,7 +66,7 @@ public class RequestSenderService {
         userBookPaymentLog.setPayment(payment);
         userBookPaymentLog.setDate(dateTime);
 
-        return client.target(mainConfig.getLoggerService().getUrl())
+        client.target(mainConfig.getLoggerService().getUrl())
                 .path("/payments")
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+accessToken.getValue())

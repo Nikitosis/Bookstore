@@ -2,6 +2,7 @@ package com.softserveinc.feecharger;
 
 import com.softserveinc.cross_api_objects.configuration.DependencyService;
 import com.softserveinc.cross_api_objects.configuration.FeeChargeConfig;
+import com.softserveinc.cross_api_objects.configuration.KafkaConfig;
 import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -19,6 +20,10 @@ public class MainConfig extends Configuration {
     private FeeChargeConfig feeChargeConfig;
 
     private OktaOAuthConfig oktaOAuth;
+
+    private KafkaConfig kafkaConfig;
+
+    private String kafkaMailTopic;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -66,5 +71,21 @@ public class MainConfig extends Configuration {
 
     public void setLoggerService(DependencyService loggerService) {
         this.loggerService = loggerService;
+    }
+
+    public KafkaConfig getKafkaConfig() {
+        return kafkaConfig;
+    }
+
+    public void setKafkaConfig(KafkaConfig kafkaConfig) {
+        this.kafkaConfig = kafkaConfig;
+    }
+
+    public String getKafkaMailTopic() {
+        return kafkaMailTopic;
+    }
+
+    public void setKafkaMailTopic(String kafkaMailTopic) {
+        this.kafkaMailTopic = kafkaMailTopic;
     }
 }
