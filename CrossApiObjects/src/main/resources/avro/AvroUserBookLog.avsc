@@ -3,7 +3,7 @@
   "name":"AvroUserBookLog",
   "namespace":"com.softserveinc.cross_api_objects.avro",
   "fields":[
-    {"name":"id","type":"long"},
+    {"name":"id","type":["null","long"]},
     {"name":"userId","type":"long"},
     {"name":"bookId","type":"long"},
     {"name":"date","type":"long"},

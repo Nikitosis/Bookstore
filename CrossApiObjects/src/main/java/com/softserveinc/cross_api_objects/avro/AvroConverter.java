@@ -12,11 +12,11 @@ import java.time.ZoneOffset;
 
 public class AvroConverter {
     public static final AvroMail buildAvroMail(Mail mail){
-        return new AvroMail.Builder()
-                .setBody(mail.getBody())
-                .setReceiverEmaill(mail.getReceiverEmail())
-                .setSubject(mail.getSubject())
-                .build();
+        return new AvroMail(
+                mail.getReceiverEmail(),
+                mail.getSubject(),
+                mail.getBody()
+        );
     }
     public static final Mail buildMail(AvroMail avroMail){
         Mail mail=new Mail();
@@ -27,22 +27,22 @@ public class AvroConverter {
     }
 
     public static final AvroUserBookLog buildAvroUserBookLog(UserBookLog userBookLog){
-        return new AvroUserBookLog.Builder()
-                .setId(userBookLog.getId())
-                .setAction(AvroAction.valueOf(userBookLog.getAction().toString()))
-                .setBookId(userBookLog.getBookId())
-                .setUserId(userBookLog.getUserId())
-                .setDate(userBookLog.getDate().toInstant(ZoneOffset.UTC).toEpochMilli())
-                .build();
-    }
-
-    public static final UserBookLog buildUserBookLog(AvroUserBookLog userBookLog){
-        return new com.softserveinc.cross_api_objects.api.UserBookLog(
+        return new AvroUserBookLog(
                 userBookLog.getId(),
                 userBookLog.getUserId(),
                 userBookLog.getBookId(),
-                Instant.ofEpochMilli(userBookLog.getDate()).atZone(ZoneId.systemDefault()).toLocalDateTime(),
-                com.softserveinc.cross_api_objects.api.Action.valueOf(userBookLog.getAction().toString())
+                userBookLog.getDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
+                AvroAction.valueOf(userBookLog.getAction().toString())
+        );
+    }
+
+    public static final UserBookLog buildUserBookLog(AvroUserBookLog avroUserBookLog){
+        return new UserBookLog(
+                avroUserBookLog.getId(),
+                avroUserBookLog.getUserId(),
+                avroUserBookLog.getBookId(),
+                Instant.ofEpochMilli(avroUserBookLog.getDate()).atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                Action.valueOf(avroUserBookLog.getAction().toString())
         );
     }
 }

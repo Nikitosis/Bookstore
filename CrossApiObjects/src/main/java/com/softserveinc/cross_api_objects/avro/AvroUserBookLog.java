@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -5857796451892978746L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookLog\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"long\"},{\"name\":\"action\",\"type\":{\"type\":\"enum\",\"name\":\"AvroAction\",\"symbols\":[\"TAKE\",\"RETURN\"]}}]}");
+  private static final long serialVersionUID = -3141041885009716647L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookLog\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"id\",\"type\":[\"null\",\"long\"]},{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"long\"},{\"name\":\"action\",\"type\":{\"type\":\"enum\",\"name\":\"AvroAction\",\"symbols\":[\"TAKE\",\"RETURN\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -51,7 +51,7 @@ public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase
     return DECODER.decode(b);
   }
 
-  @Deprecated public long id;
+  @Deprecated public java.lang.Long id;
   @Deprecated public long userId;
   @Deprecated public long bookId;
   @Deprecated public long date;
@@ -218,14 +218,14 @@ public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase
   public static class Builder extends org.apache.avro.specific.SpecificRecordBuilderBase<AvroUserBookLog>
     implements org.apache.avro.data.RecordBuilder<AvroUserBookLog> {
 
-    private long id;
+    private java.lang.Long id;
     private long userId;
     private long bookId;
     private long date;
     private com.softserveinc.cross_api_objects.avro.AvroAction action;
 
     /** Creates a new Builder */
-    Builder() {
+    private Builder() {
       super(SCHEMA$);
     }
 
@@ -298,7 +298,7 @@ public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase
       * @param value The value of 'id'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setId(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder setId(java.lang.Long value) {
       validate(fields()[0], value);
       this.id = value;
       fieldSetFlags()[0] = true;
@@ -319,6 +319,7 @@ public class AvroUserBookLog extends org.apache.avro.specific.SpecificRecordBase
       * @return This builder.
       */
     public com.softserveinc.cross_api_objects.avro.AvroUserBookLog.Builder clearId() {
+      id = null;
       fieldSetFlags()[0] = false;
       return this;
     }
