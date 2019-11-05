@@ -12,6 +12,7 @@ import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.library.services.request_senders.FeeSenderService;
 import com.softserveinc.library.services.request_senders.LogSenderService;
 import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
+import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class BookService {
     private UserService userService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService feeSenderService, RequestSenderHttpService logSenderService, AwsStorageService awsStorageService, UserService userService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService feeSenderService, RequestSenderKafkaService logSenderService, AwsStorageService awsStorageService, UserService userService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
         this.feeSenderService = feeSenderService;

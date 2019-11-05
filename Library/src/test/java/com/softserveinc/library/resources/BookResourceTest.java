@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.library.services.BookService;
 import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.UserService;
+import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.library.services.storage.AwsStorageService;
 import com.softserveinc.library.services.storage.StoredFile;
 import io.dropwizard.configuration.ConfigurationException;
@@ -60,7 +61,8 @@ public class BookResourceTest {
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
     private UserService userService=mock(UserService.class);
     private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
-    private BookService bookService=new BookService(bookDao,configuration, requestSenderHttpService,requestSenderHttpService,awsStorageService,userService);
+    private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
+    private BookService bookService=new BookService(bookDao,configuration, requestSenderHttpService,requestSenderKafkaService,awsStorageService,userService);
 
     //Creating ResourceTestRule
     @Rule

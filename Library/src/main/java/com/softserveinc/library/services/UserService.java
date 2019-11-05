@@ -30,7 +30,6 @@ public class UserService {
     private RoleDao roleDao;
     private AwsStorageService awsStorageService;
     private MailSenderService mailSenderService;
-
     private PasswordEncoder passwordEncoder;
 
     private MainConfig mainConfig;

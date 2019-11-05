@@ -62,3 +62,4 @@ kafkaConfig:
   schemaRegistryUrl: http://localhost:8081
 
 kafkaMailTopic: MailTopic
+kafkaUserBookLogTopic: UserBookLogTopic

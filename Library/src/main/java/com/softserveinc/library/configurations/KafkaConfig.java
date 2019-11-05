@@ -1,6 +1,7 @@
 package com.softserveinc.library.configurations;
 
 import com.softserveinc.cross_api_objects.avro.AvroMail;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
 import com.softserveinc.library.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -38,5 +39,10 @@ public class KafkaConfig {
     @Bean
     public Producer<String,AvroMail> kafkaMailProducer(){
         return new KafkaProducer<String,AvroMail>(producerConfigs());
+    }
+
+    @Bean
+    public Producer<String,AvroUserBookLog> kafkaBookLogProducer(){
+        return new KafkaProducer<String, AvroUserBookLog>(producerConfigs());
     }
 }
