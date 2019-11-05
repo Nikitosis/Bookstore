@@ -16,18 +16,13 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service("requestSenderKafkaService")
-public class RequestSenderKafkaService implements MailSenderService, LogSenderService{
+public class RequestSenderKafkaService implements MailSenderService{
     private MainConfig mainConfig;
     private Producer<String,Mail> mailProducer;
 
     public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, Mail> mailProducer) {
         this.mainConfig = mainConfig;
         this.mailProducer = mailProducer;
-    }
-
-    @Override
-    public void sendPaymentLog(UserBook rent, BigDecimal payment, LocalDateTime dateTime) {
-
     }
 
     @Override

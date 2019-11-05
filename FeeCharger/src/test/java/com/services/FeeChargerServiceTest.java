@@ -11,7 +11,7 @@ import com.softserveinc.feecharger.dao.FeeChargerDao;
 import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
 import com.softserveinc.feecharger.services.FeeChargerService;
-import com.softserveinc.feecharger.services.request_senders.RequestSenderHttpService;
+import com.softserveinc.feecharger.services.request_senders.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +44,9 @@ public class FeeChargerServiceTest {
 
     @Mock
     private RequestSenderHttpService requestSenderHttpService;
+
+    @Mock
+    private RequestSenderKafkaService requestSenderKafkaService;
 
     @InjectMocks
     private FeeChargerService feeChargerService;
@@ -81,29 +84,24 @@ public class FeeChargerServiceTest {
         testRent.setUserId(testUser.getId());
     }
 
-    @Before
-    public void defaultMocks(){
-        OAuth2AccessToken accessToken=mock(OAuth2AccessToken.class);
-        when(oktaService.getOktaToken()).thenReturn(accessToken);
-        when(accessToken.getValue()).thenReturn("TokenValue");
-
-
-        DependencyService mailSenderService=mock(DependencyService.class);
-        when(mainConfig.getMailSenderService()).thenReturn(mailSenderService);
-        when(mailSenderService.getUrl()).thenReturn("mailSenderUrl");
-
-        DependencyService libraryService=mock(DependencyService.class);
-        when(mainConfig.getLibraryService()).thenReturn(libraryService);
-        when(libraryService.getUrl()).thenReturn("libraryServiceUrl");
-
-        DependencyService loggerService=mock(DependencyService.class);
-        when(mainConfig.getLoggerService()).thenReturn(loggerService);
-        when(loggerService.getUrl()).thenReturn("loggerServiceUrl");
-
-        FeeChargeConfig feeChargeConfig=mock(FeeChargeConfig.class);
-        when(mainConfig.getFeeChargeConfig()).thenReturn(feeChargeConfig);
-        when(feeChargeConfig.getRentPeriod()).thenReturn(10000000L);
-    }
+//    @Before
+//    public void defaultMocks(){
+//        DependencyService mailSenderService=mock(DependencyService.class);
+//        when(mainConfig.getMailSenderService()).thenReturn(mailSenderService);
+//        when(mailSenderService.getUrl()).thenReturn("mailSenderUrl");
+//
+//        DependencyService libraryService=mock(DependencyService.class);
+//        when(mainConfig.getLibraryService()).thenReturn(libraryService);
+//        when(libraryService.getUrl()).thenReturn("libraryServiceUrl");
+//
+//        DependencyService loggerService=mock(DependencyService.class);
+//        when(mainConfig.getLoggerService()).thenReturn(loggerService);
+//        when(loggerService.getUrl()).thenReturn("loggerServiceUrl");
+//
+//        FeeChargeConfig feeChargeConfig=mock(FeeChargeConfig.class);
+//        when(mainConfig.getFeeChargeConfig()).thenReturn(feeChargeConfig);
+//        when(feeChargeConfig.getRentPeriod()).thenReturn(10000000L);
+//    }
 
     @Test
     public void tryExtendRentTest_rentIsValid(){
@@ -130,6 +128,10 @@ public class FeeChargerServiceTest {
 
     @Test
     public void tryExtendRentTest_extendBook(){
+        FeeChargeConfig feeChargeConfig=mock(FeeChargeConfig.class);
+        when(mainConfig.getFeeChargeConfig()).thenReturn(feeChargeConfig);
+        when(feeChargeConfig.getRentPeriod()).thenReturn(10000000L);
+
         when(userDao.findById(eq(testUser.getId()))).thenReturn(testUser);
         when(bookDao.findById(eq(testBook.getId()))).thenReturn(testBook);
 
