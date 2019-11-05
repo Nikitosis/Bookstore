@@ -2,6 +2,7 @@ package com.softserveinc.feecharger.configuration;
 
 import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.feecharger.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -42,7 +43,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public Producer<String,AvroUserBookLog> kafkaUserBookLogProducer(){
-        return new KafkaProducer<String, AvroUserBookLog>(producerConfigs());
+    public Producer<String,AvroUserBookPaymentLog> kafkaUserBookLogProducer(){
+        return new KafkaProducer<String, AvroUserBookPaymentLog>(producerConfigs());
     }
 }

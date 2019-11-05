@@ -1,5 +1,6 @@
 package com.softserveinc.feecharger.services;
 
+import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
@@ -34,7 +36,7 @@ public class FeeChargerService {
     private Timer timer;
 
     @Autowired
-    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderHttpService logSenderService, RequestSenderKafkaService mailSenderService) {
+    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderKafkaService logSenderService, RequestSenderKafkaService mailSenderService) {
         this.bookDao = bookDao;
         this.feeChargerDao = feeChargerDao;
         this.userDao = userDao;
@@ -109,7 +111,9 @@ public class FeeChargerService {
     private void extendBookRent(UserBook rent){
         Book book=bookDao.findById(rent.getBookId());
         feeChargerDao.chargeFee(rent.getUserId(),book.getPrice());
-        logSenderService.sendPaymentLog(rent,book.getPrice(),LocalDateTime.now());
+
+        UserBookPaymentLog userBookPaymentLog=createUserBookPaymentLog(rent,book.getPrice(),LocalDateTime.now());
+        logSenderService.sendPaymentLog(userBookPaymentLog);
 
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
@@ -125,5 +129,14 @@ public class FeeChargerService {
                         book.getName() + " rent. Book cost is " + book.getPrice() +
                         " but your current balance is " + user.getMoney()
         );
+    }
+
+    private UserBookPaymentLog createUserBookPaymentLog(UserBook rent, BigDecimal price,LocalDateTime dateTime){
+        UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
+        userBookPaymentLog.setBookId(rent.getBookId());
+        userBookPaymentLog.setUserId(rent.getUserId());
+        userBookPaymentLog.setPayment(price);
+        userBookPaymentLog.setDate(LocalDateTime.now());
+        return userBookPaymentLog;
     }
 }

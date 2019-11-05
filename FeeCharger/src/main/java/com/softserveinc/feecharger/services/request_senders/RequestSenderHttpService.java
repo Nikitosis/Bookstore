@@ -56,15 +56,10 @@ public class RequestSenderHttpService implements BookSenderService,LogSenderServ
                 .delete();
     }
 
-    public void sendPaymentLog(UserBook rent, BigDecimal payment, LocalDateTime dateTime){
+    @Override
+    public void sendPaymentLog(UserBookPaymentLog userBookPaymentLog){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
         Client client=ClientBuilder.newClient();
-
-        UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
-        userBookPaymentLog.setBookId(rent.getBookId());
-        userBookPaymentLog.setUserId(rent.getUserId());
-        userBookPaymentLog.setPayment(payment);
-        userBookPaymentLog.setDate(dateTime);
 
         client.target(mainConfig.getLoggerService().getUrl())
                 .path("/payments")

@@ -42,4 +42,4 @@ kafkaConfig:
 
 kafkaMailTopic: MailTopic
 
-kafkaUserBookLogTopic: UserBookLogTopic
+kafkaUserBookPaymentLogTopic: UserBookPaymentLogTopic
