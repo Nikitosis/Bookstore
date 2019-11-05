@@ -1,6 +1,7 @@
 package com.softserveinc.library.services.request_senders;
 
 import com.softserveinc.cross_api_objects.api.UserBookLog;
+import com.softserveinc.cross_api_objects.avro.AvroConverter;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.library.MainConfig;
 import org.apache.kafka.clients.producer.Producer;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("requestSenderKafkaService")
-public class RequestSenderKafkaService implements MailSenderService {
+public class RequestSenderKafkaService implements MailSenderService,LogSenderService {
     private MainConfig mainConfig;
     private Producer<String, com.softserveinc.cross_api_objects.avro.Mail> kafkaProducer;
 
@@ -20,22 +21,17 @@ public class RequestSenderKafkaService implements MailSenderService {
     }
 
     @Override
+    public void sendUserBookLog(UserBookLog userBookLog) {
+
+    }
+
+    @Override
     public void sendEmail(Mail mail) {
-        com.softserveinc.cross_api_objects.avro.Mail avroMail=buildAvroMail(mail);
 
         kafkaProducer.send(new ProducerRecord<String, com.softserveinc.cross_api_objects.avro.Mail>(
                 mainConfig.getKafkaMailTopic(),
-                avroMail
+                AvroConverter.buildAvroMail(mail)
         ));
     }
-
-    private com.softserveinc.cross_api_objects.avro.Mail buildAvroMail(Mail mail){
-        com.softserveinc.cross_api_objects.avro.Mail avroMail=new com.softserveinc.cross_api_objects.avro.Mail();
-        avroMail.setBody(mail.getBody());
-        avroMail.setReceiverEmaill(mail.getReceiverEmail());
-        avroMail.setSubject(mail.getSubject());
-        return avroMail;
-    }
-
 
 }

@@ -28,7 +28,7 @@ public class RequestSenderHttpService implements FeeSenderService,LogSenderServi
     }
 
     @Override
-    public void postUserBookLog(UserBookLog userBookLog){
+    public void sendUserBookLog(UserBookLog userBookLog){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
 
         log.info("Sending request to Logger service. Sending logs.");

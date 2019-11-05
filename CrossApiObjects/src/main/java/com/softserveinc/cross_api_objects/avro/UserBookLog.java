@@ -225,7 +225,7 @@ public class UserBookLog extends org.apache.avro.specific.SpecificRecordBase imp
     private com.softserveinc.cross_api_objects.avro.Action action;
 
     /** Creates a new Builder */
-    private Builder() {
+    Builder() {
       super(SCHEMA$);
     }
 

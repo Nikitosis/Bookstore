@@ -1,5 +1,6 @@
 package com.softserveinc.feecharger.services.request_senders;
 
+import com.softserveinc.cross_api_objects.avro.AvroConverter;
 import com.softserveinc.cross_api_objects.avro.Mail;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.User;
@@ -29,15 +30,8 @@ public class RequestSenderKafkaService implements MailSenderService{
     public void sendEmail(com.softserveinc.cross_api_objects.models.Mail mail) {
        mailProducer.send(new ProducerRecord<String,Mail>(
                mainConfig.getKafkaMailTopic(),
-               buildAvroMail(mail)
+               AvroConverter.buildAvroMail(mail)
        ));
     }
 
-    private Mail buildAvroMail(com.softserveinc.cross_api_objects.models.Mail mail){
-        Mail avroMail=new Mail();
-        avroMail.setSubject(mail.getSubject());
-        avroMail.setReceiverEmaill(mail.getReceiverEmail());
-        avroMail.setBody(mail.getBody());
-        return avroMail;
-    }
 }

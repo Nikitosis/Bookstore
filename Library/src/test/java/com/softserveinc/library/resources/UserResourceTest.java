@@ -630,7 +630,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).sendUserBookLog(any());
         verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
         Assert.assertEquals(Response.Status.OK,responseStatus);
@@ -744,7 +744,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).sendUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 

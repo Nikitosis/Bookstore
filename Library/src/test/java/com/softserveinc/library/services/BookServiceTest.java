@@ -65,7 +65,7 @@ public class BookServiceTest {
 
         bookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
 
-        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).sendUserBookLog(any());
         verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
     }
@@ -75,7 +75,7 @@ public class BookServiceTest {
 
         bookService.returnBook(testUser.getId(),testBook.getId());
 
-        verify(requestSenderHttpService).postUserBookLog(any());
+        verify(requestSenderHttpService).sendUserBookLog(any());
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }

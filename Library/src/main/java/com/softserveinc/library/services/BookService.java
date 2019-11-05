@@ -138,7 +138,7 @@ public class BookService {
         userBookLog.setDate(LocalDateTime.now());
 
         try {
-            logSenderService.postUserBookLog(userBookLog);
+            logSenderService.sendUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -157,7 +157,7 @@ public class BookService {
         System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
 
         try {
-           logSenderService.postUserBookLog(userBookLog);
+           logSenderService.sendUserBookLog(userBookLog);
         }
         catch(Exception e){
             e.printStackTrace();
