@@ -25,7 +25,7 @@ public class MainConfig extends Configuration {
 
     private AwsConfig awsS3Config;
 
-    private KafkaConfig kafkaMailConfig;
+    private KafkaConfig kafkaConfig;
 
     private String kafkaMailTopic;
 
@@ -101,12 +101,12 @@ public class MainConfig extends Configuration {
         this.mailSenderService = mailSenderService;
     }
 
-    public KafkaConfig getKafkaMailConfig() {
-        return kafkaMailConfig;
+    public KafkaConfig getKafkaConfig() {
+        return kafkaConfig;
     }
 
-    public void setKafkaMailConfig(KafkaConfig kafkaMailConfig) {
-        this.kafkaMailConfig = kafkaMailConfig;
+    public void setKafkaConfig(KafkaConfig kafkaConfig) {
+        this.kafkaConfig = kafkaConfig;
     }
 
     public String getKafkaMailTopic() {
