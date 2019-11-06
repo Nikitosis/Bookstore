@@ -16,7 +16,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 @Service("requestSenderHttpService")
-public class RequestSenderHttpService implements FeeSenderService,LogSenderService {
+public class RequestSenderHttpService implements FeeSenderService,LogSenderService,MailSenderService {
     private OktaService oktaService;
     private MainConfig mainConfig;
     private static final Logger log= LoggerFactory.getLogger(RequestSenderHttpService.class);
@@ -56,4 +56,20 @@ public class RequestSenderHttpService implements FeeSenderService,LogSenderServi
                 .async()
                 .put(Entity.json(""));
     }
+
+    @Override
+    public void sendEmail(Mail mail) {
+        OAuth2AccessToken accessToken=oktaService.getOktaToken();
+
+        log.info("Sending request to Mail service. Verify email.");
+
+        Client client=ClientBuilder.newClient();
+        client.target(mainConfig.getMailSenderService().getUrl())
+                .path("/mail")
+                .request(MediaType.APPLICATION_JSON)
+                .header(mainConfig.getSecurity().getTokenHeader(),mainConfig.getSecurity().getTokenPrefix()+accessToken.getValue())
+                .async()
+                .post(Entity.entity(mail,MediaType.APPLICATION_JSON));
+    }
+
 }
