@@ -2,7 +2,7 @@ package com.softserveinc.cross_api_objects.configuration;
 
 import java.util.List;
 
-public class AwsConfig {
+public class AwsS3Config {
 
     private String accessKey;
     private String secretKey;

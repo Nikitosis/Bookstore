@@ -12,9 +12,8 @@ import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.models.Deposit;
 import com.softserveinc.library.services.request_senders.MailSenderService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
-import com.softserveinc.library.services.storage.AwsStorageService;
-import com.softserveinc.library.services.storage.StoredFile;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
+import com.softserveinc.cross_api_objects.services.storage.StoredFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

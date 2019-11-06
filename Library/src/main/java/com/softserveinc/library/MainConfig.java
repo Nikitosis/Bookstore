@@ -23,7 +23,7 @@ public class MainConfig extends Configuration {
 
     private SwaggerBundleConfiguration swagger;
 
-    private AwsConfig awsS3Config;
+    private AwsS3Config awsS3Config;
 
     private KafkaConfig kafkaConfig;
 
@@ -79,11 +79,11 @@ public class MainConfig extends Configuration {
         this.swagger = swagger;
     }
 
-    public AwsConfig getAwsS3Config() {
+    public AwsS3Config getAwsS3Config() {
         return awsS3Config;
     }
 
-    public void setAwsS3Config(AwsConfig awsS3Config) {
+    public void setAwsS3Config(AwsS3Config awsS3Config) {
         this.awsS3Config = awsS3Config;
     }
 

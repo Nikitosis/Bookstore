@@ -1,4 +1,4 @@
-package com.softserveinc.library.services.storage;
+package com.softserveinc.cross_api_objects.services.storage;
 
 import java.io.InputStream;
 

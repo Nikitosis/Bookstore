@@ -5,7 +5,7 @@ import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
-import com.softserveinc.library.services.storage.AwsStorageService;
+import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
