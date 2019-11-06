@@ -16,6 +16,7 @@
         <module>Authoriser</module>
         <module>MailSender</module>
 		<module>FeeCharger</module>
+        <module>LambdaFunctions</module>
     </modules>
 
 

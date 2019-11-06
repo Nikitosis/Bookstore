@@ -1,9 +1,6 @@
 package com.softserveinc.feecharger;
 
-import com.softserveinc.cross_api_objects.configuration.DependencyService;
-import com.softserveinc.cross_api_objects.configuration.FeeChargeConfig;
-import com.softserveinc.cross_api_objects.configuration.KafkaConfig;
-import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
+import com.softserveinc.cross_api_objects.configuration.*;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
@@ -26,6 +23,10 @@ public class MainConfig extends Configuration {
     private String kafkaMailTopic;
 
     private String kafkaUserBookPaymentLogTopic;
+
+    private AwsS3Config awsS3Config;
+
+    private String invoiceLambdaGeneratorUrl;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -97,5 +98,21 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
         this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
+    }
+
+    public AwsS3Config getAwsS3Config() {
+        return awsS3Config;
+    }
+
+    public void setAwsS3Config(AwsS3Config awsS3Config) {
+        this.awsS3Config = awsS3Config;
+    }
+
+    public String getInvoiceLambdaGeneratorUrl() {
+        return invoiceLambdaGeneratorUrl;
+    }
+
+    public void setInvoiceLambdaGeneratorUrl(String invoiceLambdaGeneratorUrl) {
+        this.invoiceLambdaGeneratorUrl = invoiceLambdaGeneratorUrl;
     }
 }

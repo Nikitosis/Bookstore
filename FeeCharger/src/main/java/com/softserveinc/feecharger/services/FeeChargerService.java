@@ -33,10 +33,11 @@ public class FeeChargerService {
     private BookSenderService bookSenderService;
     private LogSenderService logSenderService;
     private MailSenderService mailSenderService;
+    private InvoiceService invoiceService;
     private Timer timer;
 
     @Autowired
-    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderKafkaService logSenderService, RequestSenderKafkaService mailSenderService) {
+    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderKafkaService logSenderService, RequestSenderKafkaService mailSenderService,InvoiceService invoiceService) {
         this.bookDao = bookDao;
         this.feeChargerDao = feeChargerDao;
         this.userDao = userDao;
@@ -44,6 +45,7 @@ public class FeeChargerService {
         this.bookSenderService = bookSenderService;
         this.logSenderService = logSenderService;
         this.mailSenderService = mailSenderService;
+        this.invoiceService=invoiceService;
     }
 
     //starting timer that will extend expired book rents every n minutes
@@ -119,6 +121,12 @@ public class FeeChargerService {
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
 
+        String fileUrl=invoiceService.createInvoiceFile(
+                userDao.findById(rent.getUserId()),
+                bookDao.findById(rent.getBookId()),
+                book.getPrice()
+        );
+        System.out.println(fileUrl);
     }
 
     private Mail createReturnMailNotification(User user,Book book){
