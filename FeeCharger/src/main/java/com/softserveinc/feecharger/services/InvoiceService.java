@@ -3,6 +3,7 @@ package com.softserveinc.feecharger.services;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.Base64;
 import com.softserveinc.cross_api_objects.models.Book;
+import com.softserveinc.cross_api_objects.models.InvoiceData;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
 import com.softserveinc.cross_api_objects.services.storage.StoredFile;
@@ -16,10 +17,8 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 
 @Service
@@ -41,7 +40,8 @@ public class InvoiceService {
 
         StoredFile storedFile=new StoredFile();
         storedFile.setFileName("Invoice.pdf");
-        storedFile.setInputStream(new ByteArrayInputStream(getPdfBytes()));
+        InvoiceData invoiceData=buildInvoiceData(user,book,price);
+        storedFile.setInputStream(new ByteArrayInputStream(getPdfBytes(invoiceData)));
 
         String fileUrl=null;
         try {
@@ -54,12 +54,21 @@ public class InvoiceService {
         return fileUrl;
     }
 
-    private byte[] getPdfBytes(){
+    private InvoiceData buildInvoiceData(User user,Book book,BigDecimal price){
+        InvoiceData invoiceData=new InvoiceData();
+        invoiceData.setBookName(book.getName());
+        invoiceData.setUserName(user.getfName());
+        invoiceData.setUserSurname(user.getlName());
+        invoiceData.setPayment(price.toString());
+        return invoiceData;
+    }
+
+    private byte[] getPdfBytes(InvoiceData invoiceData){
         Client client = ClientBuilder.newClient();
 
         String response=client.target("https://qerhbbqfd2.execute-api.us-east-2.amazonaws.com/default/InvoicePDFGenerator")
                 .request(MediaType.APPLICATION_JSON)
-                .get(String.class);
+                .post(Entity.entity(invoiceData,MediaType.APPLICATION_JSON),String.class);
 
         JSONObject jsonObject=(JSONObject)JSONValue.parse(response);
 

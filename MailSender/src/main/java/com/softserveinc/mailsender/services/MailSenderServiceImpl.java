@@ -8,13 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.URLDataSource;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 @Service
 public class MailSenderServiceImpl implements MailSenderService {
@@ -42,12 +42,34 @@ public class MailSenderServiceImpl implements MailSenderService {
                     mail.getReceiverEmail()
                     );
             message.setSubject(mail.getSubject());
-            message.setText(mail.getBody());
 
+            //create whole body
+            Multipart multipart=new MimeMultipart();
+
+            //create body text
+            MimeBodyPart textBodyPart=new MimeBodyPart();
+            textBodyPart.setText(mail.getBody());
+
+            multipart.addBodyPart(textBodyPart);
+
+            //create body attachment
+            URL fileUrl=new URL("https://bookstorebucket.s3.us-east-2.amazonaws.com/07d93dbf-f79f-4fb7-a850-4f01a6000a31.png");
+            DataSource dataSource=new URLDataSource(fileUrl);
+            BodyPart filePart=new MimeBodyPart();
+            filePart.setDataHandler(new DataHandler(dataSource));
+            filePart.setFileName(fileUrl.getFile());
+
+            multipart.addBodyPart(filePart);
+
+            message.setContent(multipart);
+
+            //send message
             Transport.send(message);
         } catch (AddressException e) {
             e.printStackTrace();
         } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
             e.printStackTrace();
         }
     }
