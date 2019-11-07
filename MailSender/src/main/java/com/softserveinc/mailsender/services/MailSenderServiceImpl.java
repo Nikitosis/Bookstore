@@ -52,14 +52,16 @@ public class MailSenderServiceImpl implements MailSenderService {
 
             multipart.addBodyPart(textBodyPart);
 
-            //create body attachment
-            URL fileUrl=new URL("https://bookstorebucket.s3.us-east-2.amazonaws.com/07d93dbf-f79f-4fb7-a850-4f01a6000a31.png");
-            DataSource dataSource=new URLDataSource(fileUrl);
-            BodyPart filePart=new MimeBodyPart();
-            filePart.setDataHandler(new DataHandler(dataSource));
-            filePart.setFileName(fileUrl.getFile());
+            //add attachment
+            if(mail.getAttachment()!=null){
+                URL fileUrl=new URL(mail.getAttachment().getAttachmentUrl());
+                DataSource dataSource=new URLDataSource(fileUrl);
+                BodyPart filePart=new MimeBodyPart();
+                filePart.setDataHandler(new DataHandler(dataSource));
+                filePart.setFileName(mail.getAttachment().getAttachmentName());
 
-            multipart.addBodyPart(filePart);
+                multipart.addBodyPart(filePart);
+            }
 
             message.setContent(multipart);
 

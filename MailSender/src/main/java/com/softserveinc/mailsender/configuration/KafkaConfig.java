@@ -40,7 +40,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,AvroMail> consumerFactory(){
+    public ConsumerFactory<String, AvroMail> consumerFactory(){
         return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
     }
 
