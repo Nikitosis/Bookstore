@@ -181,7 +181,7 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
     private java.lang.CharSequence body;
 
     /** Creates a new Builder */
-    Builder() {
+    private Builder() {
       super(SCHEMA$);
     }
 

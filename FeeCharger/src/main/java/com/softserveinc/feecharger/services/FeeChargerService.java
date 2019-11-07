@@ -124,7 +124,8 @@ public class FeeChargerService {
         String fileUrl=invoiceService.createInvoiceFile(
                 userDao.findById(rent.getUserId()),
                 bookDao.findById(rent.getBookId()),
-                book.getPrice()
+                book.getPrice(),
+                LocalDateTime.now()
         );
         System.out.println(fileUrl);
     }

@@ -20,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class InvoiceService {
@@ -35,12 +37,12 @@ public class InvoiceService {
     /**
     * @return url of the file
      */
-    public String createInvoiceFile(User user, Book book, BigDecimal price){
+    public String createInvoiceFile(User user, Book book, BigDecimal price, LocalDateTime dateTime){
         Client client = ClientBuilder.newClient();
 
         StoredFile storedFile=new StoredFile();
         storedFile.setFileName("Invoice.pdf");
-        InvoiceData invoiceData=buildInvoiceData(user,book,price);
+        InvoiceData invoiceData=buildInvoiceData(user,book,price,dateTime);
         storedFile.setInputStream(new ByteArrayInputStream(getPdfBytes(invoiceData)));
 
         String fileUrl=null;
@@ -54,13 +56,14 @@ public class InvoiceService {
         return fileUrl;
     }
 
-    private InvoiceData buildInvoiceData(User user,Book book,BigDecimal price){
-        InvoiceData invoiceData=new InvoiceData();
-        invoiceData.setBookName(book.getName());
-        invoiceData.setUserName(user.getfName());
-        invoiceData.setUserSurname(user.getlName());
-        invoiceData.setPayment(price.toString());
-        return invoiceData;
+    private InvoiceData buildInvoiceData(User user,Book book,BigDecimal price,LocalDateTime dateTime){
+        return new InvoiceData(
+                user.getfName(),
+                user.getlName(),
+                book.getName(),
+                price.toString(),
+                dateTime.format(DateTimeFormatter.ofPattern("MMM dd, yyyy"))
+        );
     }
 
     private byte[] getPdfBytes(InvoiceData invoiceData){
@@ -72,7 +75,7 @@ public class InvoiceService {
 
         JSONObject jsonObject=(JSONObject)JSONValue.parse(response);
 
-        byte[] decoded=Base64.decode(jsonObject.get("bytes").toString().getBytes());
+        byte[] decoded=Base64.decode(jsonObject.get("body").toString().getBytes());
 
         return decoded;
     }
