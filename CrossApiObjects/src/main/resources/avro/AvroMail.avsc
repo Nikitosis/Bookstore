@@ -5,6 +5,16 @@
   "fields":[
     {"name":"receiverEmaill","type":"string"},
     {"name":"subject","type":"string"},
-    {"name":"body","type":"string"}
+    {"name":"body","type":"string"},
+    {"name":"attachment","type":
+      {
+        "type": "record",
+        "name": "AvroAttachment",
+        "fields":[
+          {"name": "attachmentUrl","type": "string"},
+          {"name": "attachmentName","type": "string"}
+        ]
+      }
+    }
   ]
 }

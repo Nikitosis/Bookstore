@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 941018234998598676L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroMail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = -9058274628447765522L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroMail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"},{\"name\":\"attachment\",\"type\":{\"type\":\"record\",\"name\":\"AvroAttachment\",\"fields\":[{\"name\":\"attachmentUrl\",\"type\":\"string\"},{\"name\":\"attachmentName\",\"type\":\"string\"}]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -54,6 +54,7 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
   @Deprecated public java.lang.CharSequence receiverEmaill;
   @Deprecated public java.lang.CharSequence subject;
   @Deprecated public java.lang.CharSequence body;
+  @Deprecated public com.softserveinc.cross_api_objects.avro.AvroAttachment attachment;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -67,11 +68,13 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
    * @param receiverEmaill The new value for receiverEmaill
    * @param subject The new value for subject
    * @param body The new value for body
+   * @param attachment The new value for attachment
    */
-  public AvroMail(java.lang.CharSequence receiverEmaill, java.lang.CharSequence subject, java.lang.CharSequence body) {
+  public AvroMail(java.lang.CharSequence receiverEmaill, java.lang.CharSequence subject, java.lang.CharSequence body, com.softserveinc.cross_api_objects.avro.AvroAttachment attachment) {
     this.receiverEmaill = receiverEmaill;
     this.subject = subject;
     this.body = body;
+    this.attachment = attachment;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -81,6 +84,7 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
     case 0: return receiverEmaill;
     case 1: return subject;
     case 2: return body;
+    case 3: return attachment;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -92,6 +96,7 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
     case 0: receiverEmaill = (java.lang.CharSequence)value$; break;
     case 1: subject = (java.lang.CharSequence)value$; break;
     case 2: body = (java.lang.CharSequence)value$; break;
+    case 3: attachment = (com.softserveinc.cross_api_objects.avro.AvroAttachment)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -145,6 +150,22 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
   }
 
   /**
+   * Gets the value of the 'attachment' field.
+   * @return The value of the 'attachment' field.
+   */
+  public com.softserveinc.cross_api_objects.avro.AvroAttachment getAttachment() {
+    return attachment;
+  }
+
+  /**
+   * Sets the value of the 'attachment' field.
+   * @param value the value to set.
+   */
+  public void setAttachment(com.softserveinc.cross_api_objects.avro.AvroAttachment value) {
+    this.attachment = value;
+  }
+
+  /**
    * Creates a new AvroMail RecordBuilder.
    * @return A new AvroMail RecordBuilder
    */
@@ -179,9 +200,11 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
     private java.lang.CharSequence receiverEmaill;
     private java.lang.CharSequence subject;
     private java.lang.CharSequence body;
+    private com.softserveinc.cross_api_objects.avro.AvroAttachment attachment;
+    private com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder attachmentBuilder;
 
     /** Creates a new Builder */
-    private Builder() {
+    Builder() {
       super(SCHEMA$);
     }
 
@@ -203,6 +226,13 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
         this.body = data().deepCopy(fields()[2].schema(), other.body);
         fieldSetFlags()[2] = true;
       }
+      if (isValidValue(fields()[3], other.attachment)) {
+        this.attachment = data().deepCopy(fields()[3].schema(), other.attachment);
+        fieldSetFlags()[3] = true;
+      }
+      if (other.hasAttachmentBuilder()) {
+        this.attachmentBuilder = com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder(other.getAttachmentBuilder());
+      }
     }
 
     /**
@@ -223,6 +253,11 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
         this.body = data().deepCopy(fields()[2].schema(), other.body);
         fieldSetFlags()[2] = true;
       }
+      if (isValidValue(fields()[3], other.attachment)) {
+        this.attachment = data().deepCopy(fields()[3].schema(), other.attachment);
+        fieldSetFlags()[3] = true;
+      }
+      this.attachmentBuilder = null;
     }
 
     /**
@@ -342,6 +377,80 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
       return this;
     }
 
+    /**
+      * Gets the value of the 'attachment' field.
+      * @return The value.
+      */
+    public com.softserveinc.cross_api_objects.avro.AvroAttachment getAttachment() {
+      return attachment;
+    }
+
+    /**
+      * Sets the value of the 'attachment' field.
+      * @param value The value of 'attachment'.
+      * @return This builder.
+      */
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder setAttachment(com.softserveinc.cross_api_objects.avro.AvroAttachment value) {
+      validate(fields()[3], value);
+      this.attachmentBuilder = null;
+      this.attachment = value;
+      fieldSetFlags()[3] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'attachment' field has been set.
+      * @return True if the 'attachment' field has been set, false otherwise.
+      */
+    public boolean hasAttachment() {
+      return fieldSetFlags()[3];
+    }
+
+    /**
+     * Gets the Builder instance for the 'attachment' field and creates one if it doesn't exist yet.
+     * @return This builder.
+     */
+    public com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder getAttachmentBuilder() {
+      if (attachmentBuilder == null) {
+        if (hasAttachment()) {
+          setAttachmentBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder(attachment));
+        } else {
+          setAttachmentBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder());
+        }
+      }
+      return attachmentBuilder;
+    }
+
+    /**
+     * Sets the Builder instance for the 'attachment' field
+     * @param value The builder instance that must be set.
+     * @return This builder.
+     */
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder setAttachmentBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder value) {
+      clearAttachment();
+      attachmentBuilder = value;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'attachment' field has an active Builder instance
+     * @return True if the 'attachment' field has an active Builder instance
+     */
+    public boolean hasAttachmentBuilder() {
+      return attachmentBuilder != null;
+    }
+
+    /**
+      * Clears the value of the 'attachment' field.
+      * @return This builder.
+      */
+    public com.softserveinc.cross_api_objects.avro.AvroMail.Builder clearAttachment() {
+      attachment = null;
+      attachmentBuilder = null;
+      fieldSetFlags()[3] = false;
+      return this;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public AvroMail build() {
@@ -350,6 +459,11 @@ public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implem
         record.receiverEmaill = fieldSetFlags()[0] ? this.receiverEmaill : (java.lang.CharSequence) defaultValue(fields()[0]);
         record.subject = fieldSetFlags()[1] ? this.subject : (java.lang.CharSequence) defaultValue(fields()[1]);
         record.body = fieldSetFlags()[2] ? this.body : (java.lang.CharSequence) defaultValue(fields()[2]);
+        if (attachmentBuilder != null) {
+          record.attachment = this.attachmentBuilder.build();
+        } else {
+          record.attachment = fieldSetFlags()[3] ? this.attachment : (com.softserveinc.cross_api_objects.avro.AvroAttachment) defaultValue(fields()[3]);
+        }
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

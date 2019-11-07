@@ -4,11 +4,13 @@ public class Mail {
     private String receiverEmail;
     private String subject;
     private String body;
+    private Attachment attachment;
 
-    public Mail(String receiverEmail, String subject, String body) {
+    public Mail(String receiverEmail, String subject, String body, Attachment attachment) {
         this.receiverEmail = receiverEmail;
         this.subject = subject;
         this.body = body;
+        this.attachment = attachment;
     }
 
     public Mail(){
@@ -37,5 +39,13 @@ public class Mail {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public Attachment getAttachment() {
+        return attachment;
+    }
+
+    public void setAttachment(Attachment attachment) {
+        this.attachment = attachment;
     }
 }

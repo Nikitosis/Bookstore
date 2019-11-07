@@ -4,6 +4,7 @@ package com.softserveinc.cross_api_objects.avro;
 import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
+import com.softserveinc.cross_api_objects.models.Attachment;
 import com.softserveinc.cross_api_objects.models.Mail;
 
 import java.math.BigDecimal;
@@ -14,18 +15,35 @@ import java.time.ZoneOffset;
 
 public class AvroConverter {
     public static final AvroMail buildAvroMail(Mail mail){
-        return new AvroMail(
-                mail.getReceiverEmail(),
-                mail.getSubject(),
-                mail.getBody()
-        );
+        return new AvroMail.Builder()
+                .setBody(mail.getBody())
+                .setSubject(mail.getSubject())
+                .setReceiverEmaill(mail.getReceiverEmail())
+                .setAttachment(buildAvroAttachment(mail.getAttachment()))
+                .build();
     }
+
     public static final Mail buildMail(AvroMail avroMail){
         Mail mail=new Mail();
         mail.setSubject(avroMail.getSubject().toString());
         mail.setReceiverEmail(avroMail.getReceiverEmaill().toString());
         mail.setBody(avroMail.getBody().toString());
+        mail.setAttachment(buildAttachment(avroMail.getAttachment()));
         return mail;
+    }
+
+    public static final AvroAttachment buildAvroAttachment(Attachment attachment){
+        return new AvroAttachment.Builder()
+                .setAttachmentName(attachment.getAttachmentName())
+                .setAttachmentUrl(attachment.getAttachmentUrl())
+                .build();
+    }
+
+    public static final Attachment buildAttachment(AvroAttachment avroAttachment){
+        Attachment attachment=new Attachment();
+        attachment.setAttachmentUrl(avroAttachment.getAttachmentUrl().toString());
+        attachment.setAttachmentName(avroAttachment.getAttachmentName().toString());
+        return attachment;
     }
 
     public static final AvroUserBookLog buildAvroUserBookLog(UserBookLog userBookLog){
