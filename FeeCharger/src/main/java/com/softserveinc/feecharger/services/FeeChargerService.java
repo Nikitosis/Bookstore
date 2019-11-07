@@ -1,6 +1,7 @@
 package com.softserveinc.feecharger.services;
 
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
+import com.softserveinc.cross_api_objects.models.Attachment;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -127,17 +128,31 @@ public class FeeChargerService {
                 book.getPrice(),
                 LocalDateTime.now()
         );
+
+        mailSenderService.sendEmail(createMailInvoice(
+                userDao.findById(rent.getUserId()),
+                fileUrl
+        ));
         System.out.println(fileUrl);
     }
 
     private Mail createReturnMailNotification(User user,Book book){
-        return new Mail(
-                user.getEmail(),
-                "Cannot extend book's rent",
-                "Unfortunately, you don't have enough money on your account to extend " +
-                        book.getName() + " rent. Book cost is " + book.getPrice() +
-                        " but your current balance is " + user.getMoney()
-        );
+        Mail mail=new Mail();
+        mail.setReceiverEmail(user.getEmail());
+        mail.setSubject("Cannot extend book's rent");
+        mail.setBody( "Unfortunately, you don't have enough money on your account to extend " +
+                book.getName() + " rent. Book cost is " + book.getPrice() +
+                " but your current balance is " + user.getMoney());
+        return mail;
+    }
+
+    private Mail createMailInvoice(User user,String fileUrl){
+        Mail mail=new Mail();
+        mail.setReceiverEmail(user.getEmail());
+        mail.setSubject("Bookstore invoice");
+        mail.setBody("Invoice is attached");
+        mail.setAttachment(new Attachment("Invoice.pdf",fileUrl));
+        return mail;
     }
 
     private UserBookPaymentLog createUserBookPaymentLog(UserBook rent, BigDecimal price,LocalDateTime dateTime){

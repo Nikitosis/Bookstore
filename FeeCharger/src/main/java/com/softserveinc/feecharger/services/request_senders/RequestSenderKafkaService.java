@@ -6,19 +6,15 @@ import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.feecharger.MainConfig;
-import com.softserveinc.feecharger.models.UserBook;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService implements MailSenderService,LogSenderService {
     private MainConfig mainConfig;
-    private Producer<String,AvroMail> mailProducer;
+    private Producer<String, AvroMail> mailProducer;
     private Producer<String,AvroUserBookPaymentLog> userBookPaymentLogProducer;
 
     @Autowired

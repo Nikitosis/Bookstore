@@ -37,8 +37,8 @@ logging:
   level: INFO
 
 kafkaConfig:
-  brokerUrl: http://localhost:9092
-  schemaRegistryUrl: http://localhost:8081
+  brokerUrl: http://192.168.99.100:9092
+  schemaRegistryUrl: http://192.168.99.100:8081
 
 kafkaMailTopic: MailTopic
 
