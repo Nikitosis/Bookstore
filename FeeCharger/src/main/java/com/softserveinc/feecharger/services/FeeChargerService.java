@@ -87,6 +87,7 @@ public class FeeChargerService {
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
             //if email is verified, send notification
             if(userDao.findById(rent.getUserId()).getEmailVerified()) {
+                log.info("Sending return book notification");
                 mailSenderService.sendEmail(createReturnMailNotification(
                         userDao.findById(rent.getUserId()),
                         bookDao.findById(rent.getBookId())
@@ -129,13 +130,16 @@ public class FeeChargerService {
         //if user's email is verified
         if(userDao.findById(rent.getUserId()).getEmailVerified()) {
             //create invoice
+            log.info("Creating invoice");
             String fileUrl=invoiceService.createInvoiceFile(
                     userDao.findById(rent.getUserId()),
                     bookDao.findById(rent.getBookId()),
                     book.getPrice(),
                     LocalDateTime.now()
             );
+
             //send invoice
+            log.info("Sending invoice");
             mailSenderService.sendEmail(createMailInvoice(
                     userDao.findById(rent.getUserId()),
                     fileUrl
