@@ -85,10 +85,13 @@ public class FeeChargerService {
         }
         else{
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
-            mailSenderService.sendEmail(createReturnMailNotification(
-                    userDao.findById(rent.getUserId()),
-                    bookDao.findById(rent.getBookId())
-            ));
+            //if email is verified, send notification
+            if(userDao.findById(rent.getUserId()).getEmailVerified()) {
+                mailSenderService.sendEmail(createReturnMailNotification(
+                        userDao.findById(rent.getUserId()),
+                        bookDao.findById(rent.getBookId())
+                ));
+            }
             bookSenderService.sendReturnBook(
                     userDao.findById(rent.getUserId()),
                     bookDao.findById(rent.getBookId())
@@ -122,18 +125,22 @@ public class FeeChargerService {
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
 
-        String fileUrl=invoiceService.createInvoiceFile(
-                userDao.findById(rent.getUserId()),
-                bookDao.findById(rent.getBookId()),
-                book.getPrice(),
-                LocalDateTime.now()
-        );
 
-        mailSenderService.sendEmail(createMailInvoice(
-                userDao.findById(rent.getUserId()),
-                fileUrl
-        ));
-        System.out.println(fileUrl);
+        //if user's email is verified
+        if(userDao.findById(rent.getUserId()).getEmailVerified()) {
+            //create invoice
+            String fileUrl=invoiceService.createInvoiceFile(
+                    userDao.findById(rent.getUserId()),
+                    bookDao.findById(rent.getBookId()),
+                    book.getPrice(),
+                    LocalDateTime.now()
+            );
+            //send invoice
+            mailSenderService.sendEmail(createMailInvoice(
+                    userDao.findById(rent.getUserId()),
+                    fileUrl
+            ));
+        }
     }
 
     private Mail createReturnMailNotification(User user,Book book){
