@@ -1,4 +1,4 @@
-package com.softserveinc.cross_api_objects.models;
+package com.softserveinc.cross_api_objects.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

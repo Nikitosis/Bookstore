@@ -2,7 +2,6 @@ package com.softserveinc.lambdafunctions;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
@@ -18,15 +17,12 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
-import com.softserveinc.cross_api_objects.models.InvoiceData;
+import com.softserveinc.cross_api_objects.api.InvoiceData;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> {

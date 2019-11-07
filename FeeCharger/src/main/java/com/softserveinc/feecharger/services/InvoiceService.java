@@ -3,7 +3,7 @@ package com.softserveinc.feecharger.services;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.Base64;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.models.InvoiceData;
+import com.softserveinc.cross_api_objects.api.InvoiceData;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
 import com.softserveinc.cross_api_objects.services.storage.StoredFile;
