@@ -38,7 +38,7 @@ public class KafkaConfig {
 
     @Bean
     public Producer<String,AvroMail> kafkaMailProducer(){
-        return new KafkaProducer<String,AvroMail>(producerConfigs());
+        return new KafkaProducer<String, AvroMail>(producerConfigs());
     }
 
     @Bean

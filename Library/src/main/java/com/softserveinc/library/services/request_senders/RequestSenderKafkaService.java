@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService implements MailSenderService,LogSenderService {
     private MainConfig mainConfig;
-    private Producer<String,AvroMail> kafkaMailProducer;
+    private Producer<String, AvroMail> kafkaMailProducer;
     private Producer<String,AvroUserBookLog> kafkaUserBookLogProducer;
 
     @Autowired

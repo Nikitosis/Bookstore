@@ -120,12 +120,19 @@ public class UserService {
     private void resetVerification(User user){
         String verificationToken=UUID.randomUUID().toString();
         String verificationUrl=mainConfig.getVerificationUrl()+"/"+verificationToken;
-        Mail mail=new Mail(user.getEmail(),"Please,verify your email",
-                "Email verification is required. Follow this link to verify your email: "+verificationUrl);
-        mailSenderService.sendEmail(mail);
+
+        mailSenderService.sendEmail(createVerificationMail(user,verificationUrl));
 
         user.setVerificationToken(verificationToken);
         user.setEmailVerified(false);
+    }
+
+    private Mail createVerificationMail(User user,String verificationUrl){
+        Mail mail=new Mail();
+        mail.setReceiverEmail(user.getEmail());
+        mail.setSubject("Please,verify your email");
+        mail.setBody("Email verification is required. Follow this link to verify your email: "+verificationUrl);
+        return mail;
     }
 
     private Long getFileSize(StoredFile storedFile){

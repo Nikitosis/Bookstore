@@ -6,6 +6,7 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.color.Color;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -68,6 +69,15 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
 
         document.setFont(bold).setFontSize(12);
 
+        //add header
+        document.add(
+                new Paragraph()
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .add(new Text("Bookstore invoice").setFont(bold).setFontSize(16).setFontColor(Color.WHITE))
+                    .setBackgroundColor(Color.BLACK)
+        );
+
+        //invoice general information
         document.add(
                 new Paragraph()
                         .setTextAlignment(TextAlignment.RIGHT)
@@ -78,6 +88,7 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
                         //.add(invoiceData.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
         );
 
+        //invoice content
         document.add(getLineItemTable(invoiceData,bold));
 
         document.close();
