@@ -33,6 +33,8 @@ public class AvroConverter {
     }
 
     public static final AvroAttachment buildAvroAttachment(Attachment attachment){
+        if(attachment==null)
+            return null;
         return new AvroAttachment.Builder()
                 .setAttachmentName(attachment.getAttachmentName())
                 .setAttachmentUrl(attachment.getAttachmentUrl())
@@ -40,6 +42,8 @@ public class AvroConverter {
     }
 
     public static final Attachment buildAttachment(AvroAttachment avroAttachment){
+        if(avroAttachment==null)
+            return null;
         Attachment attachment=new Attachment();
         attachment.setAttachmentUrl(avroAttachment.getAttachmentUrl().toString());
         attachment.setAttachmentName(avroAttachment.getAttachmentName().toString());

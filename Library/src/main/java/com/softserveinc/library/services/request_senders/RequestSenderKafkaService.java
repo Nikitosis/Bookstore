@@ -34,7 +34,6 @@ public class RequestSenderKafkaService implements MailSenderService,LogSenderSer
 
     @Override
     public void sendEmail(Mail mail) {
-
         kafkaMailProducer.send(new ProducerRecord<String, AvroMail>(
                 mainConfig.getKafkaMailTopic(),
                 AvroConverter.buildAvroMail(mail)

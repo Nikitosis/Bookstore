@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroMail extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -9058274628447765522L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroMail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"},{\"name\":\"attachment\",\"type\":{\"type\":\"record\",\"name\":\"AvroAttachment\",\"fields\":[{\"name\":\"attachmentUrl\",\"type\":\"string\"},{\"name\":\"attachmentName\",\"type\":\"string\"}]}}]}");
+  private static final long serialVersionUID = -7777313727378974548L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroMail\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"receiverEmaill\",\"type\":\"string\"},{\"name\":\"subject\",\"type\":\"string\"},{\"name\":\"body\",\"type\":\"string\"},{\"name\":\"attachment\",\"type\":[{\"type\":\"record\",\"name\":\"AvroAttachment\",\"fields\":[{\"name\":\"attachmentUrl\",\"type\":\"string\"},{\"name\":\"attachmentName\",\"type\":\"string\"}]},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
