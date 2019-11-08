@@ -1,7 +1,6 @@
 package com.services;
 
-import com.softserveinc.cross_api_objects.configuration.DependencyService;
-import com.softserveinc.cross_api_objects.configuration.FeeChargeConfig;
+import com.softserveinc.feecharger.configuration.FeeChargeConfig;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.OktaService;
@@ -12,13 +11,11 @@ import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
 import com.softserveinc.feecharger.services.FeeChargerService;
 import com.softserveinc.feecharger.services.request_senders.*;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

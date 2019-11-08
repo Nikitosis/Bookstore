@@ -1,4 +1,4 @@
-package com.softserveinc.cross_api_objects.configuration;
+package com.softserveinc.feecharger.configuration;
 
 public class FeeChargeConfig {
     private Long rentPeriod;
