@@ -27,3 +27,9 @@ awsS3Config:
     - png
   maxFileSize: 314572800    #300MB
   maxImageSize: 26214400   #25MB
+
+kafkaConfig:
+  brokerUrl: http://localhost:9092
+  schemaRegistryUrl: http://localhost:8081
+
+kafkaMailTopic: MailTopic

@@ -28,15 +28,19 @@ public class InvoiceService {
     private MainConfig mainConfig;
     private InvoiceAwsSaverService invoiceAwsSaverService;
     private InvoiceGeneratorService invoiceGeneratorService;
+    private InvoiceSenderService invoiceSenderService;
     private UserPaymentsDao userPaymentsDao;
+    private UserDao userDao;
     private Timer timer;
 
     @Autowired
-    public InvoiceService(MainConfig mainConfig, InvoiceAwsSaverService invoiceAwsSaverService, InvoiceGeneratorService invoiceGeneratorService, UserPaymentsDao userPaymentsDao) {
+    public InvoiceService(MainConfig mainConfig, InvoiceAwsSaverService invoiceAwsSaverService, InvoiceGeneratorService invoiceGeneratorService, InvoiceSenderService invoiceSenderService, UserPaymentsDao userPaymentsDao, UserDao userDao) {
         this.mainConfig = mainConfig;
         this.invoiceAwsSaverService = invoiceAwsSaverService;
         this.invoiceGeneratorService = invoiceGeneratorService;
+        this.invoiceSenderService = invoiceSenderService;
         this.userPaymentsDao = userPaymentsDao;
+        this.userDao = userDao;
     }
 
     @PostConstruct
@@ -63,16 +67,11 @@ public class InvoiceService {
         for(UserPayments userPayments:paymentsByUser){
             StoredFile invoiceFile=invoiceGeneratorService.createInvoiceFile(userPayments);
             String fileUrl=invoiceAwsSaverService.saveInvoice(invoiceFile);
+            invoiceSenderService.sendInvoice(
+                    userDao.findById(userPayments.getUserId()),
+                    fileUrl
+            );
             System.out.println(fileUrl);
         }
-    }
-
-    private Mail createMailInvoice(User user, String fileUrl){
-        Mail mail=new Mail();
-        mail.setReceiverEmail(user.getEmail());
-        mail.setSubject("Bookstore invoice");
-        mail.setBody("Invoice is attached");
-        mail.setAttachment(new Attachment("Invoice.pdf",fileUrl));
-        return mail;
     }
 }
