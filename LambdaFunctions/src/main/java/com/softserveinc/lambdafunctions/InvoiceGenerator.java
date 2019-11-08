@@ -19,6 +19,7 @@ import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
 import com.softserveinc.cross_api_objects.models.InvoiceData;
+import com.softserveinc.cross_api_objects.models.InvoiceSinglePaymentData;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 
@@ -84,7 +85,7 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
                         .setMultipliedLeading(1)
                         .add(new Text(String.format("%s %s\n", invoiceData.getUserName(), invoiceData.getUserSurname()))
                                 .setFont(bold).setFontSize(14))
-                        .add(invoiceData.getDateTime().toString())
+                        .add("Invoice data")
                         //.add(invoiceData.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
         );
 
@@ -105,15 +106,21 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
     private Table getLineItemTable(InvoiceData invoiceData,PdfFont bold) {
         Table table = new Table(
                 new UnitValue[]{
-                        new UnitValue(UnitValue.PERCENT, 50f),
-                        new UnitValue(UnitValue.PERCENT, 50f)})
+                        new UnitValue(UnitValue.PERCENT, 33f),
+                        new UnitValue(UnitValue.PERCENT, 33f),
+                        new UnitValue(UnitValue.PERCENT, 33f)
+                })
                 .setWidthPercent(100)
                 .setMarginTop(10).setMarginBottom(10);
         table.addHeaderCell(createCell("Item:", bold));
+        table.addHeaderCell(createCell("Date",bold));
         table.addHeaderCell(createCell("Price:", bold));
 
-        table.addCell(createCell(invoiceData.getBookName()));
-        table.addCell(createCell(invoiceData.getPayment()));
+        for(InvoiceSinglePaymentData singlePaymentData:invoiceData.getInvoiceSinglePaymentData()){
+            table.addCell(createCell(singlePaymentData.getBookName()));
+            table.addCell(createCell(singlePaymentData.getDateTime()));
+            table.addCell(createCell(singlePaymentData.getPayment()));
+        }
 
         return table;
     }
