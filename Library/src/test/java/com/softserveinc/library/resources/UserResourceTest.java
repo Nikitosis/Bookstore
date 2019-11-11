@@ -78,7 +78,7 @@ public class UserResourceTest {
     private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
     private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
     private UserService userService =new UserService(userDao,roleDao,awsStorageService, requestSenderKafkaService,passwordEncoder,configuration);
-    private BookService bookService=spy(new BookService(bookDao,configuration, requestSenderHttpService,requestSenderKafkaService,awsStorageService,userService));
+    private BookService bookService=spy(new BookService(bookDao,configuration, requestSenderKafkaService,awsStorageService,userService));
 
     //Creating ResourceTestRule
     @Rule

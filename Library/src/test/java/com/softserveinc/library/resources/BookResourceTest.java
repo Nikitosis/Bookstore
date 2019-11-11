@@ -62,7 +62,7 @@ public class BookResourceTest {
     private UserService userService=mock(UserService.class);
     private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
     private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
-    private BookService bookService=new BookService(bookDao,configuration, requestSenderHttpService,requestSenderKafkaService,awsStorageService,userService);
+    private BookService bookService=new BookService(bookDao,configuration, requestSenderKafkaService,awsStorageService,userService);
 
     //Creating ResourceTestRule
     @Rule
