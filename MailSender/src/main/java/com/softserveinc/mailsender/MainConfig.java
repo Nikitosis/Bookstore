@@ -15,6 +15,8 @@ public class MainConfig extends Configuration {
 
     private String kafkaMailTopic;
 
+    private String kafkaUserChangedEmailActionTopic;
+
     public MailConfig getMailConfig() {
         return mailConfig;
     }
@@ -45,5 +47,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaMailTopic(String kafkaMailTopic) {
         this.kafkaMailTopic = kafkaMailTopic;
+    }
+
+    public String getKafkaUserChangedEmailActionTopic() {
+        return kafkaUserChangedEmailActionTopic;
+    }
+
+    public void setKafkaUserChangedEmailActionTopic(String kafkaUserChangedEmailActionTopic) {
+        this.kafkaUserChangedEmailActionTopic = kafkaUserChangedEmailActionTopic;
     }
 }

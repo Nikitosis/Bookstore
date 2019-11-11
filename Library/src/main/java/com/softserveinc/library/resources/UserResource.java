@@ -311,7 +311,7 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
-        bookService.takeBook(userId,bookId,returnDate);
+        bookService.takeBook(userId,bookId,null);
         return Response.ok().build();
 
     }

@@ -24,3 +24,5 @@ kafkaConfig:
   schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
 
 kafkaMailTopic: MailTopic
+
+kafkaUserChangedEmailActionTopic: UserChangedEmailActionTopic

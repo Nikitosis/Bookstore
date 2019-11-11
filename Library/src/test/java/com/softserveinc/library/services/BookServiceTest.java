@@ -15,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.*;
 
@@ -63,7 +64,7 @@ public class BookServiceTest {
     @Test
     public void takeBookTest(){
 
-        bookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
+        bookService.takeBook(testUser.getId(),testBook.getId(), LocalDateTime.now());
 
         verify(requestSenderHttpService).sendUserBookLog(any());
         verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
