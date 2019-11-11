@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class InvoiceData {
     @NotNull
@@ -18,25 +19,12 @@ public class InvoiceData {
     String userSurname;
 
     @NotNull
-    String bookName;
-
-    @NotNull
-    String payment;
-
-    @NotNull
-    String dateTime;
+    List<InvoiceSinglePaymentData> invoiceSinglePaymentData;
 
     public InvoiceData(){
 
     }
 
-    public InvoiceData(String userName, String userSurname, String bookName, String payment, String dateTime) {
-        this.userName = userName;
-        this.userSurname = userSurname;
-        this.bookName = bookName;
-        this.payment = payment;
-        this.dateTime = dateTime;
-    }
 
     public String getUserName() {
         return userName;
@@ -54,27 +42,11 @@ public class InvoiceData {
         this.userSurname = userSurname;
     }
 
-    public String getBookName() {
-        return bookName;
+    public List<InvoiceSinglePaymentData> getInvoiceSinglePaymentData() {
+        return invoiceSinglePaymentData;
     }
 
-    public void setBookName(String bookName) {
-        this.bookName = bookName;
-    }
-
-    public String getPayment() {
-        return payment;
-    }
-
-    public void setPayment(String payment) {
-        this.payment = payment;
-    }
-
-    public String getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(String dateTime) {
-        this.dateTime = dateTime;
+    public void setInvoiceSinglePaymentData(List<InvoiceSinglePaymentData> invoiceSinglePaymentData) {
+        this.invoiceSinglePaymentData = invoiceSinglePaymentData;
     }
 }

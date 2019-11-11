@@ -17,6 +17,7 @@
         <module>MailSender</module>
 		<module>FeeCharger</module>
         <module>LambdaFunctions</module>
+        <module>Invoicer</module>
     </modules>
 
 

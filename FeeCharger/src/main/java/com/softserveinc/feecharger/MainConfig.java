@@ -1,6 +1,7 @@
 package com.softserveinc.feecharger;
 
 import com.softserveinc.cross_api_objects.configuration.*;
+import com.softserveinc.feecharger.configuration.FeeChargeConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 

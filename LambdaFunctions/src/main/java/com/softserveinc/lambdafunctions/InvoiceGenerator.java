@@ -2,6 +2,7 @@ package com.softserveinc.lambdafunctions;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.lambda.runtime.RequestStreamHandler;
 import com.itextpdf.io.font.FontProgram;
 import com.itextpdf.io.font.FontProgramFactory;
 import com.itextpdf.io.font.PdfEncodings;
@@ -17,12 +18,16 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.UnitValue;
-import com.softserveinc.cross_api_objects.api.InvoiceData;
+import com.softserveinc.cross_api_objects.models.InvoiceData;
+import com.softserveinc.cross_api_objects.models.InvoiceSinglePaymentData;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> {
@@ -80,7 +85,7 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
                         .setMultipliedLeading(1)
                         .add(new Text(String.format("%s %s\n", invoiceData.getUserName(), invoiceData.getUserSurname()))
                                 .setFont(bold).setFontSize(14))
-                        .add(invoiceData.getDateTime().toString())
+                        .add("Invoice data")
                         //.add(invoiceData.getDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
         );
 
@@ -101,15 +106,21 @@ public class InvoiceGenerator implements RequestHandler<InvoiceData,JSONObject> 
     private Table getLineItemTable(InvoiceData invoiceData,PdfFont bold) {
         Table table = new Table(
                 new UnitValue[]{
-                        new UnitValue(UnitValue.PERCENT, 50f),
-                        new UnitValue(UnitValue.PERCENT, 50f)})
+                        new UnitValue(UnitValue.PERCENT, 33f),
+                        new UnitValue(UnitValue.PERCENT, 33f),
+                        new UnitValue(UnitValue.PERCENT, 33f)
+                })
                 .setWidthPercent(100)
                 .setMarginTop(10).setMarginBottom(10);
         table.addHeaderCell(createCell("Item:", bold));
+        table.addHeaderCell(createCell("Date",bold));
         table.addHeaderCell(createCell("Price:", bold));
 
-        table.addCell(createCell(invoiceData.getBookName()));
-        table.addCell(createCell(invoiceData.getPayment()));
+        for(InvoiceSinglePaymentData singlePaymentData:invoiceData.getInvoiceSinglePaymentData()){
+            table.addCell(createCell(singlePaymentData.getBookName()));
+            table.addCell(createCell(singlePaymentData.getDateTime()));
+            table.addCell(createCell(singlePaymentData.getPayment()));
+        }
 
         return table;
     }
