@@ -21,7 +21,7 @@ public class MainConfig extends Configuration {
 
     private String kafkaUserBookPaymentLogTopic;
 
-    private String kafkaUserBookLogTopic;
+    private String kafkaUserBookActionTopic;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -71,11 +71,11 @@ public class MainConfig extends Configuration {
         this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
     }
 
-    public String getKafkaUserBookLogTopic() {
-        return kafkaUserBookLogTopic;
+    public String getKafkaUserBookActionTopic() {
+        return kafkaUserBookActionTopic;
     }
 
-    public void setKafkaUserBookLogTopic(String kafkaUserBookLogTopic) {
-        this.kafkaUserBookLogTopic = kafkaUserBookLogTopic;
+    public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
+        this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
     }
 }

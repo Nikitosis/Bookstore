@@ -1,5 +1,6 @@
 package com.softserveinc.logger.configurations;
 
+import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.logger.MainConfig;
@@ -41,14 +42,14 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,AvroUserBookLog> userBookLogConsumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroUserBookLog>(consumerConfig());
+    public ConsumerFactory<String,AvroUserBookAction> userBookActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String, AvroUserBookAction>(consumerConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog> userBookLogListener(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog>();
-        factory.setConsumerFactory(userBookLogConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction> userBookActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String, AvroUserBookAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction>();
+        factory.setConsumerFactory(userBookActionConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
@@ -67,9 +68,10 @@ public class KafkaConfig {
     }
 
     @Bean
-    public String userBookLogTopic(){
-        return mainConfig.getKafkaUserBookLogTopic();
+    public String userBookActionTopic(){
+        return mainConfig.getKafkaUserBookActionTopic();
     }
+
 
     @Bean
     public String userBookPaymentLogTopic(){

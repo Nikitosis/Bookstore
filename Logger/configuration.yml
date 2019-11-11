@@ -34,4 +34,4 @@ kafkaConfig:
 
 kafkaUserBookPaymentLogTopic: UserBookPaymentLogTopic
 
-kafkaUserBookLogTopic: UserBookLogTopic
+kafkaUserBookActionTopic: UserBookActionTopic
