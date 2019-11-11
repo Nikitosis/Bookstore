@@ -2,9 +2,9 @@ package com.softserveinc.invoicer.services;
 
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.Base64;
+import com.softserveinc.cross_api_objects.api.InvoiceData;
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.models.InvoiceData;
 import com.softserveinc.cross_api_objects.models.InvoiceSinglePaymentData;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
