@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroUserChangedEmailAction extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -3915551034703581304L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserChangedEmailAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"newEmail\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = 4675965752251274408L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserChangedEmailAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"newEmail\",\"type\":\"string\"},{\"name\":\"verificationUrl\",\"type\":\"string\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -53,6 +53,7 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
 
   @Deprecated public long userId;
   @Deprecated public java.lang.CharSequence newEmail;
+  @Deprecated public java.lang.CharSequence verificationUrl;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -65,10 +66,12 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
    * All-args constructor.
    * @param userId The new value for userId
    * @param newEmail The new value for newEmail
+   * @param verificationUrl The new value for verificationUrl
    */
-  public AvroUserChangedEmailAction(java.lang.Long userId, java.lang.CharSequence newEmail) {
+  public AvroUserChangedEmailAction(java.lang.Long userId, java.lang.CharSequence newEmail, java.lang.CharSequence verificationUrl) {
     this.userId = userId;
     this.newEmail = newEmail;
+    this.verificationUrl = verificationUrl;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -77,6 +80,7 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
     switch (field$) {
     case 0: return userId;
     case 1: return newEmail;
+    case 2: return verificationUrl;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -87,6 +91,7 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
     switch (field$) {
     case 0: userId = (java.lang.Long)value$; break;
     case 1: newEmail = (java.lang.CharSequence)value$; break;
+    case 2: verificationUrl = (java.lang.CharSequence)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -124,6 +129,22 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
   }
 
   /**
+   * Gets the value of the 'verificationUrl' field.
+   * @return The value of the 'verificationUrl' field.
+   */
+  public java.lang.CharSequence getVerificationUrl() {
+    return verificationUrl;
+  }
+
+  /**
+   * Sets the value of the 'verificationUrl' field.
+   * @param value the value to set.
+   */
+  public void setVerificationUrl(java.lang.CharSequence value) {
+    this.verificationUrl = value;
+  }
+
+  /**
    * Creates a new AvroUserChangedEmailAction RecordBuilder.
    * @return A new AvroUserChangedEmailAction RecordBuilder
    */
@@ -157,6 +178,7 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
 
     private long userId;
     private java.lang.CharSequence newEmail;
+    private java.lang.CharSequence verificationUrl;
 
     /** Creates a new Builder */
     private Builder() {
@@ -177,6 +199,10 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
         this.newEmail = data().deepCopy(fields()[1].schema(), other.newEmail);
         fieldSetFlags()[1] = true;
       }
+      if (isValidValue(fields()[2], other.verificationUrl)) {
+        this.verificationUrl = data().deepCopy(fields()[2].schema(), other.verificationUrl);
+        fieldSetFlags()[2] = true;
+      }
     }
 
     /**
@@ -192,6 +218,10 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
       if (isValidValue(fields()[1], other.newEmail)) {
         this.newEmail = data().deepCopy(fields()[1].schema(), other.newEmail);
         fieldSetFlags()[1] = true;
+      }
+      if (isValidValue(fields()[2], other.verificationUrl)) {
+        this.verificationUrl = data().deepCopy(fields()[2].schema(), other.verificationUrl);
+        fieldSetFlags()[2] = true;
       }
     }
 
@@ -272,6 +302,45 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
       return this;
     }
 
+    /**
+      * Gets the value of the 'verificationUrl' field.
+      * @return The value.
+      */
+    public java.lang.CharSequence getVerificationUrl() {
+      return verificationUrl;
+    }
+
+    /**
+      * Sets the value of the 'verificationUrl' field.
+      * @param value The value of 'verificationUrl'.
+      * @return This builder.
+      */
+    public com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction.Builder setVerificationUrl(java.lang.CharSequence value) {
+      validate(fields()[2], value);
+      this.verificationUrl = value;
+      fieldSetFlags()[2] = true;
+      return this;
+    }
+
+    /**
+      * Checks whether the 'verificationUrl' field has been set.
+      * @return True if the 'verificationUrl' field has been set, false otherwise.
+      */
+    public boolean hasVerificationUrl() {
+      return fieldSetFlags()[2];
+    }
+
+
+    /**
+      * Clears the value of the 'verificationUrl' field.
+      * @return This builder.
+      */
+    public com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction.Builder clearVerificationUrl() {
+      verificationUrl = null;
+      fieldSetFlags()[2] = false;
+      return this;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public AvroUserChangedEmailAction build() {
@@ -279,6 +348,7 @@ public class AvroUserChangedEmailAction extends org.apache.avro.specific.Specifi
         AvroUserChangedEmailAction record = new AvroUserChangedEmailAction();
         record.userId = fieldSetFlags()[0] ? this.userId : (java.lang.Long) defaultValue(fields()[0]);
         record.newEmail = fieldSetFlags()[1] ? this.newEmail : (java.lang.CharSequence) defaultValue(fields()[1]);
+        record.verificationUrl = fieldSetFlags()[2] ? this.verificationUrl : (java.lang.CharSequence) defaultValue(fields()[2]);
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

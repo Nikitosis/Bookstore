@@ -14,6 +14,7 @@ import com.softserveinc.library.services.request_senders.MailSenderService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
 import com.softserveinc.cross_api_objects.services.storage.StoredFile;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +29,17 @@ public class UserService {
     private UserDao userDao;
     private RoleDao roleDao;
     private AwsStorageService awsStorageService;
-    private MailSenderService mailSenderService;
+    private RequestSenderKafkaService requestSenderKafkaService;
     private PasswordEncoder passwordEncoder;
 
     private MainConfig mainConfig;
 
-    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderKafkaService mailSenderService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
+    @Autowired
+    public UserService(UserDao userDao, RoleDao roleDao, AwsStorageService awsStorageService, RequestSenderKafkaService requestSenderKafkaService, PasswordEncoder passwordEncoder, MainConfig mainConfig) {
         this.userDao = userDao;
         this.roleDao = roleDao;
         this.awsStorageService = awsStorageService;
-        this.mailSenderService = mailSenderService;
+        this.requestSenderKafkaService = requestSenderKafkaService;
         this.passwordEncoder = passwordEncoder;
         this.mainConfig = mainConfig;
     }
@@ -121,18 +123,10 @@ public class UserService {
         String verificationToken=UUID.randomUUID().toString();
         String verificationUrl=mainConfig.getVerificationUrl()+"/"+verificationToken;
 
-        mailSenderService.sendEmail(createVerificationMail(user,verificationUrl));
+        requestSenderKafkaService.setUserChangeEmailAction(user.getId(),user.getEmail(),verificationUrl);
 
         user.setVerificationToken(verificationToken);
         user.setEmailVerified(false);
-    }
-
-    private Mail createVerificationMail(User user,String verificationUrl){
-        Mail mail=new Mail();
-        mail.setReceiverEmail(user.getEmail());
-        mail.setSubject("Please,verify your email");
-        mail.setBody("Email verification is required. Follow this link to verify your email: "+verificationUrl);
-        return mail;
     }
 
     private Long getFileSize(StoredFile storedFile){

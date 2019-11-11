@@ -10,52 +10,47 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service("requestSenderKafkaService")
-public class RequestSenderKafkaService implements MailSenderService,LogSenderService {
+public class RequestSenderKafkaService{
     private MainConfig mainConfig;
-    private Producer<String, AvroMail> kafkaMailProducer;
-    private Producer<String,AvroUserBookLog> kafkaUserBookLogProducer;
+    private Producer<String, AvroUserBookAction> kafkaUserBookActionProducer;
+    private Producer<String,AvroUserChangedEmailAction> kafkaUserChangedEmailAction;
 
     @Autowired
-    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroMail> kafkaMailProducer, Producer<String, AvroUserBookLog> kafkaUserBookLogProducer) {
+    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroUserBookAction> kafkaUserBookActionProducer, Producer<String, AvroUserChangedEmailAction> kafkaUserChangedEmailAction) {
         this.mainConfig = mainConfig;
-        this.kafkaMailProducer = kafkaMailProducer;
-        this.kafkaUserBookLogProducer = kafkaUserBookLogProducer;
+        this.kafkaUserBookActionProducer = kafkaUserBookActionProducer;
+        this.kafkaUserChangedEmailAction = kafkaUserChangedEmailAction;
     }
 
-    public void sendUserBookAction(Long userId, Long bookId, LocalDateTime date, Action action){
+    public void sendUserBookAction(Long userId, Long bookId, LocalDate date, Action action){
         AvroUserBookAction avroUserBookAction=AvroUserBookAction.newBuilder()
                 .setUserId(userId)
                 .setBookId(bookId)
-                .setDate(date.toInstant(ZoneOffset.UTC).toEpochMilli())
+                .setDate(date.toEpochDay())
                 .setAction(AvroUserBookActionType.valueOf(action.toString()))
                 .build();
+
+        kafkaUserBookActionProducer.send(new ProducerRecord<String,AvroUserBookAction>(
+                mainConfig.getKafkaUserBookActionTopic(),
+                avroUserBookAction
+        ));
     }
 
-    public void setUserChangeEmailAction(Long userId,String newEmail){
+    public void setUserChangeEmailAction(Long userId,String newEmail,String verificationUrl){
         AvroUserChangedEmailAction avroUserChangedEmailAction=AvroUserChangedEmailAction.newBuilder()
                 .setUserId(userId)
                 .setNewEmail(newEmail)
+                .setVerificationUrl(verificationUrl)
                 .build();
-    }
 
-    @Override
-    public void sendUserBookLog(UserBookLog userBookLog) {
-        kafkaUserBookLogProducer.send(new ProducerRecord<String,AvroUserBookLog>(
-                mainConfig.getKafkaUserBookLogTopic(),
-                AvroConverter.buildAvroUserBookLog(userBookLog)
+        kafkaUserChangedEmailAction.send(new ProducerRecord<String,AvroUserChangedEmailAction>(
+                mainConfig.getKafkaUserChangedEmailActionTopic(),
+                avroUserChangedEmailAction
         ));
     }
-
-    @Override
-    public void sendEmail(Mail mail) {
-        kafkaMailProducer.send(new ProducerRecord<String, AvroMail>(
-                mainConfig.getKafkaMailTopic(),
-                AvroConverter.buildAvroMail(mail)
-        ));
-    }
-
 }

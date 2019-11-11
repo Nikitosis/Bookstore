@@ -35,17 +35,15 @@ public class BookService {
 
     private BookDao bookDao;
     private MainConfig mainConfig;
-    private FeeSenderService feeSenderService;
-    private LogSenderService logSenderService;
+    private RequestSenderKafkaService requestSenderKafkaService;
     private AwsStorageService awsStorageService;
     private UserService userService;
 
     @Autowired
-    public BookService(BookDao bookDao, MainConfig mainConfig, RequestSenderHttpService feeSenderService, RequestSenderKafkaService logSenderService, AwsStorageService awsStorageService, UserService userService) {
+    public BookService(BookDao bookDao, MainConfig mainConfig,RequestSenderKafkaService requestSenderKafkaService, AwsStorageService awsStorageService, UserService userService) {
         this.bookDao = bookDao;
         this.mainConfig = mainConfig;
-        this.feeSenderService = feeSenderService;
-        this.logSenderService = logSenderService;
+        this.requestSenderKafkaService = requestSenderKafkaService;
         this.awsStorageService = awsStorageService;
         this.userService = userService;
     }
@@ -126,43 +124,24 @@ public class BookService {
     public void takeBook(Long userId, Long bookId, LocalDate returnDate){
         bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
 
-        try {
-            feeSenderService.postChargeBookFee(userId, bookId);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-
-        UserBookLog userBookLog =new UserBookLog();
-        userBookLog.setUserId(userId);
-        userBookLog.setBookId(bookId);
-        userBookLog.setAction(Action.TAKE);
-        userBookLog.setDate(LocalDateTime.now());
-
-        try {
-            logSenderService.sendUserBookLog(userBookLog);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+        requestSenderKafkaService.sendUserBookAction(
+                userId,
+                bookId,
+                LocalDate.now(),
+                Action.RETURN
+        );
     }
 
     public void returnBook(Long userId,Long bookId){
         bookDao.returnBook(userId,bookId);
 
-        UserBookLog userBookLog =new UserBookLog();
-        userBookLog.setUserId(userId);
-        userBookLog.setBookId(bookId);
-        userBookLog.setAction(Action.RETURN);
-        userBookLog.setDate(LocalDateTime.now());
+        requestSenderKafkaService.sendUserBookAction(
+                userId,
+                bookId,
+                LocalDate.now(),
+                Action.TAKE
+        );
 
-        System.out.println(Entity.entity(userBookLog,MediaType.APPLICATION_JSON).toString());
-
-        try {
-           logSenderService.sendUserBookLog(userBookLog);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
     }
 
     private Long getFileSize(StoredFile storedFile){

@@ -27,9 +27,9 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
-    private String kafkaMailTopic;
+    private String kafkaUserBookActionTopic;
 
-    private String kafkaUserBookLogTopic;
+    private String kafkaUserChangedEmailActionTopic;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -111,19 +111,19 @@ public class MainConfig extends Configuration {
         this.kafkaConfig = kafkaConfig;
     }
 
-    public String getKafkaMailTopic() {
-        return kafkaMailTopic;
+    public String getKafkaUserBookActionTopic() {
+        return kafkaUserBookActionTopic;
     }
 
-    public void setKafkaMailTopic(String kafkaMailTopic) {
-        this.kafkaMailTopic = kafkaMailTopic;
+    public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
+        this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
     }
 
-    public String getKafkaUserBookLogTopic() {
-        return kafkaUserBookLogTopic;
+    public String getKafkaUserChangedEmailActionTopic() {
+        return kafkaUserChangedEmailActionTopic;
     }
 
-    public void setKafkaUserBookLogTopic(String kafkaUserBookLogTopic) {
-        this.kafkaUserBookLogTopic = kafkaUserBookLogTopic;
+    public void setKafkaUserChangedEmailActionTopic(String kafkaUserChangedEmailActionTopic) {
+        this.kafkaUserChangedEmailActionTopic = kafkaUserChangedEmailActionTopic;
     }
 }
