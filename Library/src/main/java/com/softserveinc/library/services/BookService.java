@@ -121,13 +121,13 @@ public class BookService {
         return bookDao.isTakenByUser(userId,bookId);
     }
 
-    public void takeBook(Long userId, Long bookId, LocalDate returnDate){
-        bookDao.takeBook(userId,bookId,LocalDate.now(),returnDate);
+    public void takeBook(Long userId, Long bookId, LocalDateTime returnDate){
+        bookDao.takeBook(userId,bookId,LocalDateTime.now(),returnDate);
 
         requestSenderKafkaService.sendUserBookAction(
                 userId,
                 bookId,
-                LocalDate.now(),
+                LocalDateTime.now(),
                 Action.RETURN
         );
     }
@@ -138,7 +138,7 @@ public class BookService {
         requestSenderKafkaService.sendUserBookAction(
                 userId,
                 bookId,
-                LocalDate.now(),
+                LocalDateTime.now(),
                 Action.TAKE
         );
 

@@ -27,11 +27,11 @@ public class RequestSenderKafkaService{
         this.kafkaUserChangedEmailAction = kafkaUserChangedEmailAction;
     }
 
-    public void sendUserBookAction(Long userId, Long bookId, LocalDate date, Action action){
+    public void sendUserBookAction(Long userId, Long bookId, LocalDateTime date, Action action){
         AvroUserBookAction avroUserBookAction=AvroUserBookAction.newBuilder()
                 .setUserId(userId)
                 .setBookId(bookId)
-                .setDate(date.toEpochDay())
+                .setDate(date.toInstant(ZoneOffset.UTC).toEpochMilli())
                 .setAction(AvroUserBookActionType.valueOf(action.toString()))
                 .build();
 
