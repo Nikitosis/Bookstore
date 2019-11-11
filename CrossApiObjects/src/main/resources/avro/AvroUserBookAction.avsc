@@ -1,0 +1,13 @@
+{
+  "type":"record",
+  "name":"AvroUserBookAction",
+  "namespace":"com.softserveinc.cross_api_objects.avro",
+  "fields":[
+    {"name":"userId","type":"long"},
+    {"name":"bookId","type":"long"},
+    {"name":"date","type":"long"},
+    {"name":"action",
+      "type":{"name":"AvroAction","type":"enum","symbols":["TAKE","RETURN"]}
+    }
+  ]
+}

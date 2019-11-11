@@ -1,0 +1,9 @@
+{
+  "type": "record",
+  "name": "AvroUserChangedEmailAction",
+  "namespace": "com.softserveinc.cross_api_objects.avro",
+  "fields": [
+    {"name": "userId","type": "long"},
+    {"name": "newEmail","type": "string"}
+  ]
+}
