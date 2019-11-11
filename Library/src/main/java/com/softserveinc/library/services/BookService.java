@@ -6,12 +6,8 @@ import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
 import com.softserveinc.cross_api_objects.api.Action;
-import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
-import com.softserveinc.library.services.request_senders.FeeSenderService;
-import com.softserveinc.library.services.request_senders.LogSenderService;
-import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
 import com.softserveinc.cross_api_objects.services.storage.StoredFile;
@@ -20,13 +16,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

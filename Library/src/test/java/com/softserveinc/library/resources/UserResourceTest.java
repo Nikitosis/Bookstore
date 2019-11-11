@@ -1,6 +1,7 @@
 package com.softserveinc.library.resources;
 
 import com.amazonaws.util.Base64;
+import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
@@ -13,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.cross_api_objects.models.Role;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.services.BookService;
-import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.UserService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
@@ -75,7 +75,6 @@ public class UserResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
 
-    private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
     private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
     private UserService userService =new UserService(userDao,roleDao,awsStorageService, requestSenderKafkaService,passwordEncoder,configuration);
     private BookService bookService=spy(new BookService(bookDao,configuration, requestSenderKafkaService,awsStorageService,userService));
@@ -630,8 +629,7 @@ public class UserResourceTest {
                 .put(Entity.json(""))
                 .getStatusInfo();
 
-        verify(requestSenderHttpService).sendUserBookLog(any());
-        verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),eq(Action.TAKE));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
         Assert.assertEquals(Response.Status.OK,responseStatus);
     }
@@ -744,7 +742,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        verify(requestSenderHttpService).sendUserBookLog(any());
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),Action.RETURN);
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 

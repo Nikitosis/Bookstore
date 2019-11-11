@@ -7,7 +7,6 @@ import com.softserveinc.cross_api_objects.mixins.MixinModule;
 import com.softserveinc.library.dao.BookDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.library.services.BookService;
-import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.library.services.UserService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
@@ -60,7 +59,6 @@ public class BookResourceTest {
     //Creating dependencies
     private AwsStorageService awsStorageService=mock(AwsStorageService.class);
     private UserService userService=mock(UserService.class);
-    private RequestSenderHttpService requestSenderHttpService =mock(RequestSenderHttpService.class);
     private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
     private BookService bookService=new BookService(bookDao,configuration, requestSenderKafkaService,awsStorageService,userService);
 
