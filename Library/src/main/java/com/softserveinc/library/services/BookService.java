@@ -128,7 +128,7 @@ public class BookService {
                 userId,
                 bookId,
                 LocalDateTime.now(),
-                Action.RETURN
+                Action.TAKE
         );
     }
 
@@ -139,7 +139,7 @@ public class BookService {
                 userId,
                 bookId,
                 LocalDateTime.now(),
-                Action.TAKE
+                Action.RETURN
         );
 
     }

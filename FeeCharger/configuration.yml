@@ -44,6 +44,8 @@ kafkaMailTopic: MailTopic
 
 kafkaUserBookPaymentLogTopic: UserBookPaymentLogTopic
 
+kafkaUserBookActionTopic: UserBookActionTopic
+
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
   secretKey: ${AWS_S3_SECRET_KEY}
@@ -56,5 +58,3 @@ awsS3Config:
     - png
   maxFileSize: 314572800    #300MB
   maxImageSize: 26214400   #25MB
-
-invoiceLambdaGeneratorUrl: hts
