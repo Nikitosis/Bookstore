@@ -32,6 +32,7 @@ public class RequestSenderKafkaService{
 
        avroInvoiceProducer.send(new ProducerRecord<String,AvroInvoiceAction>(
                mainConfig.getKafkaInvoiceActionTopic(),
+               userId.toString(),
                avroInvoiceAction
        ));
     }

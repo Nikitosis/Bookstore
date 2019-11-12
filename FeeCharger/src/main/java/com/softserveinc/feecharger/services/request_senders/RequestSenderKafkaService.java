@@ -37,6 +37,7 @@ public class RequestSenderKafkaService{
 
         userBookExtendActionProducer.send(new ProducerRecord<String,AvroUserBookExtendAction>(
                 mainConfig.getKafkaUserBookExtendActionTopic(),
+                userId.toString(),
                 avroUserBookExtendAction
         ));
     }
@@ -51,6 +52,7 @@ public class RequestSenderKafkaService{
 
         userBookPaymentActionProducer.send(new ProducerRecord<String,AvroUserBookPaymentAction>(
                 mainConfig.getKafkaUserBookPaymentActionTopic(),
+                userId.toString(),
                 avroUserBookPaymentAction
         ));
     }

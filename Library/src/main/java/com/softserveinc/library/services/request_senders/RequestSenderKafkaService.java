@@ -37,6 +37,7 @@ public class RequestSenderKafkaService{
 
         kafkaUserBookActionProducer.send(new ProducerRecord<String,AvroUserBookAction>(
                 mainConfig.getKafkaUserBookActionTopic(),
+                userId.toString(),
                 avroUserBookAction
         ));
     }
@@ -50,6 +51,7 @@ public class RequestSenderKafkaService{
 
         kafkaUserChangedEmailAction.send(new ProducerRecord<String,AvroUserChangedEmailAction>(
                 mainConfig.getKafkaUserChangedEmailActionTopic(),
+                userId.toString(),
                 avroUserChangedEmailAction
         ));
     }
