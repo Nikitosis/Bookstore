@@ -32,7 +32,7 @@ public class RequestSenderKafkaService{
                 .setUserId(userId)
                 .setBookId(bookId)
                 .setDate(date.toInstant(ZoneOffset.UTC).toEpochMilli())
-                .setAction(AvroUserBookActionType.valueOf(action.toString()))
+                .setAction(AvroUserBookActionStatus.valueOf(action.toString()))
                 .build();
 
         kafkaUserBookActionProducer.send(new ProducerRecord<String,AvroUserBookAction>(
@@ -41,7 +41,7 @@ public class RequestSenderKafkaService{
         ));
     }
 
-    public void setUserChangeEmailAction(Long userId,String newEmail,String verificationUrl){
+    public void sendUserChangeEmailAction(Long userId, String newEmail, String verificationUrl){
         AvroUserChangedEmailAction avroUserChangedEmailAction=AvroUserChangedEmailAction.newBuilder()
                 .setUserId(userId)
                 .setNewEmail(newEmail)

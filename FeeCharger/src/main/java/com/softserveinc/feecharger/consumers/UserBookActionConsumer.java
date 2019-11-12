@@ -1,6 +1,7 @@
 package com.softserveinc.feecharger.consumers;
 
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookActionStatus;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookActionType;
 import com.softserveinc.feecharger.services.FeeChargerService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -19,7 +20,7 @@ public class UserBookActionConsumer {
 
     @KafkaListener(topics = "#{@userBookActionTopic}",containerFactory = "userBookActionListener")
     public void consume(ConsumerRecord<String, AvroUserBookAction> record){
-        if(record.value().getAction()== AvroUserBookActionType.TAKE){
+        if(record.value().getAction()== AvroUserBookActionStatus.TAKE){
             feeChargerService.tryExtendRent(
                     record.value().getUserId(),
                     record.value().getBookId()

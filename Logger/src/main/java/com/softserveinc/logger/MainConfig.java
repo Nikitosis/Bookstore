@@ -23,6 +23,8 @@ public class MainConfig extends Configuration {
 
     private String kafkaUserBookActionTopic;
 
+    private String kafkaUserBookPaymentActionTopic;
+
     public DataSourceFactory getDatabase() {
         return database;
     }
@@ -77,5 +79,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
         this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
+    }
+
+    public String getKafkaUserBookPaymentActionTopic() {
+        return kafkaUserBookPaymentActionTopic;
+    }
+
+    public void setKafkaUserBookPaymentActionTopic(String kafkaUserBookPaymentActionTopic) {
+        this.kafkaUserBookPaymentActionTopic = kafkaUserBookPaymentActionTopic;
     }
 }

@@ -121,7 +121,7 @@ public class UserService {
         String verificationToken=UUID.randomUUID().toString();
         String verificationUrl=mainConfig.getVerificationUrl()+"/"+verificationToken;
 
-        requestSenderKafkaService.setUserChangeEmailAction(user.getId(),user.getEmail(),verificationUrl);
+        requestSenderKafkaService.sendUserChangeEmailAction(user.getId(),user.getEmail(),verificationUrl);
 
         user.setVerificationToken(verificationToken);
         user.setEmailVerified(false);
