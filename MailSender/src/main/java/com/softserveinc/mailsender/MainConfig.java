@@ -4,6 +4,7 @@ import com.softserveinc.cross_api_objects.configuration.KafkaConfig;
 import com.softserveinc.mailsender.configuration.MailConfig;
 import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 
 public class MainConfig extends Configuration {
 
@@ -13,7 +14,13 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
-    private String kafkaMailTopic;
+    private DataSourceFactory database;
+
+    private String kafkaUserChangedEmailActionTopic;
+
+    private String kafkaInvoiceActionTopic;
+
+    private String kafkaUserBookExtendActionTopic;
 
     public MailConfig getMailConfig() {
         return mailConfig;
@@ -39,11 +46,35 @@ public class MainConfig extends Configuration {
         this.kafkaConfig = kafkaConfig;
     }
 
-    public String getKafkaMailTopic() {
-        return kafkaMailTopic;
+    public String getKafkaUserChangedEmailActionTopic() {
+        return kafkaUserChangedEmailActionTopic;
     }
 
-    public void setKafkaMailTopic(String kafkaMailTopic) {
-        this.kafkaMailTopic = kafkaMailTopic;
+    public void setKafkaUserChangedEmailActionTopic(String kafkaUserChangedEmailActionTopic) {
+        this.kafkaUserChangedEmailActionTopic = kafkaUserChangedEmailActionTopic;
+    }
+
+    public String getKafkaInvoiceActionTopic() {
+        return kafkaInvoiceActionTopic;
+    }
+
+    public void setKafkaInvoiceActionTopic(String kafkaInvoiceActionTopic) {
+        this.kafkaInvoiceActionTopic = kafkaInvoiceActionTopic;
+    }
+
+    public DataSourceFactory getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(DataSourceFactory database) {
+        this.database = database;
+    }
+
+    public String getKafkaUserBookExtendActionTopic() {
+        return kafkaUserBookExtendActionTopic;
+    }
+
+    public void setKafkaUserBookExtendActionTopic(String kafkaUserBookExtendActionTopic) {
+        this.kafkaUserBookExtendActionTopic = kafkaUserBookExtendActionTopic;
     }
 }

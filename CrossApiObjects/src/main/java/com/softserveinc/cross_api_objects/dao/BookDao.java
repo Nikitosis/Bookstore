@@ -4,6 +4,7 @@ import com.softserveinc.cross_api_objects.models.Book;
 import org.apache.ibatis.annotations.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BookDao {
@@ -104,7 +105,7 @@ public interface BookDao {
     boolean isTakenByUser(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
     @Select("INSERT INTO user_book VALUES (#{bookId},#{userId},#{takeDate},#{returnDate},NULL)")
-    void takeBook(@Param("userId") Long userId, @Param("bookId") Long bookId, @Param("takeDate") LocalDate takeDate, @Param("returnDate") LocalDate returnDate);
+    void takeBook(@Param("userId") Long userId, @Param("bookId") Long bookId, @Param("takeDate") LocalDateTime takeDate, @Param("returnDate") LocalDateTime returnDate);
 
     @Select("DELETE FROM user_book WHERE book_id=#{bookId} AND user_id=#{userId}")
     void returnBook(@Param("userId") Long userId, @Param("bookId") Long bookId);

@@ -1,8 +1,6 @@
 package com.softserveinc.feecharger.services;
 
-import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
-import com.softserveinc.cross_api_objects.models.Attachment;
-import com.softserveinc.cross_api_objects.models.Mail;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.User;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
@@ -31,22 +28,18 @@ public class FeeChargerService {
     private FeeChargerDao feeChargerDao;
     private UserDao userDao;
     private MainConfig mainConfig;
-    private BookSenderService bookSenderService;
-    private LogSenderService logSenderService;
-    private MailSenderService mailSenderService;
-    private InvoiceService invoiceService;
+    private RequestSenderHttpService requestSenderHttpService;
+    private RequestSenderKafkaService requestSenderKafkaService;
     private Timer timer;
 
     @Autowired
-    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService bookSenderService, RequestSenderKafkaService logSenderService, RequestSenderKafkaService mailSenderService,InvoiceService invoiceService) {
+    public FeeChargerService(BookDao bookDao, FeeChargerDao feeChargerDao, UserDao userDao, MainConfig mainConfig, RequestSenderHttpService requestSenderHttpService, RequestSenderKafkaService requestSenderKafkaService) {
         this.bookDao = bookDao;
         this.feeChargerDao = feeChargerDao;
         this.userDao = userDao;
         this.mainConfig = mainConfig;
-        this.bookSenderService = bookSenderService;
-        this.logSenderService = logSenderService;
-        this.mailSenderService = mailSenderService;
-        this.invoiceService=invoiceService;
+        this.requestSenderHttpService = requestSenderHttpService;
+        this.requestSenderKafkaService = requestSenderKafkaService;
     }
 
     //starting timer that will extend expired book rents every n minutes
@@ -86,14 +79,9 @@ public class FeeChargerService {
         else{
             log.info("Sending return book.UserId: "+rent.getUserId()+". BookId: "+rent.getBookId());
             //if email is verified, send notification
-            if(userDao.findById(rent.getUserId()).getEmailVerified()) {
-                log.info("Sending return book notification");
-                mailSenderService.sendEmail(createReturnMailNotification(
-                        userDao.findById(rent.getUserId()),
-                        bookDao.findById(rent.getBookId())
-                ));
-            }
-            bookSenderService.sendReturnBook(
+            requestSenderKafkaService.sendUserBookExtendAction(rent.getUserId(),rent.getBookId(), AvroUserBookExtendActionStatus.NOT_ENOUGH_MONEY);
+
+            requestSenderHttpService.sendReturnBook(
                     userDao.findById(rent.getUserId()),
                     bookDao.findById(rent.getBookId())
             );
@@ -119,59 +107,16 @@ public class FeeChargerService {
         Book book=bookDao.findById(rent.getBookId());
         feeChargerDao.chargeFee(rent.getUserId(),book.getPrice());
 
-        UserBookPaymentLog userBookPaymentLog=createUserBookPaymentLog(rent,book.getPrice(),LocalDateTime.now());
-        logSenderService.sendPaymentLog(userBookPaymentLog);
+        requestSenderKafkaService.sendUserBookExtendAction(rent.getUserId(),rent.getBookId(),AvroUserBookExtendActionStatus.SUCCEED);
+        requestSenderKafkaService.sendUserBookPaymentAction(
+                rent.getUserId(),
+                rent.getBookId(),
+                book.getPrice(),
+                LocalDateTime.now()
+        );
 
         LocalDateTime paidUntil=rent.getPaidUntil()==null ? LocalDateTime.now() : rent.getPaidUntil();
         LocalDateTime payUntil=paidUntil.plusMinutes(mainConfig.getFeeChargeConfig().getRentPeriod());
         feeChargerDao.extendBookRent(rent.getUserId(),rent.getBookId(), payUntil);
-
-
-        //if user's email is verified
-        if(userDao.findById(rent.getUserId()).getEmailVerified()) {
-            //create invoice
-            log.info("Creating invoice");
-            String fileUrl=invoiceService.createInvoiceFile(
-                    userDao.findById(rent.getUserId()),
-                    bookDao.findById(rent.getBookId()),
-                    book.getPrice(),
-                    LocalDateTime.now()
-            );
-
-            //send invoice
-            log.info("Sending invoice");
-            mailSenderService.sendEmail(createMailInvoice(
-                    userDao.findById(rent.getUserId()),
-                    fileUrl
-            ));
-        }
-    }
-
-    private Mail createReturnMailNotification(User user,Book book){
-        Mail mail=new Mail();
-        mail.setReceiverEmail(user.getEmail());
-        mail.setSubject("Cannot extend book's rent");
-        mail.setBody( "Unfortunately, you don't have enough money on your account to extend " +
-                book.getName() + " rent. Book cost is " + book.getPrice() +
-                " but your current balance is " + user.getMoney());
-        return mail;
-    }
-
-    private Mail createMailInvoice(User user,String fileUrl){
-        Mail mail=new Mail();
-        mail.setReceiverEmail(user.getEmail());
-        mail.setSubject("Bookstore invoice");
-        mail.setBody("Invoice is attached");
-        mail.setAttachment(new Attachment("Invoice.pdf",fileUrl));
-        return mail;
-    }
-
-    private UserBookPaymentLog createUserBookPaymentLog(UserBook rent, BigDecimal price,LocalDateTime dateTime){
-        UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
-        userBookPaymentLog.setBookId(rent.getBookId());
-        userBookPaymentLog.setUserId(rent.getUserId());
-        userBookPaymentLog.setPayment(price);
-        userBookPaymentLog.setDate(LocalDateTime.now());
-        return userBookPaymentLog;
     }
 }

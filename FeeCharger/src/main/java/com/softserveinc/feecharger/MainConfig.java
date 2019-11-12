@@ -11,10 +11,6 @@ public class MainConfig extends Configuration {
 
     private DependencyService libraryService;
 
-    private DependencyService mailSenderService;
-
-    private DependencyService loggerService;
-
     private FeeChargeConfig feeChargeConfig;
 
     private OktaOAuthConfig oktaOAuth;
@@ -23,7 +19,11 @@ public class MainConfig extends Configuration {
 
     private String kafkaMailTopic;
 
-    private String kafkaUserBookPaymentLogTopic;
+    private String kafkaUserBookActionTopic;
+
+    private String kafkaUserBookExtendActionTopic;
+
+    private String kafkaUserBookPaymentActionTopic;
 
     private AwsS3Config awsS3Config;
 
@@ -61,22 +61,6 @@ public class MainConfig extends Configuration {
         this.oktaOAuth = oktaOAuth;
     }
 
-    public DependencyService getMailSenderService() {
-        return mailSenderService;
-    }
-
-    public void setMailSenderService(DependencyService mailSenderService) {
-        this.mailSenderService = mailSenderService;
-    }
-
-    public DependencyService getLoggerService() {
-        return loggerService;
-    }
-
-    public void setLoggerService(DependencyService loggerService) {
-        this.loggerService = loggerService;
-    }
-
     public KafkaConfig getKafkaConfig() {
         return kafkaConfig;
     }
@@ -93,12 +77,28 @@ public class MainConfig extends Configuration {
         this.kafkaMailTopic = kafkaMailTopic;
     }
 
-    public String getKafkaUserBookPaymentLogTopic() {
-        return kafkaUserBookPaymentLogTopic;
+    public String getKafkaUserBookActionTopic() {
+        return kafkaUserBookActionTopic;
     }
 
-    public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
-        this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
+    public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
+        this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
+    }
+
+    public String getKafkaUserBookExtendActionTopic() {
+        return kafkaUserBookExtendActionTopic;
+    }
+
+    public void setKafkaUserBookExtendActionTopic(String kafkaUserBookExtendActionTopic) {
+        this.kafkaUserBookExtendActionTopic = kafkaUserBookExtendActionTopic;
+    }
+
+    public String getKafkaUserBookPaymentActionTopic() {
+        return kafkaUserBookPaymentActionTopic;
+    }
+
+    public void setKafkaUserBookPaymentActionTopic(String kafkaUserBookPaymentActionTopic) {
+        this.kafkaUserBookPaymentActionTopic = kafkaUserBookPaymentActionTopic;
     }
 
     public AwsS3Config getAwsS3Config() {

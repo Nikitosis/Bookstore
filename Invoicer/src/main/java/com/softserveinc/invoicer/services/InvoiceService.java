@@ -1,12 +1,7 @@
 package com.softserveinc.invoicer.services;
 
-import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
-import com.softserveinc.cross_api_objects.models.Attachment;
-import com.softserveinc.cross_api_objects.models.Mail;
-import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.storage.StoredFile;
 import com.softserveinc.invoicer.MainConfig;
-import com.softserveinc.invoicer.dao.BookDao;
 import com.softserveinc.invoicer.dao.UserDao;
 import com.softserveinc.invoicer.dao.UserPaymentsDao;
 import com.softserveinc.invoicer.models.UserPayments;
@@ -16,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,8 +54,8 @@ public class InvoiceService {
     }
 
     public void generateInvoices(){
-        List<UserPayments> paymentsByUser=userPaymentsDao.findUserPaymentsFromDate(
-                LocalDateTime.now().minusMinutes(mainConfig.getInvoicerConfig().getGenerateInvoicePeriod())
+        List<UserPayments> paymentsByUser=userPaymentsDao.findUserPaymentsWithInterval(
+                mainConfig.getInvoicerConfig().getGenerateInvoicePeriod()
         );
 
         for(UserPayments userPayments:paymentsByUser){

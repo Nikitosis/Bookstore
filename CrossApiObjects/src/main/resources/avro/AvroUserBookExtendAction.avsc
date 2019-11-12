@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "AvroUserBookExtendAction",
+  "namespace": "com.softserveinc.cross_api_objects.avro",
+  "fields": [
+    {"name": "userId","type": "long"},
+    {"name": "bookId","type": "long"},
+    {"name":"status",
+      "type":{"name":"AvroUserBookExtendActionStatus","type":"enum","symbols":["SUCCEED","NOT_ENOUGH_MONEY"]}
+    }
+  ]
+}

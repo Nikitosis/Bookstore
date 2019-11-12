@@ -1,0 +1,28 @@
+{
+  "type": "record",
+  "name": "AvroInvoiceAction",
+  "namespace": "com.softserveinc.cross_api_objects.avro",
+  "fields": [
+    {"name": "userId","type": "long"},
+    {
+      "name": "invoice",
+      "type": [
+        {
+          "type": "record",
+          "name": "AvroAttachment",
+          "fields": [
+            {
+              "name": "attachmentUrl",
+              "type": "string"
+            },
+            {
+              "name": "attachmentName",
+              "type": "string"
+            }
+          ]
+        },
+        "null"
+      ]
+    }
+  ]
+}

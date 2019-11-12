@@ -19,9 +19,9 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
-    private String kafkaUserBookPaymentLogTopic;
+    private String kafkaUserBookActionTopic;
 
-    private String kafkaUserBookLogTopic;
+    private String kafkaUserBookPaymentActionTopic;
 
     public DataSourceFactory getDatabase() {
         return database;
@@ -63,19 +63,19 @@ public class MainConfig extends Configuration {
         this.kafkaConfig = kafkaConfig;
     }
 
-    public String getKafkaUserBookPaymentLogTopic() {
-        return kafkaUserBookPaymentLogTopic;
+    public String getKafkaUserBookActionTopic() {
+        return kafkaUserBookActionTopic;
     }
 
-    public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
-        this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
+    public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
+        this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
     }
 
-    public String getKafkaUserBookLogTopic() {
-        return kafkaUserBookLogTopic;
+    public String getKafkaUserBookPaymentActionTopic() {
+        return kafkaUserBookPaymentActionTopic;
     }
 
-    public void setKafkaUserBookLogTopic(String kafkaUserBookLogTopic) {
-        this.kafkaUserBookLogTopic = kafkaUserBookLogTopic;
+    public void setKafkaUserBookPaymentActionTopic(String kafkaUserBookPaymentActionTopic) {
+        this.kafkaUserBookPaymentActionTopic = kafkaUserBookPaymentActionTopic;
     }
 }

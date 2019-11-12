@@ -1,19 +1,16 @@
 server:
   applicationConnectors:
     - type: http
-      port: ${SERVICE_CLIENTPORT:-9006}
+      port: ${SERVICE_CLIENTPORT:-9010}
   adminConnectors:
     - type: http
-      port: ${SERVICE_ADMINPORT:-9007}
+      port: ${SERVICE_ADMINPORT:-9011}
 
 database:
   url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
   user: ${DB_USERNAME:-root}
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
-
-invoicerConfig:
-  generateInvoicePeriod: 1
 
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
@@ -29,7 +26,10 @@ awsS3Config:
   maxImageSize: 26214400   #25MB
 
 kafkaConfig:
-  brokerUrl: http://localhost:9092
-  schemaRegistryUrl: http://localhost:8081
+  brokerUrl: http://192.168.99.100:9092
+  schemaRegistryUrl: http://192.168.99.100:8081
 
-kafkaMailTopic: MailTopic
+invoicerConfig:
+  generateInvoicePeriod: 1
+
+kafkaInvoiceActionTopic: InvoiceActionTopic

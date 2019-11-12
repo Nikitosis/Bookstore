@@ -1,7 +1,7 @@
 package com.softserveinc.logger.configurations;
 
-import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
+import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction;
 import com.softserveinc.logger.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -32,7 +32,7 @@ public class KafkaConfig {
     public Map<String,Object> consumerConfig(){
         Map<String,Object> props=new HashMap<String, Object>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,mainConfig.getKafkaConfig().getBrokerUrl());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG,"MailConsumers");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG,"LoggerConsumers");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put("schema.registry.url",mainConfig.getKafkaConfig().getSchemaRegistryUrl());
@@ -41,38 +41,38 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,AvroUserBookLog> userBookLogConsumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroUserBookLog>(consumerConfig());
+    public ConsumerFactory<String, AvroUserBookAction> userBookActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String, AvroUserBookAction>(consumerConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog> userBookLogListener(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookLog>();
-        factory.setConsumerFactory(userBookLogConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction> userBookActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String, AvroUserBookAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction>();
+        factory.setConsumerFactory(userBookActionConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String,AvroUserBookPaymentLog> userBookPaymentLogConsumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroUserBookPaymentLog>(consumerConfig());
+    public ConsumerFactory<String, AvroUserBookPaymentAction> userBookPaymentActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String, AvroUserBookPaymentAction>(consumerConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog> userBookPaymentLogListener(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog>();
-        factory.setConsumerFactory(userBookPaymentLogConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentAction> userBookPaymentActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentAction>();
+        factory.setConsumerFactory(userBookPaymentActionConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
 
     @Bean
-    public String userBookLogTopic(){
-        return mainConfig.getKafkaUserBookLogTopic();
+    public String userBookActionTopic(){
+        return mainConfig.getKafkaUserBookActionTopic();
     }
 
     @Bean
-    public String userBookPaymentLogTopic(){
-        return mainConfig.getKafkaUserBookPaymentLogTopic();
+    public String userBookPaymentActionTopic(){
+        return mainConfig.getKafkaUserBookPaymentActionTopic();
     }
 }

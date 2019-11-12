@@ -1,6 +1,5 @@
 package com.softserveinc.invoicer.services;
 
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.Base64;
 import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Book;
@@ -15,7 +14,6 @@ import com.softserveinc.invoicer.dao.UserDao;
 import com.softserveinc.invoicer.models.UserPayments;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
@@ -23,9 +21,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.softserveinc.mailsender.configuration;
 
-import com.softserveinc.cross_api_objects.avro.AvroMail;
+import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.mailsender.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -40,21 +40,57 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, AvroMail> consumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
+    public ConsumerFactory<String, AvroUserChangedEmailAction> userChangedEmailActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroUserChangedEmailAction>(consumerConfig());
     }
 
-
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroMail> kafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroMail> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroMail>();
-        factory.setConsumerFactory(consumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserChangedEmailAction> kafkaUserChangedEmailActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String,AvroUserChangedEmailAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserChangedEmailAction>();
+        factory.setConsumerFactory(userChangedEmailActionConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
 
     @Bean
-    public String mailTopic(){
-        return mainConfig.getKafkaMailTopic();
+    public ConsumerFactory<String, AvroInvoiceAction> invoiceActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroInvoiceAction>(consumerConfig());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction> kafkaInvoiveActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction>();
+        factory.setConsumerFactory(invoiceActionConsumerFactory());
+        factory.getContainerProperties().setPollTimeout(1000);
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, AvroUserBookExtendAction> userBookExtendActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroUserBookExtendAction>(consumerConfig());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookExtendAction> kafkaUserBookExtendActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String, AvroUserBookExtendAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookExtendAction>();
+        factory.setConsumerFactory(userBookExtendActionConsumerFactory());
+        factory.getContainerProperties().setPollTimeout(1000);
+        return factory;
+    }
+
+
+    @Bean
+    public String userChangedEmailActionTopic(){
+        return mainConfig.getKafkaUserChangedEmailActionTopic();
+    }
+
+    @Bean
+    public String invoiceActionTopic(){
+        return mainConfig.getKafkaInvoiceActionTopic();
+    }
+
+    @Bean
+    public String userBookExtendActionTopic(){
+        return mainConfig.getKafkaUserBookExtendActionTopic();
     }
 }

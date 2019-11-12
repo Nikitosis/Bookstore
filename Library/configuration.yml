@@ -14,15 +14,6 @@ database:
 
 verificationUrl: http://localhost:3000/verifyEmail
 
-loggerService:
-  url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
-
-feeChargerService:
-  url: http://${FEE_CHARGER_SERVICE_IP:-localhost}:${FEE_CHARGER_SERVICE_PORT:-9006}
-
-mailSenderService:
-  url: http://${MAIL_SENDER_SERVICE_IP:-localhost}:${MAIL_SENDER_SERVICE_PORT:-9008}
-
 security:
   jwtSecret: ${JWT_SECRET}
   tokenHeader: "Authorization"
@@ -58,8 +49,8 @@ awsS3Config:
   maxImageSize: 26214400   #25MB
 
 kafkaConfig:
-  brokerUrl: http://localhost:9092
-  schemaRegistryUrl: http://localhost:8081
+  brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
+  schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
 
-kafkaMailTopic: MailTopic
-kafkaUserBookLogTopic: UserBookLogTopic
+kafkaUserBookActionTopic: UserBookActionTopic
+kafkaUserChangedEmailActionTopic: UserChangedEmailActionTopic

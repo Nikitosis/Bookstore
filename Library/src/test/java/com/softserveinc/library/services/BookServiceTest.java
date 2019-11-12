@@ -1,11 +1,12 @@
 package com.softserveinc.library.services;
 
+import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.library.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.library.dao.BookDao;
 import com.softserveinc.cross_api_objects.models.User;
-import com.softserveinc.library.services.request_senders.RequestSenderHttpService;
 import com.softserveinc.cross_api_objects.services.storage.AwsStorageService;
+import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.mockito.Mockito.*;
 
@@ -24,8 +25,10 @@ public class BookServiceTest {
     private BookDao bookDao;
     @Mock
     private MainConfig mainConfig;
+
     @Mock
-    private RequestSenderHttpService requestSenderHttpService;
+    private RequestSenderKafkaService requestSenderKafkaService;
+
     @Mock
     private AwsStorageService awsStorageService;
 
@@ -63,10 +66,9 @@ public class BookServiceTest {
     @Test
     public void takeBookTest(){
 
-        bookService.takeBook(testUser.getId(),testBook.getId(), LocalDate.now());
+        bookService.takeBook(testUser.getId(),testBook.getId(), LocalDateTime.now());
 
-        verify(requestSenderHttpService).sendUserBookLog(any());
-        verify(requestSenderHttpService).postChargeBookFee(eq(testUser.getId()),eq(testBook.getId()));
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(), Action.TAKE);
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
     }
 
@@ -75,7 +77,7 @@ public class BookServiceTest {
 
         bookService.returnBook(testUser.getId(),testBook.getId());
 
-        verify(requestSenderHttpService).sendUserBookLog(any());
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),Action.RETURN);
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }

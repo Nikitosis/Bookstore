@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service("requestSenderHttpService")
-public class RequestSenderHttpService implements BookSenderService,LogSenderService,MailSenderService{
+public class RequestSenderHttpService{
     private OktaService oktaService;
     private MainConfig mainConfig;
 
@@ -29,19 +29,6 @@ public class RequestSenderHttpService implements BookSenderService,LogSenderServ
     public RequestSenderHttpService(OktaService oktaService, MainConfig mainConfig) {
         this.oktaService = oktaService;
         this.mainConfig = mainConfig;
-    }
-
-    @Override
-    public void sendEmail(Mail mail){
-        OAuth2AccessToken accessToken = oktaService.getOktaToken();
-        Client client = ClientBuilder.newClient();
-
-        client.target(mainConfig.getMailSenderService().getUrl())
-                .path("/mail")
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken.getValue())
-                .async()
-                .post(Entity.entity(mail, MediaType.APPLICATION_JSON));
     }
 
     public void sendReturnBook(User user,Book book){
@@ -54,18 +41,5 @@ public class RequestSenderHttpService implements BookSenderService,LogSenderServ
                 .header("Authorization","Bearer "+accessToken.getValue())
                 .async()
                 .delete();
-    }
-
-    @Override
-    public void sendPaymentLog(UserBookPaymentLog userBookPaymentLog){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-        Client client=ClientBuilder.newClient();
-
-        client.target(mainConfig.getLoggerService().getUrl())
-                .path("/payments")
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization","Bearer "+accessToken.getValue())
-                .async()
-                .post(Entity.entity(userBookPaymentLog, MediaType.APPLICATION_JSON));
     }
 }
