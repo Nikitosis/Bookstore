@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "AvroUserBookPaymentAction",
+  "namespace": "com.softserveinc.cross_api_objects.avro",
+  "fields": [
+    {"name": "userId","type": "long"},
+    {"name": "bookId","type": "long"},
+    {"name":"date","type":"long"},
+    {"name":"payment","type":"string","logicalType":"decimal","precision":"4","scale":"2"}
+  ]
+}

@@ -1,8 +1,6 @@
 package com.softserveinc.feecharger.configuration;
 
-import com.softserveinc.cross_api_objects.avro.AvroMail;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
+import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.feecharger.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -23,8 +21,8 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-@EnableKafka
 @Configuration
+@EnableKafka
 public class KafkaConfig {
 
     private MainConfig mainConfig;
@@ -85,5 +83,15 @@ public class KafkaConfig {
     @Bean
     public Producer<String,AvroUserBookPaymentLog> kafkaUserBookLogProducer(){
         return new KafkaProducer<String, AvroUserBookPaymentLog>(producerConfigs());
+    }
+
+    @Bean
+    public Producer<String, AvroUserBookExtendAction> kafkaUserBookExtendActionProducer(){
+        return new KafkaProducer<String, AvroUserBookExtendAction>(producerConfigs());
+    }
+
+    @Bean
+    public Producer<String, AvroUserBookPaymentAction> kafkaUserBookPaymentActionProducer(){
+        return new KafkaProducer<String,AvroUserBookPaymentAction>(producerConfigs());
     }
 }

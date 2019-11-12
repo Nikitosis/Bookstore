@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service("requestSenderHttpService")
-public class RequestSenderHttpService implements BookSenderService,LogSenderService,MailSenderService{
+public class RequestSenderHttpService{
     private OktaService oktaService;
     private MainConfig mainConfig;
 
@@ -31,7 +31,6 @@ public class RequestSenderHttpService implements BookSenderService,LogSenderServ
         this.mainConfig = mainConfig;
     }
 
-    @Override
     public void sendEmail(Mail mail){
         OAuth2AccessToken accessToken = oktaService.getOktaToken();
         Client client = ClientBuilder.newClient();
@@ -56,7 +55,6 @@ public class RequestSenderHttpService implements BookSenderService,LogSenderServ
                 .delete();
     }
 
-    @Override
     public void sendPaymentLog(UserBookPaymentLog userBookPaymentLog){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
         Client client=ClientBuilder.newClient();

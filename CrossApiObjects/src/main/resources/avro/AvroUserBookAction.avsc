@@ -7,7 +7,7 @@
     {"name":"bookId","type":"long"},
     {"name":"date","type":"long"},
     {"name":"action",
-      "type":{"name":"AvroUserBookActionType","type":"enum","symbols":["TAKE","RETURN"]}
+      "type":{"name":"AvroUserBookActionStatus","type":"enum","symbols":["TAKE","RETURN"]}
     }
   ]
 }

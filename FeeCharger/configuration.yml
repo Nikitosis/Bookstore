@@ -46,6 +46,9 @@ kafkaUserBookPaymentLogTopic: UserBookPaymentLogTopic
 
 kafkaUserBookActionTopic: UserBookActionTopic
 
+kafkaUserBookExtendActionTopic: UserBookExtendActionTopic
+
+kafkaUserBookPaymentActionTopic: UserBookPaymentActionTopic
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
   secretKey: ${AWS_S3_SECRET_KEY}

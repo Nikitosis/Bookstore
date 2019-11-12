@@ -27,6 +27,10 @@ public class MainConfig extends Configuration {
 
     private String kafkaUserBookActionTopic;
 
+    private String kafkaUserBookExtendActionTopic;
+
+    private String kafkaUserBookPaymentActionTopic;
+
     private AwsS3Config awsS3Config;
 
     private String invoiceLambdaGeneratorUrl;
@@ -125,5 +129,21 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserBookActionTopic(String kafkaUserBookActionTopic) {
         this.kafkaUserBookActionTopic = kafkaUserBookActionTopic;
+    }
+
+    public String getKafkaUserBookExtendActionTopic() {
+        return kafkaUserBookExtendActionTopic;
+    }
+
+    public void setKafkaUserBookExtendActionTopic(String kafkaUserBookExtendActionTopic) {
+        this.kafkaUserBookExtendActionTopic = kafkaUserBookExtendActionTopic;
+    }
+
+    public String getKafkaUserBookPaymentActionTopic() {
+        return kafkaUserBookPaymentActionTopic;
+    }
+
+    public void setKafkaUserBookPaymentActionTopic(String kafkaUserBookPaymentActionTopic) {
+        this.kafkaUserBookPaymentActionTopic = kafkaUserBookPaymentActionTopic;
     }
 }
