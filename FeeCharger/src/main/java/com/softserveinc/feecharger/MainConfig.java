@@ -11,10 +11,6 @@ public class MainConfig extends Configuration {
 
     private DependencyService libraryService;
 
-    private DependencyService mailSenderService;
-
-    private DependencyService loggerService;
-
     private FeeChargeConfig feeChargeConfig;
 
     private OktaOAuthConfig oktaOAuth;
@@ -22,8 +18,6 @@ public class MainConfig extends Configuration {
     private KafkaConfig kafkaConfig;
 
     private String kafkaMailTopic;
-
-    private String kafkaUserBookPaymentLogTopic;
 
     private String kafkaUserBookActionTopic;
 
@@ -67,22 +61,6 @@ public class MainConfig extends Configuration {
         this.oktaOAuth = oktaOAuth;
     }
 
-    public DependencyService getMailSenderService() {
-        return mailSenderService;
-    }
-
-    public void setMailSenderService(DependencyService mailSenderService) {
-        this.mailSenderService = mailSenderService;
-    }
-
-    public DependencyService getLoggerService() {
-        return loggerService;
-    }
-
-    public void setLoggerService(DependencyService loggerService) {
-        this.loggerService = loggerService;
-    }
-
     public KafkaConfig getKafkaConfig() {
         return kafkaConfig;
     }
@@ -97,30 +75,6 @@ public class MainConfig extends Configuration {
 
     public void setKafkaMailTopic(String kafkaMailTopic) {
         this.kafkaMailTopic = kafkaMailTopic;
-    }
-
-    public String getKafkaUserBookPaymentLogTopic() {
-        return kafkaUserBookPaymentLogTopic;
-    }
-
-    public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
-        this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
-    }
-
-    public AwsS3Config getAwsS3Config() {
-        return awsS3Config;
-    }
-
-    public void setAwsS3Config(AwsS3Config awsS3Config) {
-        this.awsS3Config = awsS3Config;
-    }
-
-    public String getInvoiceLambdaGeneratorUrl() {
-        return invoiceLambdaGeneratorUrl;
-    }
-
-    public void setInvoiceLambdaGeneratorUrl(String invoiceLambdaGeneratorUrl) {
-        this.invoiceLambdaGeneratorUrl = invoiceLambdaGeneratorUrl;
     }
 
     public String getKafkaUserBookActionTopic() {
@@ -145,5 +99,21 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserBookPaymentActionTopic(String kafkaUserBookPaymentActionTopic) {
         this.kafkaUserBookPaymentActionTopic = kafkaUserBookPaymentActionTopic;
+    }
+
+    public AwsS3Config getAwsS3Config() {
+        return awsS3Config;
+    }
+
+    public void setAwsS3Config(AwsS3Config awsS3Config) {
+        this.awsS3Config = awsS3Config;
+    }
+
+    public String getInvoiceLambdaGeneratorUrl() {
+        return invoiceLambdaGeneratorUrl;
+    }
+
+    public void setInvoiceLambdaGeneratorUrl(String invoiceLambdaGeneratorUrl) {
+        this.invoiceLambdaGeneratorUrl = invoiceLambdaGeneratorUrl;
     }
 }

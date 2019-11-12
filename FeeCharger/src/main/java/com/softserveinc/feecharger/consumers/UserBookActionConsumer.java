@@ -2,7 +2,6 @@ package com.softserveinc.feecharger.consumers;
 
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookActionStatus;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookActionType;
 import com.softserveinc.feecharger.services.FeeChargerService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;

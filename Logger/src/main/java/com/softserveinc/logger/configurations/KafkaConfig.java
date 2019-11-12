@@ -1,9 +1,7 @@
 package com.softserveinc.logger.configurations;
 
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.logger.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -43,7 +41,7 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String,AvroUserBookAction> userBookActionConsumerFactory(){
+    public ConsumerFactory<String, AvroUserBookAction> userBookActionConsumerFactory(){
         return new DefaultKafkaConsumerFactory<String, AvroUserBookAction>(consumerConfig());
     }
 
@@ -51,19 +49,6 @@ public class KafkaConfig {
     public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction> userBookActionListener(){
         ConcurrentKafkaListenerContainerFactory<String, AvroUserBookAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookAction>();
         factory.setConsumerFactory(userBookActionConsumerFactory());
-        factory.getContainerProperties().setPollTimeout(1000);
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String,AvroUserBookPaymentLog> userBookPaymentLogConsumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroUserBookPaymentLog>(consumerConfig());
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog> userBookPaymentLogListener(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookPaymentLog>();
-        factory.setConsumerFactory(userBookPaymentLogConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
     }
@@ -84,12 +69,6 @@ public class KafkaConfig {
     @Bean
     public String userBookActionTopic(){
         return mainConfig.getKafkaUserBookActionTopic();
-    }
-
-
-    @Bean
-    public String userBookPaymentLogTopic(){
-        return mainConfig.getKafkaUserBookPaymentLogTopic();
     }
 
     @Bean

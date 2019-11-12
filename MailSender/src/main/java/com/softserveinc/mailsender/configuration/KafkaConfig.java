@@ -1,7 +1,6 @@
 package com.softserveinc.mailsender.configuration;
 
 import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
-import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction;
 import com.softserveinc.mailsender.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
@@ -65,24 +64,6 @@ public class KafkaConfig {
         factory.setConsumerFactory(invoiceActionConsumerFactory());
         factory.getContainerProperties().setPollTimeout(1000);
         return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, AvroMail> consumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String,AvroMail> kafkaListenerContainerFactory(){
-        ConcurrentKafkaListenerContainerFactory<String,AvroMail> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroMail>();
-        factory.setConsumerFactory(consumerFactory());
-        factory.getContainerProperties().setPollTimeout(1000);
-        return factory;
-    }
-
-    @Bean
-    public String mailTopic(){
-        return mainConfig.getKafkaMailTopic();
     }
 
     @Bean

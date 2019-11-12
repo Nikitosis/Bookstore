@@ -15,12 +15,6 @@ database:
 libraryService:
   url: http://${LIBRARY_SERVICE_IP:-localhost}:${LIBRARY_SERVICE_PORT:-9000}
 
-mailSenderService:
-  url: http://${MAIL_SENDER_SERVICE_IP:-localhost}:${MAIL_SENDER_SERVICE_PORT:-9008}
-
-loggerService:
-  url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
-
 feeChargeConfig:
   rentPeriod: 1
   checkExpirationInterval: 1
@@ -33,22 +27,10 @@ oktaOAuth:
   clientSecret: ${OKTA_FEECHARGER_SECRET}
   scopes:
     - write
+    -
 logging:
   level: INFO
 
-kafkaConfig:
-  brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
-  schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
-
-kafkaMailTopic: MailTopic
-
-kafkaUserBookPaymentLogTopic: UserBookPaymentLogTopic
-
-kafkaUserBookActionTopic: UserBookActionTopic
-
-kafkaUserBookExtendActionTopic: UserBookExtendActionTopic
-
-kafkaUserBookPaymentActionTopic: UserBookPaymentActionTopic
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
   secretKey: ${AWS_S3_SECRET_KEY}
@@ -61,3 +43,14 @@ awsS3Config:
     - png
   maxFileSize: 314572800    #300MB
   maxImageSize: 26214400   #25MB
+
+
+kafkaConfig:
+  brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
+  schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
+
+kafkaUserBookActionTopic: UserBookActionTopic
+
+kafkaUserBookExtendActionTopic: UserBookExtendActionTopic
+
+kafkaUserBookPaymentActionTopic: UserBookPaymentActionTopic

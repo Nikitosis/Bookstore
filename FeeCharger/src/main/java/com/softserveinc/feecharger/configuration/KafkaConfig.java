@@ -70,22 +70,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    public String userBookActionTopic(){
-        return mainConfig.getKafkaUserBookActionTopic();
-    }
-
-
-    @Bean
-    public Producer<String,AvroMail> kafkaMailProducer(){
-        return new KafkaProducer<String, AvroMail>(producerConfigs());
-    }
-
-    @Bean
-    public Producer<String,AvroUserBookPaymentLog> kafkaUserBookLogProducer(){
-        return new KafkaProducer<String, AvroUserBookPaymentLog>(producerConfigs());
-    }
-
-    @Bean
     public Producer<String, AvroUserBookExtendAction> kafkaUserBookExtendActionProducer(){
         return new KafkaProducer<String, AvroUserBookExtendAction>(producerConfigs());
     }
@@ -93,5 +77,10 @@ public class KafkaConfig {
     @Bean
     public Producer<String, AvroUserBookPaymentAction> kafkaUserBookPaymentActionProducer(){
         return new KafkaProducer<String,AvroUserBookPaymentAction>(producerConfigs());
+    }
+
+    @Bean
+    public String userBookActionTopic(){
+        return mainConfig.getKafkaUserBookActionTopic();
     }
 }

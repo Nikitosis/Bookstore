@@ -1,10 +1,6 @@
 package com.softserveinc.feecharger.services;
 
-import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionType;
-import com.softserveinc.cross_api_objects.models.Attachment;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.User;
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;

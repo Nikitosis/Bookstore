@@ -31,18 +31,6 @@ public class RequestSenderHttpService{
         this.mainConfig = mainConfig;
     }
 
-    public void sendEmail(Mail mail){
-        OAuth2AccessToken accessToken = oktaService.getOktaToken();
-        Client client = ClientBuilder.newClient();
-
-        client.target(mainConfig.getMailSenderService().getUrl())
-                .path("/mail")
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken.getValue())
-                .async()
-                .post(Entity.entity(mail, MediaType.APPLICATION_JSON));
-    }
-
     public void sendReturnBook(User user,Book book){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
         Client client= ClientBuilder.newClient();
@@ -53,17 +41,5 @@ public class RequestSenderHttpService{
                 .header("Authorization","Bearer "+accessToken.getValue())
                 .async()
                 .delete();
-    }
-
-    public void sendPaymentLog(UserBookPaymentLog userBookPaymentLog){
-        OAuth2AccessToken accessToken=oktaService.getOktaToken();
-        Client client=ClientBuilder.newClient();
-
-        client.target(mainConfig.getLoggerService().getUrl())
-                .path("/payments")
-                .request(MediaType.APPLICATION_JSON)
-                .header("Authorization","Bearer "+accessToken.getValue())
-                .async()
-                .post(Entity.entity(userBookPaymentLog, MediaType.APPLICATION_JSON));
     }
 }

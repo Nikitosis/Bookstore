@@ -14,15 +14,6 @@ database:
 
 verificationUrl: http://localhost:3000/verifyEmail
 
-loggerService:
-  url: http://${LOGGER_SERVICE_IP:-localhost}:${LOGGER_SERVICE_PORT:-9002}
-
-feeChargerService:
-  url: http://${FEE_CHARGER_SERVICE_IP:-localhost}:${FEE_CHARGER_SERVICE_PORT:-9006}
-
-mailSenderService:
-  url: http://${MAIL_SENDER_SERVICE_IP:-localhost}:${MAIL_SENDER_SERVICE_PORT:-9008}
-
 security:
   jwtSecret: ${JWT_SECRET}
   tokenHeader: "Authorization"

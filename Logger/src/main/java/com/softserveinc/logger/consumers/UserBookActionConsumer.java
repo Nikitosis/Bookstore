@@ -2,9 +2,7 @@ package com.softserveinc.logger.consumers;
 
 import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
-import com.softserveinc.cross_api_objects.avro.AvroConverter;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
 import com.softserveinc.logger.dao.UserBookLogDao;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;

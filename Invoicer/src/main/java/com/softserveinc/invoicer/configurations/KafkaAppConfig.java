@@ -1,8 +1,6 @@
 package com.softserveinc.invoicer.configurations;
 
 import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
-import com.softserveinc.cross_api_objects.avro.AvroMail;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.invoicer.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -35,11 +33,6 @@ public class KafkaAppConfig {
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,KafkaAvroSerializer.class);
         props.put("schema.registry.url",mainConfig.getKafkaConfig().getSchemaRegistryUrl());
         return props;
-    }
-
-    @Bean
-    public Producer<String,AvroMail> kafkaMailProducer(){
-        return new KafkaProducer<String, AvroMail>(producerConfigs());
     }
 
     @Bean

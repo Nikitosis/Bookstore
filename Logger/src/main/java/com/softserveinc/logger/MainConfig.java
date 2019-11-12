@@ -19,8 +19,6 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
-    private String kafkaUserBookPaymentLogTopic;
-
     private String kafkaUserBookActionTopic;
 
     private String kafkaUserBookPaymentActionTopic;
@@ -63,14 +61,6 @@ public class MainConfig extends Configuration {
 
     public void setKafkaConfig(KafkaConfig kafkaConfig) {
         this.kafkaConfig = kafkaConfig;
-    }
-
-    public String getKafkaUserBookPaymentLogTopic() {
-        return kafkaUserBookPaymentLogTopic;
-    }
-
-    public void setKafkaUserBookPaymentLogTopic(String kafkaUserBookPaymentLogTopic) {
-        this.kafkaUserBookPaymentLogTopic = kafkaUserBookPaymentLogTopic;
     }
 
     public String getKafkaUserBookActionTopic() {

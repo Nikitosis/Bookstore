@@ -1,8 +1,6 @@
 package com.softserveinc.library.configurations;
 
-import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookLog;
 import com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction;
 import com.softserveinc.library.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;

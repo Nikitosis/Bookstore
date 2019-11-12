@@ -12,9 +12,6 @@ database:
   password: ${DB_PASSWORD:-1234}
   driverClass: com.mysql.cj.jdbc.Driver
 
-invoicerConfig:
-  generateInvoicePeriod: 1
-
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
   secretKey: ${AWS_S3_SECRET_KEY}
@@ -32,6 +29,7 @@ kafkaConfig:
   brokerUrl: http://192.168.99.100:9092
   schemaRegistryUrl: http://192.168.99.100:8081
 
-kafkaMailTopic: MailTopic
+invoicerConfig:
+  generateInvoicePeriod: 1
 
 kafkaInvoiceActionTopic: InvoiceActionTopic
