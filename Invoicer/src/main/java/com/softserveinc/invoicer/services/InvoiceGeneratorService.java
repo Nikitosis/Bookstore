@@ -14,6 +14,7 @@ import com.softserveinc.invoicer.dao.UserDao;
 import com.softserveinc.invoicer.models.UserPayments;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.Client;
@@ -28,13 +29,12 @@ import java.util.List;
 @Service
 public class InvoiceGeneratorService {
     private MainConfig mainConfig;
-    private AwsStorageService awsStorageService;
     private UserDao userDao;
     private BookDao bookDao;
 
-    public InvoiceGeneratorService(MainConfig mainConfig, AwsStorageService awsStorageService, UserDao userDao, BookDao bookDao) {
+    @Autowired
+    public InvoiceGeneratorService(MainConfig mainConfig, UserDao userDao, BookDao bookDao) {
         this.mainConfig = mainConfig;
-        this.awsStorageService = awsStorageService;
         this.userDao = userDao;
         this.bookDao = bookDao;
     }
@@ -73,7 +73,7 @@ public class InvoiceGeneratorService {
     private byte[] getPdfBytes(InvoiceData invoiceData){
         Client client = ClientBuilder.newClient();
 
-        String response=client.target("https://qerhbbqfd2.execute-api.us-east-2.amazonaws.com/default/InvoicePDFGenerator")
+        String response=client.target(mainConfig.getInvoiceGeneratorLambdaUrl())
                 .request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(invoiceData,MediaType.APPLICATION_JSON),String.class);
 

@@ -15,6 +15,8 @@ public class MainConfig extends Configuration {
 
     private AwsS3Config awsS3Config;
 
+    private String invoiceGeneratorLambdaUrl;
+
     private KafkaConfig kafkaConfig;
 
     private String kafkaMailTopic;
@@ -67,5 +69,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaInvoiceActionTopic(String kafkaInvoiceActionTopic) {
         this.kafkaInvoiceActionTopic = kafkaInvoiceActionTopic;
+    }
+
+    public String getInvoiceGeneratorLambdaUrl() {
+        return invoiceGeneratorLambdaUrl;
+    }
+
+    public void setInvoiceGeneratorLambdaUrl(String invoiceGeneratorLambdaUrl) {
+        this.invoiceGeneratorLambdaUrl = invoiceGeneratorLambdaUrl;
     }
 }
