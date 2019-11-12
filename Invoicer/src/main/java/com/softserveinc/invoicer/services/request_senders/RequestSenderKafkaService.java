@@ -1,6 +1,7 @@
 package com.softserveinc.invoicer.services.request_senders;
 
 import com.softserveinc.cross_api_objects.avro.AvroConverter;
+import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
 import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.cross_api_objects.models.Mail;
@@ -11,20 +12,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("requestSenderKafkaService")
-public class RequestSenderKafkaService implements MailSenderService{
+public class RequestSenderKafkaService{
     private MainConfig mainConfig;
-    private Producer<String, AvroMail> mailProducer;
+    private Producer<String, AvroInvoiceAction> avroInvoiceProducer;
+
     @Autowired
-    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroMail> mailProducer) {
+    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroInvoiceAction> avroInvoiceProducer) {
         this.mainConfig = mainConfig;
-        this.mailProducer = mailProducer;
+        this.avroInvoiceProducer = avroInvoiceProducer;
     }
 
-    @Override
-    public void sendEmail(Mail mail) {
-       mailProducer.send(new ProducerRecord<String,AvroMail>(
-               mainConfig.getKafkaMailTopic(),
-               AvroConverter.buildAvroMail(mail)
+    public void sendInvoiceAction(Long userId, String invoiceUrl) {
+        AvroInvoiceAction avroInvoiceAction=AvroInvoiceAction.newBuilder()
+                .setUserId(userId)
+                .setInvoiceUrl(invoiceUrl)
+                .build();
+
+       avroInvoiceProducer.send(new ProducerRecord<String,AvroInvoiceAction>(
+               mainConfig.getKafkaInvoiceActionTopic(),
+               avroInvoiceAction
        ));
     }
 

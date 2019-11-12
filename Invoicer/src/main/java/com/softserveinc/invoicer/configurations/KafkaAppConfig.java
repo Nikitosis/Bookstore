@@ -1,5 +1,6 @@
 package com.softserveinc.invoicer.configurations;
 
+import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
 import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
 import com.softserveinc.invoicer.MainConfig;
@@ -39,5 +40,10 @@ public class KafkaAppConfig {
     @Bean
     public Producer<String,AvroMail> kafkaMailProducer(){
         return new KafkaProducer<String, AvroMail>(producerConfigs());
+    }
+
+    @Bean
+    public Producer<String, AvroInvoiceAction> kafkaInvoiceActionProducer(){
+        return new KafkaProducer<String,AvroInvoiceAction>(producerConfigs());
     }
 }

@@ -1,10 +1,10 @@
 server:
   applicationConnectors:
     - type: http
-      port: ${SERVICE_CLIENTPORT:-9006}
+      port: ${SERVICE_CLIENTPORT:-9008}
   adminConnectors:
     - type: http
-      port: ${SERVICE_ADMINPORT:-9007}
+      port: ${SERVICE_ADMINPORT:-9009}
 
 database:
   url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
@@ -29,7 +29,9 @@ awsS3Config:
   maxImageSize: 26214400   #25MB
 
 kafkaConfig:
-  brokerUrl: http://localhost:9092
-  schemaRegistryUrl: http://localhost:8081
+  brokerUrl: http://192.168.99.100:9092
+  schemaRegistryUrl: http://192.168.99.100:8081
 
 kafkaMailTopic: MailTopic
+
+kafkaInvoiceActionTopic: InvoiceActionTopic
