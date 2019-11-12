@@ -4,6 +4,7 @@ import com.softserveinc.cross_api_objects.configuration.KafkaConfig;
 import com.softserveinc.mailsender.configuration.MailConfig;
 import com.softserveinc.cross_api_objects.configuration.OktaOAuthConfig;
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 
 public class MainConfig extends Configuration {
 
@@ -13,9 +14,13 @@ public class MainConfig extends Configuration {
 
     private KafkaConfig kafkaConfig;
 
+    private DataSourceFactory database;
+
     private String kafkaMailTopic;
 
     private String kafkaUserChangedEmailActionTopic;
+
+    private String kafkaInvoiceActionTopic;
 
     public MailConfig getMailConfig() {
         return mailConfig;
@@ -55,5 +60,21 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserChangedEmailActionTopic(String kafkaUserChangedEmailActionTopic) {
         this.kafkaUserChangedEmailActionTopic = kafkaUserChangedEmailActionTopic;
+    }
+
+    public String getKafkaInvoiceActionTopic() {
+        return kafkaInvoiceActionTopic;
+    }
+
+    public void setKafkaInvoiceActionTopic(String kafkaInvoiceActionTopic) {
+        this.kafkaInvoiceActionTopic = kafkaInvoiceActionTopic;
+    }
+
+    public DataSourceFactory getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(DataSourceFactory database) {
+        this.database = database;
     }
 }

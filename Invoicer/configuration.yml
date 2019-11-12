@@ -1,10 +1,10 @@
 server:
   applicationConnectors:
     - type: http
-      port: ${SERVICE_CLIENTPORT:-9008}
+      port: ${SERVICE_CLIENTPORT:-9010}
   adminConnectors:
     - type: http
-      port: ${SERVICE_ADMINPORT:-9009}
+      port: ${SERVICE_ADMINPORT:-9011}
 
 database:
   url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}

@@ -4,6 +4,25 @@
   "namespace": "com.softserveinc.cross_api_objects.avro",
   "fields": [
     {"name": "userId","type": "long"},
-    {"name": "invoiceUrl","type": "string"}
+    {
+      "name": "invoice",
+      "type": [
+        {
+          "type": "record",
+          "name": "AvroAttachment",
+          "fields": [
+            {
+              "name": "attachmentUrl",
+              "type": "string"
+            },
+            {
+              "name": "attachmentName",
+              "type": "string"
+            }
+          ]
+        },
+        "null"
+      ]
+    }
   ]
 }

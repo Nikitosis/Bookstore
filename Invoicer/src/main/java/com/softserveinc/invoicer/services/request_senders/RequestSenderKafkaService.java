@@ -1,9 +1,6 @@
 package com.softserveinc.invoicer.services.request_senders;
 
-import com.softserveinc.cross_api_objects.avro.AvroConverter;
-import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
-import com.softserveinc.cross_api_objects.avro.AvroMail;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentLog;
+import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.invoicer.MainConfig;
 import org.apache.kafka.clients.producer.Producer;
@@ -23,9 +20,14 @@ public class RequestSenderKafkaService{
     }
 
     public void sendInvoiceAction(Long userId, String invoiceUrl) {
+        AvroAttachment avroAttachment=AvroAttachment.newBuilder()
+                .setAttachmentName("Invoice.pdf")
+                .setAttachmentUrl(invoiceUrl)
+                .build();
+
         AvroInvoiceAction avroInvoiceAction=AvroInvoiceAction.newBuilder()
                 .setUserId(userId)
-                .setInvoiceUrl(invoiceUrl)
+                .setInvoice(avroAttachment)
                 .build();
 
        avroInvoiceProducer.send(new ProducerRecord<String,AvroInvoiceAction>(

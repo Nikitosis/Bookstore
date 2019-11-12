@@ -19,6 +19,12 @@ oktaOAuth:
   clientId: "0oa1j89ftf8jgPY1Q357"
   clientSecret: ${OKTA_MAILSENDER_SECRET}
 
+database:
+  url: jdbc:mysql://${DB_IP:-localhost}:3306/${DB_NAME:-bookstore}
+  user: ${DB_USERNAME:-root}
+  password: ${DB_PASSWORD:-1234}
+  driverClass: com.mysql.cj.jdbc.Driver
+
 kafkaConfig:
   brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
   schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
@@ -26,3 +32,5 @@ kafkaConfig:
 kafkaMailTopic: MailTopic
 
 kafkaUserChangedEmailActionTopic: UserChangedEmailActionTopic
+
+kafkaInvoiceActionTopic: InvoiceActionTopic

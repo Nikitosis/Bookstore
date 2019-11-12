@@ -1,5 +1,6 @@
 package com.softserveinc.mailsender.configuration;
 
+import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
 import com.softserveinc.cross_api_objects.avro.AvroMail;
 import com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction;
 import com.softserveinc.mailsender.MainConfig;
@@ -54,15 +55,22 @@ public class KafkaConfig {
     }
 
     @Bean
-    public ConsumerFactory<String, AvroMail> consumerFactory(){
-        return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
+    public ConsumerFactory<String, AvroInvoiceAction> invoiceActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroInvoiceAction>(consumerConfig());
     }
 
     @Bean
-    public String userChangedEmailActionTopic(){
-        return mainConfig.getKafkaUserChangedEmailActionTopic();
+    public ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction> kafkaInvoiveActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroInvoiceAction>();
+        factory.setConsumerFactory(invoiceActionConsumerFactory());
+        factory.getContainerProperties().setPollTimeout(1000);
+        return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, AvroMail> consumerFactory(){
+        return new DefaultKafkaConsumerFactory<String, AvroMail>(consumerConfig());
+    }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String,AvroMail> kafkaListenerContainerFactory(){
@@ -75,5 +83,15 @@ public class KafkaConfig {
     @Bean
     public String mailTopic(){
         return mainConfig.getKafkaMailTopic();
+    }
+
+    @Bean
+    public String userChangedEmailActionTopic(){
+        return mainConfig.getKafkaUserChangedEmailActionTopic();
+    }
+
+    @Bean
+    public String invoiceActionTopic(){
+        return mainConfig.getKafkaInvoiceActionTopic();
     }
 }

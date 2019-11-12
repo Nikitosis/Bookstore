@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -1813108494383545800L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroInvoiceAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"invoiceUrl\",\"type\":\"string\"}]}");
+  private static final long serialVersionUID = -5396064135160261803L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroInvoiceAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"invoice\",\"type\":[{\"type\":\"record\",\"name\":\"AvroAttachment\",\"fields\":[{\"name\":\"attachmentUrl\",\"type\":\"string\"},{\"name\":\"attachmentName\",\"type\":\"string\"}]},\"null\"]}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -52,7 +52,7 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
   }
 
   @Deprecated public long userId;
-  @Deprecated public java.lang.CharSequence invoiceUrl;
+  @Deprecated public com.softserveinc.cross_api_objects.avro.AvroAttachment invoice;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -64,11 +64,11 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
   /**
    * All-args constructor.
    * @param userId The new value for userId
-   * @param invoiceUrl The new value for invoiceUrl
+   * @param invoice The new value for invoice
    */
-  public AvroInvoiceAction(java.lang.Long userId, java.lang.CharSequence invoiceUrl) {
+  public AvroInvoiceAction(java.lang.Long userId, com.softserveinc.cross_api_objects.avro.AvroAttachment invoice) {
     this.userId = userId;
-    this.invoiceUrl = invoiceUrl;
+    this.invoice = invoice;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -76,7 +76,7 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
   public java.lang.Object get(int field$) {
     switch (field$) {
     case 0: return userId;
-    case 1: return invoiceUrl;
+    case 1: return invoice;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -86,7 +86,7 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
   public void put(int field$, java.lang.Object value$) {
     switch (field$) {
     case 0: userId = (java.lang.Long)value$; break;
-    case 1: invoiceUrl = (java.lang.CharSequence)value$; break;
+    case 1: invoice = (com.softserveinc.cross_api_objects.avro.AvroAttachment)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -108,19 +108,19 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
   }
 
   /**
-   * Gets the value of the 'invoiceUrl' field.
-   * @return The value of the 'invoiceUrl' field.
+   * Gets the value of the 'invoice' field.
+   * @return The value of the 'invoice' field.
    */
-  public java.lang.CharSequence getInvoiceUrl() {
-    return invoiceUrl;
+  public com.softserveinc.cross_api_objects.avro.AvroAttachment getInvoice() {
+    return invoice;
   }
 
   /**
-   * Sets the value of the 'invoiceUrl' field.
+   * Sets the value of the 'invoice' field.
    * @param value the value to set.
    */
-  public void setInvoiceUrl(java.lang.CharSequence value) {
-    this.invoiceUrl = value;
+  public void setInvoice(com.softserveinc.cross_api_objects.avro.AvroAttachment value) {
+    this.invoice = value;
   }
 
   /**
@@ -156,7 +156,8 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
     implements org.apache.avro.data.RecordBuilder<AvroInvoiceAction> {
 
     private long userId;
-    private java.lang.CharSequence invoiceUrl;
+    private com.softserveinc.cross_api_objects.avro.AvroAttachment invoice;
+    private com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder invoiceBuilder;
 
     /** Creates a new Builder */
     private Builder() {
@@ -173,9 +174,12 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
         this.userId = data().deepCopy(fields()[0].schema(), other.userId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.invoiceUrl)) {
-        this.invoiceUrl = data().deepCopy(fields()[1].schema(), other.invoiceUrl);
+      if (isValidValue(fields()[1], other.invoice)) {
+        this.invoice = data().deepCopy(fields()[1].schema(), other.invoice);
         fieldSetFlags()[1] = true;
+      }
+      if (other.hasInvoiceBuilder()) {
+        this.invoiceBuilder = com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder(other.getInvoiceBuilder());
       }
     }
 
@@ -189,10 +193,11 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
         this.userId = data().deepCopy(fields()[0].schema(), other.userId);
         fieldSetFlags()[0] = true;
       }
-      if (isValidValue(fields()[1], other.invoiceUrl)) {
-        this.invoiceUrl = data().deepCopy(fields()[1].schema(), other.invoiceUrl);
+      if (isValidValue(fields()[1], other.invoice)) {
+        this.invoice = data().deepCopy(fields()[1].schema(), other.invoice);
         fieldSetFlags()[1] = true;
       }
+      this.invoiceBuilder = null;
     }
 
     /**
@@ -234,40 +239,75 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
     }
 
     /**
-      * Gets the value of the 'invoiceUrl' field.
+      * Gets the value of the 'invoice' field.
       * @return The value.
       */
-    public java.lang.CharSequence getInvoiceUrl() {
-      return invoiceUrl;
+    public com.softserveinc.cross_api_objects.avro.AvroAttachment getInvoice() {
+      return invoice;
     }
 
     /**
-      * Sets the value of the 'invoiceUrl' field.
-      * @param value The value of 'invoiceUrl'.
+      * Sets the value of the 'invoice' field.
+      * @param value The value of 'invoice'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroInvoiceAction.Builder setInvoiceUrl(java.lang.CharSequence value) {
+    public com.softserveinc.cross_api_objects.avro.AvroInvoiceAction.Builder setInvoice(com.softserveinc.cross_api_objects.avro.AvroAttachment value) {
       validate(fields()[1], value);
-      this.invoiceUrl = value;
+      this.invoiceBuilder = null;
+      this.invoice = value;
       fieldSetFlags()[1] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'invoiceUrl' field has been set.
-      * @return True if the 'invoiceUrl' field has been set, false otherwise.
+      * Checks whether the 'invoice' field has been set.
+      * @return True if the 'invoice' field has been set, false otherwise.
       */
-    public boolean hasInvoiceUrl() {
+    public boolean hasInvoice() {
       return fieldSetFlags()[1];
     }
 
+    /**
+     * Gets the Builder instance for the 'invoice' field and creates one if it doesn't exist yet.
+     * @return This builder.
+     */
+    public com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder getInvoiceBuilder() {
+      if (invoiceBuilder == null) {
+        if (hasInvoice()) {
+          setInvoiceBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder(invoice));
+        } else {
+          setInvoiceBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.newBuilder());
+        }
+      }
+      return invoiceBuilder;
+    }
 
     /**
-      * Clears the value of the 'invoiceUrl' field.
+     * Sets the Builder instance for the 'invoice' field
+     * @param value The builder instance that must be set.
+     * @return This builder.
+     */
+    public com.softserveinc.cross_api_objects.avro.AvroInvoiceAction.Builder setInvoiceBuilder(com.softserveinc.cross_api_objects.avro.AvroAttachment.Builder value) {
+      clearInvoice();
+      invoiceBuilder = value;
+      return this;
+    }
+
+    /**
+     * Checks whether the 'invoice' field has an active Builder instance
+     * @return True if the 'invoice' field has an active Builder instance
+     */
+    public boolean hasInvoiceBuilder() {
+      return invoiceBuilder != null;
+    }
+
+    /**
+      * Clears the value of the 'invoice' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroInvoiceAction.Builder clearInvoiceUrl() {
-      invoiceUrl = null;
+    public com.softserveinc.cross_api_objects.avro.AvroInvoiceAction.Builder clearInvoice() {
+      invoice = null;
+      invoiceBuilder = null;
       fieldSetFlags()[1] = false;
       return this;
     }
@@ -278,7 +318,11 @@ public class AvroInvoiceAction extends org.apache.avro.specific.SpecificRecordBa
       try {
         AvroInvoiceAction record = new AvroInvoiceAction();
         record.userId = fieldSetFlags()[0] ? this.userId : (java.lang.Long) defaultValue(fields()[0]);
-        record.invoiceUrl = fieldSetFlags()[1] ? this.invoiceUrl : (java.lang.CharSequence) defaultValue(fields()[1]);
+        if (invoiceBuilder != null) {
+          record.invoice = this.invoiceBuilder.build();
+        } else {
+          record.invoice = fieldSetFlags()[1] ? this.invoice : (com.softserveinc.cross_api_objects.avro.AvroAttachment) defaultValue(fields()[1]);
+        }
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);
