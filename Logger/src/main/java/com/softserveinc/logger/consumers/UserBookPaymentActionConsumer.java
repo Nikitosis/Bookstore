@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Service
@@ -26,7 +27,7 @@ public class UserBookPaymentActionConsumer {
         UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
         userBookPaymentLog.setUserId(record.value().getUserId());
         userBookPaymentLog.setBookId(record.value().getBookId());
-        userBookPaymentLog.setDate(Instant.ofEpochMilli(record.value().getDate()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+        userBookPaymentLog.setDate(LocalDateTime.parse(record.value().getDate()));
         userBookPaymentLog.setPayment(new BigDecimal(record.value().getPayment().toString()));
 
         userBookPaymentLogDao.save(userBookPaymentLog);

@@ -10,6 +10,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Service
@@ -27,7 +28,7 @@ public class UserBookActionConsumer {
         userBookLog.setUserId(record.value().getUserId());
         userBookLog.setBookId(record.value().getBookId());
         userBookLog.setAction(Action.valueOf(record.value().getAction().toString()));
-        userBookLog.setDate(Instant.ofEpochMilli(record.value().getDate()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+        userBookLog.setDate(LocalDateTime.parse(record.value().getDate()));
 
         userBookLogDao.save(userBookLog);
     }

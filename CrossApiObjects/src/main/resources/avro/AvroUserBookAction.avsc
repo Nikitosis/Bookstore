@@ -5,7 +5,7 @@
   "fields":[
     {"name":"userId","type":"long"},
     {"name":"bookId","type":"long"},
-    {"name":"date","type":"long"},
+    {"name":"date","type":"string"},
     {"name":"action",
       "type":{"name":"AvroUserBookActionStatus","type":"enum","symbols":["TAKE","RETURN"]}
     }

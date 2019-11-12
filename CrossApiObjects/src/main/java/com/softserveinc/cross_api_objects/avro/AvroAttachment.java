@@ -159,7 +159,7 @@ public class AvroAttachment extends org.apache.avro.specific.SpecificRecordBase 
     private java.lang.CharSequence attachmentName;
 
     /** Creates a new Builder */
-    Builder() {
+    private Builder() {
       super(SCHEMA$);
     }
 

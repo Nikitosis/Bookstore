@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroUserBookPaymentAction extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = 4116404258799510748L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookPaymentAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"long\"},{\"name\":\"payment\",\"type\":\"string\",\"logicalType\":\"decimal\",\"precision\":\"4\",\"scale\":\"2\"}]}");
+  private static final long serialVersionUID = 5194069577111971520L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookPaymentAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"date\",\"type\":\"string\"},{\"name\":\"payment\",\"type\":\"string\",\"logicalType\":\"decimal\",\"precision\":\"4\",\"scale\":\"2\"}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -53,7 +53,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
 
   @Deprecated public long userId;
   @Deprecated public long bookId;
-  @Deprecated public long date;
+  @Deprecated public java.lang.CharSequence date;
   @Deprecated public java.lang.CharSequence payment;
 
   /**
@@ -70,7 +70,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
    * @param date The new value for date
    * @param payment The new value for payment
    */
-  public AvroUserBookPaymentAction(java.lang.Long userId, java.lang.Long bookId, java.lang.Long date, java.lang.CharSequence payment) {
+  public AvroUserBookPaymentAction(java.lang.Long userId, java.lang.Long bookId, java.lang.CharSequence date, java.lang.CharSequence payment) {
     this.userId = userId;
     this.bookId = bookId;
     this.date = date;
@@ -95,7 +95,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
     switch (field$) {
     case 0: userId = (java.lang.Long)value$; break;
     case 1: bookId = (java.lang.Long)value$; break;
-    case 2: date = (java.lang.Long)value$; break;
+    case 2: date = (java.lang.CharSequence)value$; break;
     case 3: payment = (java.lang.CharSequence)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
@@ -137,7 +137,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
    * Gets the value of the 'date' field.
    * @return The value of the 'date' field.
    */
-  public java.lang.Long getDate() {
+  public java.lang.CharSequence getDate() {
     return date;
   }
 
@@ -145,7 +145,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
    * Sets the value of the 'date' field.
    * @param value the value to set.
    */
-  public void setDate(java.lang.Long value) {
+  public void setDate(java.lang.CharSequence value) {
     this.date = value;
   }
 
@@ -199,7 +199,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
 
     private long userId;
     private long bookId;
-    private long date;
+    private java.lang.CharSequence date;
     private java.lang.CharSequence payment;
 
     /** Creates a new Builder */
@@ -335,7 +335,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
       * Gets the value of the 'date' field.
       * @return The value.
       */
-    public java.lang.Long getDate() {
+    public java.lang.CharSequence getDate() {
       return date;
     }
 
@@ -344,7 +344,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
       * @param value The value of 'date'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction.Builder setDate(long value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction.Builder setDate(java.lang.CharSequence value) {
       validate(fields()[2], value);
       this.date = value;
       fieldSetFlags()[2] = true;
@@ -365,6 +365,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
       * @return This builder.
       */
     public com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction.Builder clearDate() {
+      date = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -415,7 +416,7 @@ public class AvroUserBookPaymentAction extends org.apache.avro.specific.Specific
         AvroUserBookPaymentAction record = new AvroUserBookPaymentAction();
         record.userId = fieldSetFlags()[0] ? this.userId : (java.lang.Long) defaultValue(fields()[0]);
         record.bookId = fieldSetFlags()[1] ? this.bookId : (java.lang.Long) defaultValue(fields()[1]);
-        record.date = fieldSetFlags()[2] ? this.date : (java.lang.Long) defaultValue(fields()[2]);
+        record.date = fieldSetFlags()[2] ? this.date : (java.lang.CharSequence) defaultValue(fields()[2]);
         record.payment = fieldSetFlags()[3] ? this.payment : (java.lang.CharSequence) defaultValue(fields()[3]);
         return record;
       } catch (java.lang.Exception e) {

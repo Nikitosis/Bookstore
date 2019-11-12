@@ -31,7 +31,7 @@ public class RequestSenderKafkaService{
         AvroUserBookAction avroUserBookAction=AvroUserBookAction.newBuilder()
                 .setUserId(userId)
                 .setBookId(bookId)
-                .setDate(date.toInstant(ZoneOffset.UTC).toEpochMilli())
+                .setDate(date.toString())
                 .setAction(AvroUserBookActionStatus.valueOf(action.toString()))
                 .build();
 

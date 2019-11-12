@@ -46,7 +46,7 @@ public class RequestSenderKafkaService{
                 .setUserId(userId)
                 .setBookId(bookId)
                 .setPayment(payment.toString())
-                .setDate(dateTime.toInstant(ZoneOffset.UTC).toEpochMilli())
+                .setDate(dateTime.toString())
                 .build();
 
         userBookPaymentActionProducer.send(new ProducerRecord<String,AvroUserBookPaymentAction>(

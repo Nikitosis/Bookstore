@@ -116,7 +116,7 @@ public class BookService {
 
     public void takeBook(Long userId, Long bookId, LocalDateTime returnDate){
         bookDao.takeBook(userId,bookId,LocalDateTime.now(),returnDate);
-
+        LocalDateTime time=LocalDateTime.now();
         requestSenderKafkaService.sendUserBookAction(
                 userId,
                 bookId,

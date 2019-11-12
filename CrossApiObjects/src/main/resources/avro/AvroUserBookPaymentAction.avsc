@@ -5,7 +5,7 @@
   "fields": [
     {"name": "userId","type": "long"},
     {"name": "bookId","type": "long"},
-    {"name":"date","type":"long"},
+    {"name":"date","type":"string"},
     {"name":"payment","type":"string","logicalType":"decimal","precision":"4","scale":"2"}
   ]
 }
