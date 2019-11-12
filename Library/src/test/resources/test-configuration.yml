@@ -16,7 +16,4 @@ awsS3Config:
   maxFileSize: 314572800    #300MB
   maxImageSize: 26214400   #25MB
 
-mailSenderService:
-  url: mailSenderUrl
-
 verificationUrl: verificationUrl

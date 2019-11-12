@@ -68,7 +68,7 @@ public class BookServiceTest {
 
         bookService.takeBook(testUser.getId(),testBook.getId(), LocalDateTime.now());
 
-        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(), Action.TAKE);
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(), eq(Action.TAKE));
         verify(bookDao).takeBook(eq(testUser.getId()),eq(testBook.getId()),any(),any());
     }
 
@@ -77,7 +77,7 @@ public class BookServiceTest {
 
         bookService.returnBook(testUser.getId(),testBook.getId());
 
-        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),Action.RETURN);
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),eq(Action.RETURN));
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 }

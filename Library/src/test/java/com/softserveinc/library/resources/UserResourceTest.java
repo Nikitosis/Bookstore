@@ -742,7 +742,7 @@ public class UserResourceTest {
                 .request()
                 .delete();
 
-        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),Action.RETURN);
+        verify(requestSenderKafkaService).sendUserBookAction(eq(testUser.getId()),eq(testBook.getId()),any(),eq(Action.RETURN));
         verify(bookDao).returnBook(eq(testUser.getId()),eq(testBook.getId()));
     }
 
