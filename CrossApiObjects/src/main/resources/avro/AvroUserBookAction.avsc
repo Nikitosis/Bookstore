@@ -6,7 +6,7 @@
     {"name":"userId","type":"long"},
     {"name":"bookId","type":"long"},
     {"name":"date","type":"string"},
-    {"name":"action",
+    {"name":"status",
       "type":{"name":"AvroUserBookActionStatus","type":"enum","symbols":["TAKE","RETURN"]}
     }
   ]

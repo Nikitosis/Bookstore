@@ -1,7 +1,6 @@
 package com.softserveinc.mailsender.configuration;
 
-import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction;
+import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.mailsender.MainConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
@@ -67,6 +66,20 @@ public class KafkaConfig {
     }
 
     @Bean
+    public ConsumerFactory<String, AvroUserBookExtendAction> userBookExtendActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroUserBookExtendAction>(consumerConfig());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String,AvroUserBookExtendAction> kafkaUserBookExtendActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String, AvroUserBookExtendAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroUserBookExtendAction>();
+        factory.setConsumerFactory(userBookExtendActionConsumerFactory());
+        factory.getContainerProperties().setPollTimeout(1000);
+        return factory;
+    }
+
+
+    @Bean
     public String userChangedEmailActionTopic(){
         return mainConfig.getKafkaUserChangedEmailActionTopic();
     }
@@ -74,5 +87,10 @@ public class KafkaConfig {
     @Bean
     public String invoiceActionTopic(){
         return mainConfig.getKafkaInvoiceActionTopic();
+    }
+
+    @Bean
+    public String userBookExtendActionTopic(){
+        return mainConfig.getKafkaUserBookExtendActionTopic();
     }
 }

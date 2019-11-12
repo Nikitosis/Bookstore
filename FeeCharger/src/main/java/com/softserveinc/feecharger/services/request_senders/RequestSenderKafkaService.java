@@ -32,7 +32,7 @@ public class RequestSenderKafkaService{
        AvroUserBookExtendAction avroUserBookExtendAction=AvroUserBookExtendAction.newBuilder()
                 .setUserId(userId)
                 .setBookId(bookId)
-                .setAction(actionStatus)
+                .setStatus(actionStatus)
                 .build();
 
         userBookExtendActionProducer.send(new ProducerRecord<String,AvroUserBookExtendAction>(

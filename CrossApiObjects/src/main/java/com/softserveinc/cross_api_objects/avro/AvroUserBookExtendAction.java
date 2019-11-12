@@ -13,8 +13,8 @@ import org.apache.avro.message.SchemaStore;
 @SuppressWarnings("all")
 @org.apache.avro.specific.AvroGenerated
 public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificRecordBase implements org.apache.avro.specific.SpecificRecord {
-  private static final long serialVersionUID = -4340068818355947652L;
-  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookExtendAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"action\",\"type\":{\"type\":\"enum\",\"name\":\"AvroUserBookExtendActionStatus\",\"symbols\":[\"SUCCEED\",\"NOT_ENOUGH_MONEY\"]}}]}");
+  private static final long serialVersionUID = 1398337421394280090L;
+  public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"record\",\"name\":\"AvroUserBookExtendAction\",\"namespace\":\"com.softserveinc.cross_api_objects.avro\",\"fields\":[{\"name\":\"userId\",\"type\":\"long\"},{\"name\":\"bookId\",\"type\":\"long\"},{\"name\":\"status\",\"type\":{\"type\":\"enum\",\"name\":\"AvroUserBookExtendActionStatus\",\"symbols\":[\"SUCCEED\",\"NOT_ENOUGH_MONEY\"]}}]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
 
   private static SpecificData MODEL$ = new SpecificData();
@@ -53,7 +53,7 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
 
   @Deprecated public long userId;
   @Deprecated public long bookId;
-  @Deprecated public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus action;
+  @Deprecated public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus status;
 
   /**
    * Default constructor.  Note that this does not initialize fields
@@ -66,12 +66,12 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
    * All-args constructor.
    * @param userId The new value for userId
    * @param bookId The new value for bookId
-   * @param action The new value for action
+   * @param status The new value for status
    */
-  public AvroUserBookExtendAction(java.lang.Long userId, java.lang.Long bookId, com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus action) {
+  public AvroUserBookExtendAction(java.lang.Long userId, java.lang.Long bookId, com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus status) {
     this.userId = userId;
     this.bookId = bookId;
-    this.action = action;
+    this.status = status;
   }
 
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
@@ -80,7 +80,7 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
     switch (field$) {
     case 0: return userId;
     case 1: return bookId;
-    case 2: return action;
+    case 2: return status;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -91,7 +91,7 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
     switch (field$) {
     case 0: userId = (java.lang.Long)value$; break;
     case 1: bookId = (java.lang.Long)value$; break;
-    case 2: action = (com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus)value$; break;
+    case 2: status = (com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus)value$; break;
     default: throw new org.apache.avro.AvroRuntimeException("Bad index");
     }
   }
@@ -129,19 +129,19 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
   }
 
   /**
-   * Gets the value of the 'action' field.
-   * @return The value of the 'action' field.
+   * Gets the value of the 'status' field.
+   * @return The value of the 'status' field.
    */
-  public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus getAction() {
-    return action;
+  public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus getStatus() {
+    return status;
   }
 
   /**
-   * Sets the value of the 'action' field.
+   * Sets the value of the 'status' field.
    * @param value the value to set.
    */
-  public void setAction(com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus value) {
-    this.action = value;
+  public void setStatus(com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus value) {
+    this.status = value;
   }
 
   /**
@@ -178,7 +178,7 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
 
     private long userId;
     private long bookId;
-    private com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus action;
+    private com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus status;
 
     /** Creates a new Builder */
     private Builder() {
@@ -199,8 +199,8 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
         this.bookId = data().deepCopy(fields()[1].schema(), other.bookId);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.action)) {
-        this.action = data().deepCopy(fields()[2].schema(), other.action);
+      if (isValidValue(fields()[2], other.status)) {
+        this.status = data().deepCopy(fields()[2].schema(), other.status);
         fieldSetFlags()[2] = true;
       }
     }
@@ -219,8 +219,8 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
         this.bookId = data().deepCopy(fields()[1].schema(), other.bookId);
         fieldSetFlags()[1] = true;
       }
-      if (isValidValue(fields()[2], other.action)) {
-        this.action = data().deepCopy(fields()[2].schema(), other.action);
+      if (isValidValue(fields()[2], other.status)) {
+        this.status = data().deepCopy(fields()[2].schema(), other.status);
         fieldSetFlags()[2] = true;
       }
     }
@@ -302,40 +302,40 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
     }
 
     /**
-      * Gets the value of the 'action' field.
+      * Gets the value of the 'status' field.
       * @return The value.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus getAction() {
-      return action;
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus getStatus() {
+      return status;
     }
 
     /**
-      * Sets the value of the 'action' field.
-      * @param value The value of 'action'.
+      * Sets the value of the 'status' field.
+      * @param value The value of 'status'.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendAction.Builder setAction(com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus value) {
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendAction.Builder setStatus(com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus value) {
       validate(fields()[2], value);
-      this.action = value;
+      this.status = value;
       fieldSetFlags()[2] = true;
       return this;
     }
 
     /**
-      * Checks whether the 'action' field has been set.
-      * @return True if the 'action' field has been set, false otherwise.
+      * Checks whether the 'status' field has been set.
+      * @return True if the 'status' field has been set, false otherwise.
       */
-    public boolean hasAction() {
+    public boolean hasStatus() {
       return fieldSetFlags()[2];
     }
 
 
     /**
-      * Clears the value of the 'action' field.
+      * Clears the value of the 'status' field.
       * @return This builder.
       */
-    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendAction.Builder clearAction() {
-      action = null;
+    public com.softserveinc.cross_api_objects.avro.AvroUserBookExtendAction.Builder clearStatus() {
+      status = null;
       fieldSetFlags()[2] = false;
       return this;
     }
@@ -347,7 +347,7 @@ public class AvroUserBookExtendAction extends org.apache.avro.specific.SpecificR
         AvroUserBookExtendAction record = new AvroUserBookExtendAction();
         record.userId = fieldSetFlags()[0] ? this.userId : (java.lang.Long) defaultValue(fields()[0]);
         record.bookId = fieldSetFlags()[1] ? this.bookId : (java.lang.Long) defaultValue(fields()[1]);
-        record.action = fieldSetFlags()[2] ? this.action : (com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus) defaultValue(fields()[2]);
+        record.status = fieldSetFlags()[2] ? this.status : (com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus) defaultValue(fields()[2]);
         return record;
       } catch (java.lang.Exception e) {
         throw new org.apache.avro.AvroRuntimeException(e);

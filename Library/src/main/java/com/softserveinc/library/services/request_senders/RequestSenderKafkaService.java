@@ -32,7 +32,7 @@ public class RequestSenderKafkaService{
                 .setUserId(userId)
                 .setBookId(bookId)
                 .setDate(date.toString())
-                .setAction(AvroUserBookActionStatus.valueOf(action.toString()))
+                .setStatus(AvroUserBookActionStatus.valueOf(action.toString()))
                 .build();
 
         kafkaUserBookActionProducer.send(new ProducerRecord<String,AvroUserBookAction>(

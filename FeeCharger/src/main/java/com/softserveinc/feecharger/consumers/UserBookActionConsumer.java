@@ -19,7 +19,7 @@ public class UserBookActionConsumer {
 
     @KafkaListener(topics = "#{@userBookActionTopic}",containerFactory = "userBookActionListener")
     public void consume(ConsumerRecord<String, AvroUserBookAction> record){
-        if(record.value().getAction()== AvroUserBookActionStatus.TAKE){
+        if(record.value().getStatus()== AvroUserBookActionStatus.TAKE){
             feeChargerService.tryExtendRent(
                     record.value().getUserId(),
                     record.value().getBookId()

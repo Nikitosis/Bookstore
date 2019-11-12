@@ -16,11 +16,11 @@ public class MainConfig extends Configuration {
 
     private DataSourceFactory database;
 
-    private String kafkaMailTopic;
-
     private String kafkaUserChangedEmailActionTopic;
 
     private String kafkaInvoiceActionTopic;
+
+    private String kafkaUserBookExtendActionTopic;
 
     public MailConfig getMailConfig() {
         return mailConfig;
@@ -46,14 +46,6 @@ public class MainConfig extends Configuration {
         this.kafkaConfig = kafkaConfig;
     }
 
-    public String getKafkaMailTopic() {
-        return kafkaMailTopic;
-    }
-
-    public void setKafkaMailTopic(String kafkaMailTopic) {
-        this.kafkaMailTopic = kafkaMailTopic;
-    }
-
     public String getKafkaUserChangedEmailActionTopic() {
         return kafkaUserChangedEmailActionTopic;
     }
@@ -76,5 +68,13 @@ public class MainConfig extends Configuration {
 
     public void setDatabase(DataSourceFactory database) {
         this.database = database;
+    }
+
+    public String getKafkaUserBookExtendActionTopic() {
+        return kafkaUserBookExtendActionTopic;
+    }
+
+    public void setKafkaUserBookExtendActionTopic(String kafkaUserBookExtendActionTopic) {
+        this.kafkaUserBookExtendActionTopic = kafkaUserBookExtendActionTopic;
     }
 }

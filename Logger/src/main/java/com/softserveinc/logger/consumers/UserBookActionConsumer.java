@@ -27,7 +27,7 @@ public class UserBookActionConsumer {
         UserBookLog userBookLog=new UserBookLog();
         userBookLog.setUserId(record.value().getUserId());
         userBookLog.setBookId(record.value().getBookId());
-        userBookLog.setAction(Action.valueOf(record.value().getAction().toString()));
+        userBookLog.setAction(Action.valueOf(record.value().getStatus().toString()));
         userBookLog.setDate(LocalDateTime.parse(record.value().getDate()));
 
         userBookLogDao.save(userBookLog);

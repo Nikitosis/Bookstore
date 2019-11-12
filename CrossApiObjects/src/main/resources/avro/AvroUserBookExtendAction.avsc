@@ -5,7 +5,7 @@
   "fields": [
     {"name": "userId","type": "long"},
     {"name": "bookId","type": "long"},
-    {"name":"action",
+    {"name":"status",
       "type":{"name":"AvroUserBookExtendActionStatus","type":"enum","symbols":["SUCCEED","NOT_ENOUGH_MONEY"]}
     }
   ]

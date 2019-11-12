@@ -27,7 +27,6 @@ oktaOAuth:
   clientSecret: ${OKTA_FEECHARGER_SECRET}
   scopes:
     - write
-    -
 logging:
   level: INFO
 
