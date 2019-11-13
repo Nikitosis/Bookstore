@@ -34,6 +34,11 @@ swagger:
 
 logging:
   level: INFO
+  appenders:
+    - type: tcp
+      host: 192.168.99.100
+      port: 5600
+    - type: console
 
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
