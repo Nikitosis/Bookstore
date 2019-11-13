@@ -32,13 +32,17 @@ oktaOAuth:
 swagger:
   resourcePackage: com.resources
 
+#important section if you use logstash
 logging:
   level: INFO
   appenders:
     - type: tcp
-      host: 192.168.99.100
-      port: 5600
+      host: ${LOGSTASH_IP:-192.168.99.100}
+      port: ${LOGSTASH_PORT:-5600}
+      #log pattern that includes all necessary information
+      logFormat: "%-5level [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
     - type: console
+      logFormat: "%-5level [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
 
 awsS3Config:
   accessKey: ${AWS_S3_ACCESS_KEY}
