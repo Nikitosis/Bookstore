@@ -15,7 +15,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -25,6 +28,8 @@ import javax.servlet.FilterRegistration;
 import javax.ws.rs.Path;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MainApp extends Application<MainConfig> {
 
@@ -99,6 +104,9 @@ public class MainApp extends Application<MainConfig> {
 
         //register utils for correlation id
         environment.jersey().register(HttpCorrelationInterceptor.class);
+
+        //jersey logging
+        environment.jersey().register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, LoggingFeature.DEFAULT_MAX_ENTITY_SIZE));
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
