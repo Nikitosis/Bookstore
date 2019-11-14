@@ -7,12 +7,15 @@ import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.mailsender.dao.BookDao;
 import com.softserveinc.mailsender.dao.UserDao;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +32,10 @@ public class UserBookPaymentActionConsumer {
     }
 
     @KafkaListener(topics = "#{@userBookExtendActionTopic}", containerFactory = "kafkaUserBookExtendActionListener")
-    public void consume(ConsumerRecord<String, AvroUserBookExtendAction> record){
+    public void consume(ConsumerRecord<String, AvroUserBookExtendAction> record,
+                        @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
+        CorrelationManager.setCorrelationId(correlationId);
+
         if(record.value().getStatus()==AvroUserBookExtendActionStatus.NOT_ENOUGH_MONEY) {
 
             User user = userDao.findById(record.value().getUserId());
@@ -43,6 +49,7 @@ public class UserBookPaymentActionConsumer {
 
             mailSenderService.sendMail(mail);
 
+            CorrelationManager.removeCorrelationId();
         }
     }
 }

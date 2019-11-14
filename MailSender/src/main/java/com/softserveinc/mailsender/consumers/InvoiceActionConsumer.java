@@ -3,11 +3,14 @@ package com.softserveinc.mailsender.consumers;
 import com.softserveinc.cross_api_objects.avro.AvroInvoiceAction;
 import com.softserveinc.cross_api_objects.models.Attachment;
 import com.softserveinc.cross_api_objects.models.Mail;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.mailsender.dao.UserDao;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,7 +25,10 @@ public class InvoiceActionConsumer {
     }
 
     @KafkaListener(topics = "#{@invoiceActionTopic}",containerFactory = "kafkaInvoiveActionListener")
-    public void consume(ConsumerRecord<String, AvroInvoiceAction> record){
+    public void consume(ConsumerRecord<String, AvroInvoiceAction> record,
+                        @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
+        CorrelationManager.setCorrelationId(correlationId);
+
         Attachment attachment=new Attachment();
         attachment.setAttachmentName(record.value().getInvoice().getAttachmentName().toString());
         attachment.setAttachmentUrl(record.value().getInvoice().getAttachmentUrl().toString());
@@ -34,5 +40,7 @@ public class InvoiceActionConsumer {
         mail.setAttachment(attachment);
 
         mailSenderService.sendMail(mail);
+
+        CorrelationManager.removeCorrelationId();
     }
 }

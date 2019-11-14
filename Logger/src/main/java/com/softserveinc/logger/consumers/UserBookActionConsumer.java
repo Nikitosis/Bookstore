@@ -3,10 +3,16 @@ package com.softserveinc.logger.consumers;
 import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.logger.dao.UserBookLogDao;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.log4j.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,7 +29,10 @@ public class UserBookActionConsumer {
     }
 
     @KafkaListener(topics = "#{@userBookActionTopic}",containerFactory = "userBookActionListener")
-    public void consumeUserBookLog(ConsumerRecord<String, AvroUserBookAction> record){
+    public void consume(ConsumerRecord<String, AvroUserBookAction> record,
+                        @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
+        CorrelationManager.setCorrelationId(correlationId);
+
         UserBookLog userBookLog=new UserBookLog();
         userBookLog.setUserId(record.value().getUserId());
         userBookLog.setBookId(record.value().getBookId());
@@ -31,5 +40,7 @@ public class UserBookActionConsumer {
         userBookLog.setDate(LocalDateTime.parse(record.value().getDate()));
 
         userBookLogDao.save(userBookLog);
+
+        CorrelationManager.removeCorrelationId();
     }
 }

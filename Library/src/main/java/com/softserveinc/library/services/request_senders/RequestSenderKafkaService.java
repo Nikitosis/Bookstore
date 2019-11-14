@@ -4,9 +4,14 @@ import com.softserveinc.cross_api_objects.api.Action;
 import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.cross_api_objects.models.Mail;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.library.MainConfig;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,11 +40,15 @@ public class RequestSenderKafkaService{
                 .setStatus(AvroUserBookActionStatus.valueOf(action.toString()))
                 .build();
 
-        kafkaUserBookActionProducer.send(new ProducerRecord<String,AvroUserBookAction>(
+        ProducerRecord<String,AvroUserBookAction> record=new ProducerRecord<String,AvroUserBookAction>(
                 mainConfig.getKafkaUserBookActionTopic(),
                 userId.toString(),
                 avroUserBookAction
-        ));
+        );
+
+        record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
+
+        kafkaUserBookActionProducer.send(record);
     }
 
     public void sendUserChangeEmailAction(Long userId, String newEmail, String verificationUrl){
@@ -49,10 +58,14 @@ public class RequestSenderKafkaService{
                 .setVerificationUrl(verificationUrl)
                 .build();
 
-        kafkaUserChangedEmailAction.send(new ProducerRecord<String,AvroUserChangedEmailAction>(
+        ProducerRecord<String,AvroUserChangedEmailAction> record=new ProducerRecord<String,AvroUserChangedEmailAction>(
                 mainConfig.getKafkaUserChangedEmailActionTopic(),
                 userId.toString(),
                 avroUserChangedEmailAction
-        ));
+        );
+
+        record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
+
+        kafkaUserChangedEmailAction.send(record);
     }
 }

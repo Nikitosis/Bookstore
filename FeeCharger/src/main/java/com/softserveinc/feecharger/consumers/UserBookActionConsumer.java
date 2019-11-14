@@ -2,10 +2,13 @@ package com.softserveinc.feecharger.consumers;
 
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookActionStatus;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.feecharger.services.FeeChargerService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,12 +21,17 @@ public class UserBookActionConsumer {
     }
 
     @KafkaListener(topics = "#{@userBookActionTopic}",containerFactory = "userBookActionListener")
-    public void consume(ConsumerRecord<String, AvroUserBookAction> record){
+    public void consume(ConsumerRecord<String, AvroUserBookAction> record,
+                        @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
+        CorrelationManager.setCorrelationId(correlationId);
+
         if(record.value().getStatus()== AvroUserBookActionStatus.TAKE){
             feeChargerService.tryExtendRent(
                     record.value().getUserId(),
                     record.value().getBookId()
             );
         }
+
+        CorrelationManager.removeCorrelationId();
     }
 }

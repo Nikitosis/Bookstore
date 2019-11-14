@@ -2,6 +2,8 @@ package com.softserveinc.invoicer.services.request_senders;
 
 import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.cross_api_objects.models.Mail;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.invoicer.MainConfig;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -30,11 +32,15 @@ public class RequestSenderKafkaService{
                 .setInvoice(avroAttachment)
                 .build();
 
-       avroInvoiceProducer.send(new ProducerRecord<String,AvroInvoiceAction>(
-               mainConfig.getKafkaInvoiceActionTopic(),
-               userId.toString(),
-               avroInvoiceAction
-       ));
+        ProducerRecord<String,AvroInvoiceAction> record=new ProducerRecord<String,AvroInvoiceAction>(
+                mainConfig.getKafkaInvoiceActionTopic(),
+                userId.toString(),
+                avroInvoiceAction
+        );
+
+        record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
+
+        avroInvoiceProducer.send(record);
     }
 
 }
