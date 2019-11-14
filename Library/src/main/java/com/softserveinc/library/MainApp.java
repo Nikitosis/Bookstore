@@ -2,7 +2,6 @@ package com.softserveinc.library;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.softserveinc.library.configurations.AppConfig;
-import com.softserveinc.cross_api_objects.utils.correlation_id.ClientCorrelationInterceptor;
 import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
@@ -100,7 +99,6 @@ public class MainApp extends Application<MainConfig> {
 
         //register utils for correlation id
         environment.jersey().register(HttpCorrelationInterceptor.class);
-        environment.jersey().register(ClientCorrelationInterceptor.class);
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());

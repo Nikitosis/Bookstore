@@ -35,3 +35,15 @@ invoicerConfig:
   generateInvoicePeriod: 1
 
 kafkaInvoiceActionTopic: InvoiceActionTopic
+
+#important section if you use logstash
+logging:
+  level: INFO
+  appenders:
+    - type: tcp
+      host: ${LOGSTASH_IP:-192.168.99.100}
+      port: ${LOGSTASH_PORT:-5600}
+      #log pattern that includes all necessary information
+      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
+    - type: console
+      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"

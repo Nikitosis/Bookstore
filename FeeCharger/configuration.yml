@@ -43,7 +43,6 @@ awsS3Config:
   maxFileSize: 314572800    #300MB
   maxImageSize: 26214400   #25MB
 
-
 kafkaConfig:
   brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
   schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
@@ -53,3 +52,15 @@ kafkaUserBookActionTopic: UserBookActionTopic
 kafkaUserBookExtendActionTopic: UserBookExtendActionTopic
 
 kafkaUserBookPaymentActionTopic: UserBookPaymentActionTopic
+
+#important section if you use logstash
+logging:
+  level: INFO
+  appenders:
+    - type: tcp
+      host: ${LOGSTASH_IP:-192.168.99.100}
+      port: ${LOGSTASH_PORT:-5600}
+      #log pattern that includes all necessary information
+      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
+    - type: console
+      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"

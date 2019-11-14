@@ -1,6 +1,7 @@
 package com.softserveinc.logger;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
 import com.softserveinc.logger.configurations.AppConfig;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
@@ -72,6 +73,9 @@ public class MainApp extends Application<MainConfig> {
 
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
+
+        //register utils for correlation id
+        environment.jersey().register(HttpCorrelationInterceptor.class);
 
         //last, but not least, let's link Spring to the embedded Jetty in Dropwizard
         environment.servlets().addServletListeners(new ContextLoaderListener(ctx));
