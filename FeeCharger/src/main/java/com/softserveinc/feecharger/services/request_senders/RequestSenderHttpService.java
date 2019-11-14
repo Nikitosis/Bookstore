@@ -5,10 +5,12 @@ import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.OktaService;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.feecharger.dao.BookDao;
 import com.softserveinc.feecharger.dao.UserDao;
 import com.softserveinc.feecharger.models.UserBook;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class RequestSenderHttpService{
                 .path("/users/"+user.getId()+"/books/"+book.getId())
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+accessToken.getValue())
+                .header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME,MDC.get(CorrelationConstraints.CORRELATION_ID_LOG_VAR_NAME))
                 .async()
                 .delete();
     }
