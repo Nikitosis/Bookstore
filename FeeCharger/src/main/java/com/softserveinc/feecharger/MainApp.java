@@ -1,7 +1,8 @@
 package com.softserveinc.feecharger;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpClientCorrelationFilter;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationFilter;
 import com.softserveinc.feecharger.configuration.AppConfig;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
@@ -64,9 +65,6 @@ public class MainApp extends Application<MainConfig> {
             environment.jersey().register(entry.getValue());
         }
 
-        //register utils for correlation id
-        environment.jersey().register(HttpCorrelationInterceptor.class);
-
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
 
@@ -76,5 +74,9 @@ public class MainApp extends Application<MainConfig> {
         //add Spring Security filter
         FilterRegistration.Dynamic filterRegistration=environment.servlets().addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
+
+        //filter for setting correlationId
+        FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);
+        correlationFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
     }
 }

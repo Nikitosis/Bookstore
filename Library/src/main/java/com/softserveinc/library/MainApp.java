@@ -1,8 +1,8 @@
 package com.softserveinc.library;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationFilter;
 import com.softserveinc.library.configurations.AppConfig;
-import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -15,10 +15,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -102,9 +100,6 @@ public class MainApp extends Application<MainConfig> {
         //enable multipart_form_data
         environment.jersey().register(MultiPartFeature.class);
 
-        //register utils for correlation id
-        environment.jersey().register(HttpCorrelationInterceptor.class);
-
         //jersey logging
         environment.jersey().register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, LoggingFeature.DEFAULT_MAX_ENTITY_SIZE));
 
@@ -117,5 +112,9 @@ public class MainApp extends Application<MainConfig> {
         //add Spring Security filter
         FilterRegistration.Dynamic filterRegistration=environment.servlets().addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
+
+        //filter for setting correlationId
+        FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);
+        correlationFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
     }
 }

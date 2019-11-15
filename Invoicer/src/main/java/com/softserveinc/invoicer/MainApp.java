@@ -1,20 +1,22 @@
 package com.softserveinc.invoicer;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpClientCorrelationFilter;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationFilter;
 import com.softserveinc.invoicer.configurations.AppConfig;
 import io.dropwizard.Application;
-import io.dropwizard.Configuration;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
 import javax.ws.rs.Path;
+import java.util.EnumSet;
 import java.util.Map;
 
 public class MainApp extends Application<MainConfig> {
@@ -64,10 +66,11 @@ public class MainApp extends Application<MainConfig> {
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
 
-        //register utils for correlation id
-        environment.jersey().register(HttpCorrelationInterceptor.class);
-
         //last, but not least, let's link Spring to the embedded Jetty in Dropwizard
         environment.servlets().addServletListeners(new ContextLoaderListener(ctx));
+
+        //filter for setting correlationId
+        FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);
+        correlationFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
     }
 }

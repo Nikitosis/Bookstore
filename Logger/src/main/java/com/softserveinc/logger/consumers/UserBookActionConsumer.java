@@ -21,6 +21,8 @@ import java.time.ZoneId;
 
 @Service
 public class UserBookActionConsumer {
+    private static final Logger log=LoggerFactory.getLogger(UserBookActionConsumer.class);
+
     private UserBookLogDao userBookLogDao;
 
     @Autowired
@@ -32,6 +34,7 @@ public class UserBookActionConsumer {
     public void consume(ConsumerRecord<String, AvroUserBookAction> record,
                         @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
         CorrelationManager.setCorrelationId(correlationId);
+        log.info("Handling userBookAction");
 
         UserBookLog userBookLog=new UserBookLog();
         userBookLog.setUserId(record.value().getUserId());

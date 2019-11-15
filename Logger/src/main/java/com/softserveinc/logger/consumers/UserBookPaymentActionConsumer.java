@@ -6,6 +6,8 @@ import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstr
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.logger.dao.UserBookPaymentLogDao;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
@@ -18,6 +20,8 @@ import java.time.ZoneId;
 
 @Service
 public class UserBookPaymentActionConsumer {
+    private static final Logger log= LoggerFactory.getLogger(UserBookActionConsumer.class);
+
     private UserBookPaymentLogDao userBookPaymentLogDao;
 
     @Autowired
@@ -29,6 +33,7 @@ public class UserBookPaymentActionConsumer {
     public void consume(ConsumerRecord<String, AvroUserBookPaymentAction> record,
                         @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
         CorrelationManager.setCorrelationId(correlationId);
+        log.info("Handling userBookPaymentAction");
 
         UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
         userBookPaymentLog.setUserId(record.value().getUserId());

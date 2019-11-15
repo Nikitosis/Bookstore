@@ -2,6 +2,7 @@ package com.softserveinc.authorizer;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.softserveinc.authorizer.configurations.AppConfig;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationFilter;
 import io.dropwizard.Application;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -76,5 +77,9 @@ public class MainApp extends Application<MainConfig> {
         //add Spring Security filter
         FilterRegistration.Dynamic filterRegistration=environment.servlets().addFilter("springSecurityFilterChain", DelegatingFilterProxy.class);
         filterRegistration.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
+
+        //filter for setting correlationId
+        FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);
+        correlationFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
     }
 }
