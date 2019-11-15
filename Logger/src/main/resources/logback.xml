@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${LOGSTASH_IP:-192.168.99.100}:${LOGSTASH_PORT:-5600}</destination>
+        <encoder>
+            <pattern>%-5level [%X{correlationId}] [${SERVICE_NAME:-Logger}] [%date{ISO8601}] %c %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level [%X{correlationId}] [${SERVICE_NAME:-Logger}] [%date{ISO8601}] %c %message%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+
+</configuration>

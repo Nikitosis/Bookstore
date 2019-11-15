@@ -2,24 +2,19 @@ Brief explanation. Will be modified soon.
 
 Support for logging with correlation id(in particular microservice)
 
-First of all you have to include this configuration to your configuration.yml:
+First of all you have to include logback.xml and configure logger to use it:
+	<dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>6.2</version>
+        </dependency>
 
-#important section if you use logstash
-logging:
-  level: INFO
-  appenders:
-    - type: tcp
-      host: ${LOGSTASH_IP:-192.168.99.100}
-      port: ${LOGSTASH_PORT:-5600}
-      #log pattern that includes all necessary information
-      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
-    - type: console
-      logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.reset();
+        ContextInitializer initializer = new ContextInitializer(context);
+        initializer.autoConfig();
 
--If you want to have all jersey requests and responses logged, you should configure logger:
- 	//jersey logging
-        environment.jersey().register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, LoggingFeature.DEFAULT_MAX_ENTITY_SIZE));
-
+Doing so instead of configuring logger in configuration.yml prevents microservice from falling if logstash is not available
 
 -register correlationFilter after all fiters are set:
 	//filter for setting correlationId

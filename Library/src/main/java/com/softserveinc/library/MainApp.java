@@ -1,5 +1,8 @@
 package com.softserveinc.library;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.util.ContextInitializer;
+import ch.qos.logback.core.joran.spi.JoranException;
 import com.codahale.metrics.health.HealthCheck;
 import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationFilter;
 import com.softserveinc.library.configurations.AppConfig;
@@ -17,6 +20,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
@@ -61,6 +65,8 @@ public class MainApp extends Application<MainConfig> {
 
     @Override
     public void run(MainConfig mainConfig, Environment environment) throws Exception {
+        setupLogbackLogger();
+
         AnnotationConfigWebApplicationContext parent = new AnnotationConfigWebApplicationContext();
         AnnotationConfigWebApplicationContext ctx=new AnnotationConfigWebApplicationContext();
 
@@ -106,7 +112,7 @@ public class MainApp extends Application<MainConfig> {
         //setting sessionHandler
         environment.servlets().setSessionHandler(new SessionHandler());
 
-        //last, but not least, let's link Spring to the embedded Jetty in Dropwizard
+        //link Spring to the embedded Jetty in Dropwizard
         environment.servlets().addServletListeners(new ContextLoaderListener(ctx));
 
         //add Spring Security filter
@@ -116,5 +122,12 @@ public class MainApp extends Application<MainConfig> {
         //filter for setting correlationId
         FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);
         correlationFilter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class),false,"/*");
+    }
+
+    private void setupLogbackLogger() throws JoranException {
+        LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+        context.reset();
+        ContextInitializer initializer = new ContextInitializer(context);
+        initializer.autoConfig();
     }
 }
