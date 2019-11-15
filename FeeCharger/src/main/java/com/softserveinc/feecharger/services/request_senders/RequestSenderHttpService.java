@@ -6,6 +6,8 @@ import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.services.OktaService;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
+import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
+import com.softserveinc.cross_api_objects.utils.correlation_id.HttpCorrelationInterceptor;
 import com.softserveinc.feecharger.MainConfig;
 import com.softserveinc.feecharger.dao.BookDao;
 import com.softserveinc.feecharger.dao.UserDao;
@@ -35,13 +37,12 @@ public class RequestSenderHttpService{
 
     public void sendReturnBook(User user,Book book){
         OAuth2AccessToken accessToken=oktaService.getOktaToken();
-        Client client= ClientBuilder.newClient();
+        Client client= ClientBuilder.newClient().register(HttpCorrelationInterceptor.class);
 
         client.target(mainConfig.getLibraryService().getUrl())
                 .path("/users/"+user.getId()+"/books/"+book.getId())
                 .request(MediaType.APPLICATION_JSON)
                 .header("Authorization","Bearer "+accessToken.getValue())
-                .header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME,MDC.get(CorrelationConstraints.CORRELATION_ID_LOG_VAR_NAME))
                 .async()
                 .delete();
     }

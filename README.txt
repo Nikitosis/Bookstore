@@ -8,9 +8,8 @@ It automatically intercepts http requests and sets mdc correlationId field.
 So that, logger includes this correlationId in logs.
 If no correlation id presents, it will generate new one and set mdc correlationId field.
 
--if using jax.rs.Client, be sure to add header with correlationId to the request:
-	header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME,MDC.get(CorrelationConstraints.CORRELATION_ID_LOG_VAR_NAME))
-It gets correlationId from mdc and sets header.
+-if using jax.rs.Client, be sure to register HttpCorrelationInterceptor to the Client:
+	ClientBuilder.newClient().register(HttpCorrelationInterceptor.class);
 
 -if using Kafka Producer, be sure to add header with corellationId to kafka ProducerRecord:
 	record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());

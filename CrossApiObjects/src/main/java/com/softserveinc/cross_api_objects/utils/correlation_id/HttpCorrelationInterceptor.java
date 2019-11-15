@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -16,7 +18,7 @@ import java.util.UUID;
 
 @Provider
 @Priority(6000)
-public class HttpCorrelationInterceptor implements ContainerRequestFilter, ContainerResponseFilter {
+public class HttpCorrelationInterceptor implements ContainerRequestFilter, ContainerResponseFilter, ClientRequestFilter {
     @Override
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         final String correlationId=getCorrelationIdFromHeader(containerRequestContext);
@@ -26,6 +28,11 @@ public class HttpCorrelationInterceptor implements ContainerRequestFilter, Conta
     @Override
     public void filter(ContainerRequestContext containerRequestContext, ContainerResponseContext containerResponseContext) throws IOException {
         CorrelationManager.removeCorrelationId();
+    }
+
+    @Override
+    public void filter(ClientRequestContext clientRequestContext) throws IOException {
+        clientRequestContext.getHeaders().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId());
     }
 
     private String getCorrelationIdFromHeader(final ContainerRequestContext containerRequestContext) {
