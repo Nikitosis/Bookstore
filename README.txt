@@ -16,6 +16,11 @@ logging:
     - type: console
       logFormat: "%-5level [%X{correlationId}] [${SERVICE_NAME:-Library}] [%date{ISO8601}] %c %message%n"
 
+-If you want to have all jersey requests and responses logged, you should configure logger:
+ 	//jersey logging
+        environment.jersey().register(new LoggingFeature(Logger.getLogger(LoggingFeature.DEFAULT_LOGGER_NAME), Level.INFO, LoggingFeature.Verbosity.PAYLOAD_ANY, LoggingFeature.DEFAULT_MAX_ENTITY_SIZE));
+
+
 -register correlationFilter after all fiters are set:
 	//filter for setting correlationId
         FilterRegistration.Dynamic correlationFilter=environment.servlets().addFilter("correlationFilter", HttpCorrelationFilter.class);

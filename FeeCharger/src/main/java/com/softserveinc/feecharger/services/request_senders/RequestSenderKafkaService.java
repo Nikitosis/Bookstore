@@ -56,7 +56,7 @@ public class RequestSenderKafkaService{
                 .build();
 
         ProducerRecord<String,AvroUserBookPaymentAction> record=new ProducerRecord<String,AvroUserBookPaymentAction>(
-                mainConfig.getKafkaUserBookExtendActionTopic(),
+                mainConfig.getKafkaUserBookPaymentActionTopic(),
                 userId.toString(),
                 avroUserBookPaymentAction
         );
