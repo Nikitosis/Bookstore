@@ -1,0 +1,38 @@
+node('master') {
+  def dockerTool = tool name: 'Docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+  
+  jdk = tool name: 'jdk8'
+  env.JAVA_HOME = "${jdk}"
+  
+  withEnv(["DOCKER=${dockerTool}/bin"]) {
+      stage("initialize"){
+           git branch: 'master',
+                    credentialsId: 'gitlab-ssh-key',
+                    url: 'git@gitlab.com:Nikitosis/bookstore.git'
+                    
+            sh "ls -lat"
+      }
+      stage("build"){
+          withMaven(maven: 'Maven 3.6.2'){
+              dir('Authoriser'){
+                  sh 'mvn clean package'
+                  dockerCmd 'build -t nikitosis/bookstore_authoriser:latest .'
+              }
+          }
+      }
+      
+      stage('deploy'){
+          dir('Authoriser'){
+               docker.withRegistry('', 'docker-credentials') {
+                    dockerCmd 'push nikitosis/bookstore_authoriser:latest'
+                }
+          }
+      }
+      //stages
+      //now we can simply call: dockerCmd 'run mycontainer'
+  }
+}
+
+def dockerCmd(args) {
+    sh "${DOCKER}/docker ${args}"
+}
