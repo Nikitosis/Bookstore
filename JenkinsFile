@@ -1,5 +1,5 @@
 node('master') {
-  def dockerTool = tool name: 'Docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+     def dockerTool = tool name: 'Docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
   
   jdk = tool name: 'jdk8'
   env.JAVA_HOME = "${jdk}"
@@ -12,24 +12,60 @@ node('master') {
                     
             sh "ls -lat"
       }
+      
+      stage("test"){
+          
+          withMaven(maven: 'Maven 3.6.2'){
+              sh 'mvn test'
+          }
+      }
+      
       stage("build"){
           withMaven(maven: 'Maven 3.6.2'){
-              dir('Authoriser'){
-                  sh 'mvn clean package'
-                  dockerCmd 'build -t nikitosis/bookstore_authoriser:latest .'
-              }
+            sh 'mvn clean package'
+            dir('Authoriser'){
+                dockerCmd 'build -t nikitosis/bookstore_authoriser:latest .'
+            }
+            dir('FeeCharger'){
+                dockerCmd 'build -t nikitosis/bookstore_feecharger:latest .'
+            }
+            dir('Invoicer'){
+                dockerCmd 'build -t nikitosis/bookstore_invoicer:latest .'
+            }
+            dir('Library'){
+                dockerCmd 'build -t nikitosis/bookstore_library:latest .'
+            }
+            dir('Logger'){
+                dockerCmd 'build -t nikitosis/bookstore_logger:latest .'
+            }
+            dir('MailSender'){
+                dockerCmd 'build -t nikitosis/bookstore_mailsender:latest .'
+            }
           }
       }
       
       stage('deploy'){
-          dir('Authoriser'){
-               docker.withRegistry('', 'docker-credentials') {
+           docker.withRegistry('', 'docker-credentials') {
+                dir('Authoriser'){
                     dockerCmd 'push nikitosis/bookstore_authoriser:latest'
                 }
-          }
+                dir('FeeCharger'){
+                    dockerCmd 'push nikitosis/bookstore_feecharger:latest'
+                }
+                dir('Invoicer'){
+                    dockerCmd 'push nikitosis/bookstore_invoicer:latest'
+                }
+                dir('Library'){
+                    dockerCmd 'push nikitosis/bookstore_library:latest'
+                }
+                dir('Logger'){
+                    dockerCmd 'push nikitosis/bookstore_logger:latest'
+                }
+                dir('MailSender'){
+                    dockerCmd 'push nikitosis/bookstore_mailsender:latest'
+                }
+           }
       }
-      //stages
-      //now we can simply call: dockerCmd 'run mycontainer'
   }
 }
 

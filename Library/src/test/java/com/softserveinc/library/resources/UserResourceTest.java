@@ -62,7 +62,7 @@ public class UserResourceTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper().registerModule(new MixinModule());
     private final Validator validator = Validators.newValidator();
     private final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
-    private final File yaml=new File(URLEncoder.encode(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath(),"UTF-8"));
+    private final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
     private final MainConfig configuration=factory.build(yaml);
 
     private final PasswordEncoder passwordEncoder=mock(PasswordEncoder.class);
