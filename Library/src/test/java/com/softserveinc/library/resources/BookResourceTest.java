@@ -50,7 +50,7 @@ public class BookResourceTest {
     final ObjectMapper objectMapper = Jackson.newObjectMapper().registerModule(new MixinModule());
     final Validator validator = Validators.newValidator();
     final YamlConfigurationFactory<MainConfig> factory = new YamlConfigurationFactory<>(MainConfig.class,validator,objectMapper,"dw");
-    private final File yaml=new File(URLEncoder.encode(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath(),"UTF-8"));
+    private final File yaml=new File(Thread.currentThread().getContextClassLoader().getResource("test-configuration.yml").getPath());
 
     //Creating mocks
     private BookDao bookDao=mock(BookDao.class);
