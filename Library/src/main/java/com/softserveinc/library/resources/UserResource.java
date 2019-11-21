@@ -3,6 +3,8 @@ package com.softserveinc.library.resources;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.util.Base64;
 import com.amazonaws.util.IOUtils;
+import com.amazonaws.util.StringUtils;
+import com.softserveinc.cross_api_objects.dao.CountryDao;
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.models.Book;
 import com.softserveinc.cross_api_objects.models.ResponseError;
@@ -48,11 +50,14 @@ public class UserResource {
 
     private RoleDao roleDao;
 
+    private CountryDao countryDao;
+
     @Autowired
-    public UserResource(UserService userService, BookService bookService, RoleDao roleDao) {
+    public UserResource(UserService userService, BookService bookService, RoleDao roleDao, CountryDao countryDao) {
         this.userService = userService;
         this.bookService = bookService;
         this.roleDao = roleDao;
+        this.countryDao = countryDao;
     }
 
     @GET
@@ -128,6 +133,12 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
+        if(!StringUtils.isNullOrEmpty(user.getCountry()) && countryDao.findByName(user.getCountry())==null){
+            log.warn("Country is not valid");
+            ResponseError error=new ResponseError().setCode(4).setMessage("Country is not valid");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
         userService.save(user);
 
         tryAddImageToUser(user,imageStream,imageDisposition);
@@ -167,6 +178,13 @@ public class UserResource {
             ResponseError error=new ResponseError().setCode(4).setMessage("Email already in use");
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
+
+        if(!StringUtils.isNullOrEmpty(user.getCountry()) && countryDao.findByName(user.getCountry())==null){
+            log.warn("Country is not valid");
+            ResponseError error=new ResponseError().setCode(5).setMessage("Country is not valid");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
         userService.update(user);
 
         tryAddImageToUser(user,imageStream,imageDisposition);

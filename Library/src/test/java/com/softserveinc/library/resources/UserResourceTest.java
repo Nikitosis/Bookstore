@@ -2,6 +2,7 @@ package com.softserveinc.library.resources;
 
 import com.amazonaws.util.Base64;
 import com.softserveinc.cross_api_objects.api.Action;
+import com.softserveinc.cross_api_objects.models.Country;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.util.IOUtils;
@@ -13,6 +14,7 @@ import com.softserveinc.cross_api_objects.dao.UserDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.cross_api_objects.models.Role;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.library.dao.CountryDao;
 import com.softserveinc.library.services.BookService;
 import com.softserveinc.library.services.UserService;
 import com.softserveinc.library.services.request_senders.RequestSenderKafkaService;
@@ -79,11 +81,12 @@ public class UserResourceTest {
     private RequestSenderKafkaService requestSenderKafkaService=mock(RequestSenderKafkaService.class);
     private UserService userService =new UserService(userDao,roleDao,awsStorageService, requestSenderKafkaService,passwordEncoder,configuration);
     private BookService bookService=spy(new BookService(bookDao,configuration, requestSenderKafkaService,awsStorageService,userService));
+    private CountryDao countryDao=mock(CountryDao.class);
 
     //Creating ResourceTestRule
     @Rule
     public ResourceTestRule resources=ResourceTestRule.builder()
-            .addResource(new UserResource(userService,bookService,roleDao))
+            .addResource(new UserResource(userService,bookService,roleDao,countryDao))
             .addResource(new MultiPartFeature())
             .setMapper(objectMapper)
             .build();
@@ -92,17 +95,20 @@ public class UserResourceTest {
     private User testUser;
     private User anotherTestUser;
     private Book testBook;
+    private Country testCountry;
     FileDataBodyPart testFilePart;
     FileDataBodyPart testImagePart;
     FormDataBodyPart testUserPart;
-
-    UUID uuid;
 
     public UserResourceTest() throws IOException, ConfigurationException {
     }
 
     @Before
     public void init(){
+        testCountry=new Country();
+        testCountry.setId(1L);
+        testCountry.setName("Ukraine");
+
         testUser =new User();
         testUser.setId(12L);
         testUser.setPassword("password");
@@ -289,6 +295,7 @@ public class UserResourceTest {
         when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
         when(passwordEncoder.encode(eq(testUser.getPassword()))).thenReturn(testUser.getPassword());
         when(awsStorageService.getFileUrl(any())).thenReturn(testUser.getAvatarLink());
+        when(countryDao.findByName(eq(testUser.getCountry()))).thenReturn(testCountry);
 
 
 
@@ -357,6 +364,7 @@ public class UserResourceTest {
         when(userDao.findByUsername(eq(testUser.getUsername()))).thenReturn(testUser);
         when(authentication.getName()).thenReturn(testUser.getUsername());
         when(awsStorageService.isAllowedImageType(any())).thenReturn(true);
+        when(countryDao.findByName(eq(testUser.getCountry()))).thenReturn(testCountry);
 
         User responseUser = resources.target("/users")
                 .register(MultiPartFeature.class)
