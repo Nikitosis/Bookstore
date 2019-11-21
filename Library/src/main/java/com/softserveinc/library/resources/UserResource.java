@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 //@Api(value = "/users")
@@ -139,6 +140,12 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
+        if(!isEmailValid(user.getEmail())){
+            log.warn("Email is not valid");
+            ResponseError error=new ResponseError().setCode(5).setMessage("Email is not valid");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
         userService.save(user);
 
         tryAddImageToUser(user,imageStream,imageDisposition);
@@ -182,6 +189,12 @@ public class UserResource {
         if(!StringUtils.isNullOrEmpty(user.getCountry()) && countryDao.findByName(user.getCountry())==null){
             log.warn("Country is not valid");
             ResponseError error=new ResponseError().setCode(5).setMessage("Country is not valid");
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
+        if(!isEmailValid(user.getEmail())){
+            log.warn("Email is not valid");
+            ResponseError error=new ResponseError().setCode(6).setMessage("Email is not valid");
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
@@ -415,5 +428,14 @@ public class UserResource {
             log.warn(e.getMessage());
         }
         return false;
+    }
+
+    private boolean isEmailValid(String email){
+        if(StringUtils.isNullOrEmpty(email)){
+            return true;
+        }
+        return Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE)
+                .matcher(email)
+                .find();
     }
 }
