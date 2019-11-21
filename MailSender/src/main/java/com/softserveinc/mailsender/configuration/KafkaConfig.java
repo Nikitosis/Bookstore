@@ -78,6 +78,19 @@ public class KafkaConfig {
         return factory;
     }
 
+    @Bean
+    public ConsumerFactory<String, AvroBookAction> bookActionConsumerFactory(){
+        return new DefaultKafkaConsumerFactory<String,AvroBookAction>(consumerConfig());
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String,AvroBookAction> kafkaBookActionListener(){
+        ConcurrentKafkaListenerContainerFactory<String, AvroBookAction> factory=new ConcurrentKafkaListenerContainerFactory<String,AvroBookAction>();
+        factory.setConsumerFactory(bookActionConsumerFactory());
+        factory.getContainerProperties().setPollTimeout(1000);
+        return factory;
+    }
+
 
     @Bean
     public String userChangedEmailActionTopic(){
@@ -92,5 +105,10 @@ public class KafkaConfig {
     @Bean
     public String userBookExtendActionTopic(){
         return mainConfig.getKafkaUserBookExtendActionTopic();
+    }
+
+    @Bean
+    public String bookActionTopic(){
+        return mainConfig.getKafkaBookActionTopic();
     }
 }

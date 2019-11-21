@@ -22,6 +22,8 @@ public class MainConfig extends Configuration {
 
     private String kafkaUserBookExtendActionTopic;
 
+    private String kafkaBookActionTopic;
+
     public MailConfig getMailConfig() {
         return mailConfig;
     }
@@ -76,5 +78,13 @@ public class MainConfig extends Configuration {
 
     public void setKafkaUserBookExtendActionTopic(String kafkaUserBookExtendActionTopic) {
         this.kafkaUserBookExtendActionTopic = kafkaUserBookExtendActionTopic;
+    }
+
+    public String getKafkaBookActionTopic() {
+        return kafkaBookActionTopic;
+    }
+
+    public void setKafkaBookActionTopic(String kafkaBookActionTopic) {
+        this.kafkaBookActionTopic = kafkaBookActionTopic;
     }
 }

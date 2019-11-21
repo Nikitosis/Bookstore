@@ -1,5 +1,6 @@
 package com.softserveinc.library.services;
 
+import com.softserveinc.cross_api_objects.avro.AvroBookActionStatus;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
@@ -87,16 +88,19 @@ public class BookService {
         update(book);
     }
 
-    public Long save(Book book){
-        return bookDao.save(book);
+    public void save(Book book){
+        bookDao.save(book);
+        requestSenderKafkaService.sendBookAction(book.getId(), AvroBookActionStatus.CREATED);
     }
 
     public void update(Book book){
         bookDao.update(book);
+        requestSenderKafkaService.sendBookAction(book.getId(), AvroBookActionStatus.UPDATED);
     }
 
     public void delete(Long id){
         bookDao.delete(id);
+        requestSenderKafkaService.sendBookAction(id, AvroBookActionStatus.DELETED);
     }
 
     public List<Book> findTakenByUser(Long userId){

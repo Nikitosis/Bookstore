@@ -32,5 +32,5 @@ kafkaConfig:
 kafkaUserChangedEmailActionTopic: UserChangedEmailActionTopic
 
 kafkaInvoiceActionTopic: InvoiceActionTopic
-
 kafkaUserBookExtendActionTopic: UserBookExtendActionTopic
+kafkaBookActionTopic: BookActionTopic

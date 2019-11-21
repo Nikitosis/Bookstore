@@ -1,5 +1,6 @@
 package com.softserveinc.library.configurations;
 
+import com.softserveinc.cross_api_objects.avro.AvroBookAction;
 import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
 import com.softserveinc.cross_api_objects.avro.AvroUserChangedEmailAction;
 import com.softserveinc.library.MainConfig;
@@ -44,5 +45,10 @@ public class KafkaConfig {
     @Bean
     public Producer<String, AvroUserChangedEmailAction> kafkaUserChangedEmailActionProducer(){
         return new KafkaProducer<String, AvroUserChangedEmailAction>(producerConfigs());
+    }
+
+    @Bean
+    public Producer<String, AvroBookAction> kafkaBookActionProducer(){
+        return new KafkaProducer<String, AvroBookAction>(producerConfigs());
     }
 }

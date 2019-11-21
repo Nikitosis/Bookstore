@@ -1,9 +1,7 @@
 package com.softserveinc.library.services.request_senders;
 
 import com.softserveinc.cross_api_objects.api.Action;
-import com.softserveinc.cross_api_objects.api.UserBookLog;
 import com.softserveinc.cross_api_objects.avro.*;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.library.MainConfig;
@@ -11,13 +9,10 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService{
@@ -25,13 +20,15 @@ public class RequestSenderKafkaService{
 
     private MainConfig mainConfig;
     private Producer<String, AvroUserBookAction> kafkaUserBookActionProducer;
-    private Producer<String,AvroUserChangedEmailAction> kafkaUserChangedEmailAction;
+    private Producer<String,AvroUserChangedEmailAction> kafkaUserChangedEmailActionProducer;
+    private Producer<String,AvroBookAction> kafkaBookActionProducer;
 
     @Autowired
-    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroUserBookAction> kafkaUserBookActionProducer, Producer<String, AvroUserChangedEmailAction> kafkaUserChangedEmailAction) {
+    public RequestSenderKafkaService(MainConfig mainConfig, Producer<String, AvroUserBookAction> kafkaUserBookActionProducer, Producer<String, AvroUserChangedEmailAction> kafkaUserChangedEmailActionProducer, Producer<String, AvroBookAction> kafkaBookActionProducer) {
         this.mainConfig = mainConfig;
         this.kafkaUserBookActionProducer = kafkaUserBookActionProducer;
-        this.kafkaUserChangedEmailAction = kafkaUserChangedEmailAction;
+        this.kafkaUserChangedEmailActionProducer = kafkaUserChangedEmailActionProducer;
+        this.kafkaBookActionProducer = kafkaBookActionProducer;
     }
 
     public void sendUserBookAction(Long userId, Long bookId, LocalDateTime date, Action action){
@@ -70,6 +67,27 @@ public class RequestSenderKafkaService{
 
         record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
 
-        kafkaUserChangedEmailAction.send(record);
+        log.info("Sending UserChangedEmailAction. User id: "+record.value().getUserId()+". New email: "+record.value().getNewEmail());
+
+        kafkaUserChangedEmailActionProducer.send(record);
+    }
+
+    public void sendBookAction(Long bookId,AvroBookActionStatus status){
+        AvroBookAction bookAction=AvroBookAction.newBuilder()
+                .setBookId(bookId)
+                .setStatus(status)
+                .build();
+
+        ProducerRecord<String,AvroBookAction> record=new ProducerRecord<String,AvroBookAction>(
+                mainConfig.getKafkaBookActionTopic(),
+                bookId.toString(),
+                bookAction
+        );
+
+        record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
+
+        log.info("Sending AvroBookAction. Book id: "+record.value().getBookId()+". Status: "+record.value().getStatus().toString());
+
+        kafkaBookActionProducer.send(record);
     }
 }

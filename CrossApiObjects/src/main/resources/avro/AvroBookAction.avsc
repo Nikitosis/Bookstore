@@ -1,0 +1,11 @@
+{
+  "type": "record",
+  "name": "AvroBookAction",
+  "namespace": "com.softserveinc.cross_api_objects.avro",
+  "fields": [
+    {"name": "bookId","type": "long"},
+    {"name":"status",
+      "type":{"name":"AvroBookActionStatus","type":"enum","symbols":["CREATED","DELETED","UPDATED"]}
+    }
+  ]
+}

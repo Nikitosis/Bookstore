@@ -51,4 +51,5 @@ kafkaConfig:
 
 kafkaUserBookActionTopic: UserBookActionTopic
 kafkaUserChangedEmailActionTopic: UserChangedEmailActionTopic
+kafkaBookActionTopic: BookActionTopic
 
