@@ -9,6 +9,8 @@ import com.softserveinc.feecharger.MainConfig;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ import java.time.ZoneOffset;
 
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService{
+    private static final Logger log= LoggerFactory.getLogger(RequestSenderKafkaService.class);
+
     private MainConfig mainConfig;
 
     private Producer<String, AvroUserBookExtendAction> userBookExtendActionProducer;
@@ -44,6 +48,9 @@ public class RequestSenderKafkaService{
         );
         record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
 
+        log.info("Sending UserBookExtendAction. User id: "+record.value().getUserId()+". Book id: "+
+                record.value().getBookId()+". Status: "+record.value().getStatus().toString());
+
         userBookExtendActionProducer.send(record);
     }
 
@@ -62,6 +69,9 @@ public class RequestSenderKafkaService{
         );
 
         record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
+
+        log.info("Sending UserBookExtendAction. User id: "+record.value().getUserId()+". Book id: "+
+                record.value().getBookId()+". Status: "+record.value().getPayment().toString());
 
         userBookPaymentActionProducer.send(record);
     }

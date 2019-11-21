@@ -86,7 +86,6 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .regexMatchers(HttpMethod.PUT,"/books","/books/(\\d+)/image").hasAnyRole("ADMIN")
                 .regexMatchers(HttpMethod.DELETE,"/books/(\\d+)").hasAnyRole("ADMIN")
 
-                //TODO: change to denyAll on production
                 .antMatchers("/**").denyAll()
                 .and()
                 .addFilter(new JwtServiceAuthorizationFilter(authenticationManager(),jwtVerifier()))

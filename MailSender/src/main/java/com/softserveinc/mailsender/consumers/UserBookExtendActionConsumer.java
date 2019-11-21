@@ -13,19 +13,23 @@ import com.softserveinc.mailsender.dao.BookDao;
 import com.softserveinc.mailsender.dao.UserDao;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserBookPaymentActionConsumer {
+public class UserBookExtendActionConsumer {
+    private static final Logger log= LoggerFactory.getLogger(InvoiceActionConsumer.class);
+
     private MailSenderService mailSenderService;
     private UserDao userDao;
     private BookDao bookDao;
 
     @Autowired
-    public UserBookPaymentActionConsumer(MailSenderService mailSenderService, UserDao userDao, BookDao bookDao) {
+    public UserBookExtendActionConsumer(MailSenderService mailSenderService, UserDao userDao, BookDao bookDao) {
         this.mailSenderService = mailSenderService;
         this.userDao = userDao;
         this.bookDao = bookDao;
@@ -35,6 +39,9 @@ public class UserBookPaymentActionConsumer {
     public void consume(ConsumerRecord<String, AvroUserBookExtendAction> record,
                         @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
         CorrelationManager.setCorrelationId(correlationId);
+
+        log.info("Consuming UserBookExtendAction. User id: "+record.value().getUserId()+". Book id: "+
+                record.value().getBookId()+". Status: "+record.value().getStatus().toString());
 
         if(record.value().getStatus()==AvroUserBookExtendActionStatus.NOT_ENOUGH_MONEY) {
 
@@ -47,7 +54,12 @@ public class UserBookPaymentActionConsumer {
             mail.setBody("Unfortunately, cannot extend book " + book.getName() +
                     ". You only have " + user.getMoney() + "$, but book costs " + book.getPrice() + "$");
 
-            mailSenderService.sendMail(mail);
+            if(userDao.findById(record.value().getUserId()).getEmailVerified()) {
+                mailSenderService.sendMail(mail);
+            }
+            else{
+                log.info("User's email is not verified. Don't send email.");
+            }
 
             CorrelationManager.removeCorrelationId();
         }

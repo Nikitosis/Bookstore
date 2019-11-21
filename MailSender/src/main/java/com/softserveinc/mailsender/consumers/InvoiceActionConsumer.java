@@ -8,6 +8,8 @@ import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManage
 import com.softserveinc.mailsender.dao.UserDao;
 import com.softserveinc.mailsender.services.MailSenderService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class InvoiceActionConsumer {
+    private static final Logger log= LoggerFactory.getLogger(InvoiceActionConsumer.class);
+
     private MailSenderService mailSenderService;
     private UserDao userDao;
 
@@ -29,6 +33,8 @@ public class InvoiceActionConsumer {
                         @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
         CorrelationManager.setCorrelationId(correlationId);
 
+        log.info("Consuming InvoiceAction. UserId: "+record.value().getUserId()+". Invoice link: "+record.value().getInvoice().getAttachmentUrl());
+
         Attachment attachment=new Attachment();
         attachment.setAttachmentName(record.value().getInvoice().getAttachmentName().toString());
         attachment.setAttachmentUrl(record.value().getInvoice().getAttachmentUrl().toString());
@@ -39,7 +45,12 @@ public class InvoiceActionConsumer {
         mail.setBody("Your invoice is in the attachment");
         mail.setAttachment(attachment);
 
-        mailSenderService.sendMail(mail);
+        if(userDao.findById(record.value().getUserId()).getEmailVerified()) {
+            mailSenderService.sendMail(mail);
+        }
+        else{
+            log.info("User's email is not verified. Don't send email.");
+        }
 
         CorrelationManager.removeCorrelationId();
     }

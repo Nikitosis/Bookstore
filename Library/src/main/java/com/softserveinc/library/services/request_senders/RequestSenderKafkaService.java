@@ -21,6 +21,8 @@ import java.time.ZoneOffset;
 
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService{
+    private static final Logger log=LoggerFactory.getLogger(RequestSenderKafkaService.class);
+
     private MainConfig mainConfig;
     private Producer<String, AvroUserBookAction> kafkaUserBookActionProducer;
     private Producer<String,AvroUserChangedEmailAction> kafkaUserChangedEmailAction;
@@ -48,6 +50,8 @@ public class RequestSenderKafkaService{
 
         record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
 
+        log.info("Sending UserBookAction. User id: "+record.value().getUserId()+". Book id: "+record.value().getBookId()+
+                ". Status: "+record.value().getStatus().toString());
         kafkaUserBookActionProducer.send(record);
     }
 

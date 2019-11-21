@@ -6,6 +6,8 @@ import com.softserveinc.cross_api_objects.dao.UserDao;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+    private static final Logger log= LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private AuthenticationManager authenticationManager;
 
@@ -50,6 +53,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String username=request.getParameter("username");
         String password=request.getParameter("password");
+
+        log.info("Trying to authenticate user");
 
         UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(username,password);
 
@@ -82,9 +87,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 mainConfig.getSecurity().getTokenPrefix()+token);
 
         writeUserToResponse(userId,response);
+
+        log.info("User successfully authenticated");
     }
 
-    private void writeUserToResponse(Long userId,HttpServletResponse response) throws IOException {
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        super.unsuccessfulAuthentication(request, response, failed);
+
+        log.info("User not authenticated");
+    }
+
+    private void writeUserToResponse(Long userId, HttpServletResponse response) throws IOException {
         com.softserveinc.cross_api_objects.models.User user=userDao.findById(userId);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

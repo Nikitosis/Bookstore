@@ -1,5 +1,6 @@
 package com.softserveinc.logger.resources;
 
+import com.softserveinc.logger.dao.BookDao;
 import com.softserveinc.logger.dao.UserBookLogDao;
 import com.softserveinc.logger.dao.UserBookPaymentLogDao;
 import com.softserveinc.logger.models.BookStatistics;
@@ -18,17 +19,22 @@ import java.math.BigDecimal;
 public class StatisticsResource {
     private UserBookPaymentLogDao userBookPaymentLogDao;
     private UserBookLogDao userBookLogDao;
+    private BookDao bookDao;
 
     @Autowired
-    public StatisticsResource(UserBookPaymentLogDao userBookPaymentLogDao, UserBookLogDao userBookLogDao) {
+    public StatisticsResource(UserBookPaymentLogDao userBookPaymentLogDao, UserBookLogDao userBookLogDao, BookDao bookDao) {
         this.userBookPaymentLogDao = userBookPaymentLogDao;
         this.userBookLogDao = userBookLogDao;
+        this.bookDao = bookDao;
     }
 
     @GET
     @Path("/books/{bookId}")
     public Response getBookStatistics(@PathParam("bookId")Long bookId){
         BookStatistics bookStatistics=new BookStatistics();
+        if(bookDao.findById(bookId)==null){
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
         bookStatistics.setTakenAmount(userBookLogDao.getBookTakenAmount(bookId));
         bookStatistics.setReturnedAmount(userBookLogDao.getBookReturnedAmount(bookId));
         bookStatistics.setTotalPayments(userBookPaymentLogDao.getBookTotalPayments(bookId));;

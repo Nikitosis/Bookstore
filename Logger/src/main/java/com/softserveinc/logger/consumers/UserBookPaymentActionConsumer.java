@@ -33,7 +33,9 @@ public class UserBookPaymentActionConsumer {
     public void consume(ConsumerRecord<String, AvroUserBookPaymentAction> record,
                         @Header(CorrelationConstraints.CORRELATION_ID_HEADER_NAME) String correlationId){
         CorrelationManager.setCorrelationId(correlationId);
-        log.info("Handling userBookPaymentAction");
+
+        log.info("Consuming UserBookExtendAction. User id: "+record.value().getUserId()+". Book id: "+
+                record.value().getBookId()+". Payment: "+record.value().getPayment().toString());
 
         UserBookPaymentLog userBookPaymentLog=new UserBookPaymentLog();
         userBookPaymentLog.setUserId(record.value().getUserId());

@@ -7,11 +7,15 @@ import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManage
 import com.softserveinc.invoicer.MainConfig;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService{
+    private static final Logger log= LoggerFactory.getLogger(RequestSenderKafkaService.class);
+
     private MainConfig mainConfig;
     private Producer<String, AvroInvoiceAction> avroInvoiceProducer;
 
@@ -40,6 +44,7 @@ public class RequestSenderKafkaService{
 
         record.headers().add(CorrelationConstraints.CORRELATION_ID_HEADER_NAME, CorrelationManager.getCorrelationId().getBytes());
 
+        log.info("Sending InvoiceAction. UserId: "+record.value().getUserId()+". Invoice link: "+record.value().getInvoice().getAttachmentUrl());
         avroInvoiceProducer.send(record);
     }
 
