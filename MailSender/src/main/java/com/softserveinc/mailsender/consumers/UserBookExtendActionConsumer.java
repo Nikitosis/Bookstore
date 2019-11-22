@@ -75,8 +75,13 @@ public class UserBookExtendActionConsumer {
             Multipart multipart=new MimeMultipart();
             //create body text
             MimeBodyPart textBodyPart=new MimeBodyPart();
-            textBodyPart.setText("Unfortunately, cannot extend book " + book.getName() +
-                            ". You only have " + user.getMoney() + "$, but book costs " + book.getPrice() + "$");
+            String html="<p>"+
+                    "Unfortunately, cannot extend book " +"<b>"+ book.getName() +"</b>"+". You only have " +
+                    "<font color=\"green\">"+user.getMoney() + "$"+"</font>"+
+                    " but book costs " +
+                    "<font color=\"green\">"+book.getPrice() + "$"+"</font>"+
+                    "</p>";
+            textBodyPart.setText(html,"UTF-8","html");
 
             multipart.addBodyPart(textBodyPart);
 
@@ -87,7 +92,7 @@ public class UserBookExtendActionConsumer {
                     user.getEmail()
             );
             message.setSubject("Cannot extend book");
-            message.setContent(multipart);
+            message.setContent(multipart,"text/html");
 
         } catch (MessagingException e) {
             e.printStackTrace();

@@ -64,7 +64,15 @@ public class BookActionConsumer {
             Multipart multipart=new MimeMultipart();
             //create body text
             MimeBodyPart textBodyPart=new MimeBodyPart();
-            textBodyPart.setText("Omg!! New book is added. Check out "+bookDao.findById(record.value().getBookId()).getName());
+            String html="<h2>"+
+                    "Omg, new book is added!!"+
+                    "</h2>"+
+                    "<img src=\""+bookDao.findById(record.value().getBookId()).getPhotoLink()+"\">"+
+                    "<p>"+
+                    "Check out: "+
+                    "<b>"+bookDao.findById(record.value().getBookId()).getName()+"</b>"+
+                    "</p>";
+            textBodyPart.setText(html,"UTF-8","html");
 
             multipart.addBodyPart(textBodyPart);
 

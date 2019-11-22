@@ -66,7 +66,7 @@ public class InvoiceActionConsumer {
             Multipart multipart=new MimeMultipart();
             //create body text
             MimeBodyPart textBodyPart=new MimeBodyPart();
-            textBodyPart.setText("Your invoice is in the attachment");
+            textBodyPart.setText("<h1>Your invoice is in the attachment</h1>");
 
             //create attachment
             URL fileUrl=new URL(record.value().getInvoice().getAttachmentUrl().toString());
@@ -85,7 +85,7 @@ public class InvoiceActionConsumer {
                     userDao.findById(record.value().getUserId()).getEmail()
             );
             message.setSubject("Bookstore invoice");
-            message.setContent(multipart);
+            message.setContent(multipart,"text/html");
 
         } catch (MessagingException e) {
             e.printStackTrace();

@@ -58,7 +58,9 @@ public class UserChangedEmailActionConsumer {
             Multipart multipart=new MimeMultipart();
             //create body text
             MimeBodyPart textBodyPart=new MimeBodyPart();
-            textBodyPart.setText("Please, verify your email here: "+record.value().getVerificationUrl());
+            textBodyPart.setText("<p>"+
+                    "Please, verify your email here: "+"<a href=\""+record.value().getVerificationUrl()+"\">"+"Verify"+"</a>"+
+                    "</p>");
 
             multipart.addBodyPart(textBodyPart);
 
@@ -69,7 +71,7 @@ public class UserChangedEmailActionConsumer {
                 record.value().getNewEmail().toString()
             );
             message.setSubject("Please, verify your email");
-            message.setContent(multipart);
+            message.setContent(multipart,"text/html");
 
         } catch (MessagingException e) {
             e.printStackTrace();
