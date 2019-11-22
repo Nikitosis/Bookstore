@@ -1,14 +1,11 @@
 package com.softserveinc.mailsender.consumers;
 
-import com.softserveinc.cross_api_objects.avro.AvroUserBookAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookExtendAction;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookExtendActionStatus;
-import com.softserveinc.cross_api_objects.avro.AvroUserBookPaymentAction;
+import com.softserveinc.cross_api_objects.avro.*;
 import com.softserveinc.cross_api_objects.models.Book;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
+import com.softserveinc.mailsender.MainConfig;
 import com.softserveinc.mailsender.dao.BookDao;
 import com.softserveinc.mailsender.dao.UserDao;
 import com.softserveinc.mailsender.services.MailSenderService;
@@ -20,6 +17,15 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+
 @Service
 public class UserBookExtendActionConsumer {
     private static final Logger log= LoggerFactory.getLogger(InvoiceActionConsumer.class);
@@ -27,12 +33,16 @@ public class UserBookExtendActionConsumer {
     private MailSenderService mailSenderService;
     private UserDao userDao;
     private BookDao bookDao;
+    private MainConfig mainConfig;
+    private Session session;
 
     @Autowired
-    public UserBookExtendActionConsumer(MailSenderService mailSenderService, UserDao userDao, BookDao bookDao) {
+    public UserBookExtendActionConsumer(MailSenderService mailSenderService, UserDao userDao, BookDao bookDao, MainConfig mainConfig, Session session) {
         this.mailSenderService = mailSenderService;
         this.userDao = userDao;
         this.bookDao = bookDao;
+        this.mainConfig = mainConfig;
+        this.session = session;
     }
 
     @KafkaListener(topics = "#{@userBookExtendActionTopic}", containerFactory = "kafkaUserBookExtendActionListener")
@@ -44,24 +54,44 @@ public class UserBookExtendActionConsumer {
                 record.value().getBookId()+". Status: "+record.value().getStatus().toString());
 
         if(record.value().getStatus()==AvroUserBookExtendActionStatus.NOT_ENOUGH_MONEY) {
-
-            User user = userDao.findById(record.value().getUserId());
-            Book book = bookDao.findById(record.value().getBookId());
-
-            Mail mail = new Mail();
-            mail.setReceiverEmail(user.getEmail());
-            mail.setSubject("Cannot extend book");
-            mail.setBody("Unfortunately, cannot extend book " + book.getName() +
-                    ". You only have " + user.getMoney() + "$, but book costs " + book.getPrice() + "$");
-
             if(userDao.findById(record.value().getUserId()).getEmailVerified()) {
-                mailSenderService.sendMail(mail);
+                mailSenderService.sendMail(prepareMessage(record));
             }
             else{
                 log.info("User's email is not verified. Don't send email.");
             }
-
-            CorrelationManager.removeCorrelationId();
         }
+
+        CorrelationManager.removeCorrelationId();
+    }
+
+    private MimeMessage prepareMessage(ConsumerRecord<String, AvroUserBookExtendAction> record){
+        User user = userDao.findById(record.value().getUserId());
+        Book book = bookDao.findById(record.value().getBookId());
+
+        MimeMessage message=new MimeMessage(session);
+        try {
+            //create whole body
+            Multipart multipart=new MimeMultipart();
+            //create body text
+            MimeBodyPart textBodyPart=new MimeBodyPart();
+            textBodyPart.setText("Unfortunately, cannot extend book " + book.getName() +
+                            ". You only have " + user.getMoney() + "$, but book costs " + book.getPrice() + "$");
+
+            multipart.addBodyPart(textBodyPart);
+
+            //create message
+            message.setFrom(new InternetAddress(mainConfig.getMailConfig().getFromAddress()));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    user.getEmail()
+            );
+            message.setSubject("Cannot extend book");
+            message.setContent(multipart);
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        return message;
     }
 }

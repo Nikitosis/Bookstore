@@ -1,7 +1,6 @@
 package com.softserveinc.invoicer.services.request_senders;
 
 import com.softserveinc.cross_api_objects.avro.*;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.invoicer.MainConfig;

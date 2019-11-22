@@ -1,7 +1,7 @@
 package com.softserveinc.mailsender.services;
 
-import com.softserveinc.cross_api_objects.models.Mail;
+import javax.mail.internet.MimeMessage;
 
 public interface MailSenderService {
-    public void sendMail(Mail mail);
+    public void sendMail(MimeMessage mail);
 }

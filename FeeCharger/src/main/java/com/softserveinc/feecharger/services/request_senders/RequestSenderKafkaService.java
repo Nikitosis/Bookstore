@@ -1,23 +1,18 @@
 package com.softserveinc.feecharger.services.request_senders;
 
-import com.softserveinc.cross_api_objects.api.UserBookPaymentLog;
 import com.softserveinc.cross_api_objects.avro.*;
-import com.softserveinc.cross_api_objects.models.Mail;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationConstraints;
 import com.softserveinc.cross_api_objects.utils.correlation_id.CorrelationManager;
 import com.softserveinc.feecharger.MainConfig;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 
 @Service("requestSenderKafkaService")
 public class RequestSenderKafkaService{
