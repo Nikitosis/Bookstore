@@ -80,7 +80,7 @@ public class UserService {
         return res;
     }
 
-    public void setUserImage(User user, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public String setUserImage(StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         Long fileSize=getFileSize(file);
         if(fileSize<=4 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
@@ -92,8 +92,7 @@ public class UserService {
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
-        user.setAvatarLink(url);
-        userDao.update(user);
+        return url;
     }
 
     public void update(User user){

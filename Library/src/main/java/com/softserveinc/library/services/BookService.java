@@ -58,7 +58,7 @@ public class BookService {
             return bookDao.findByIdWithUser(id,authUser.getId());
     }
 
-    public void addFileToBook(Book book, StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public String addFile(StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         Long fileSize=getFileSize(file);
         if(fileSize<=4 || fileSize>mainConfig.getAwsS3Config().getMaxFileSize())
             throw new FileTooLargeException("File size if too large or not defined. Max file size is "+mainConfig.getAwsS3Config().getMaxFileSize());
@@ -68,11 +68,10 @@ public class BookService {
             throw new IllegalArgumentException("Wrong file type for book");
         }
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.Private);
-        book.setFilePath(path);
-        update(book);
+        return path;
     }
 
-    public void addImageToBook(Book book,StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
+    public String addImage(StoredFile file) throws IOException, IllegalArgumentException, FileTooLargeException {
         Long fileSize=getFileSize(file);
         if(fileSize<=4 || fileSize>mainConfig.getAwsS3Config().getMaxImageSize())
             throw new FileTooLargeException("Image size if too large or not defined. Max image size is "+mainConfig.getAwsS3Config().getMaxImageSize());
@@ -84,8 +83,7 @@ public class BookService {
 
         String path=awsStorageService.uploadFile(file, CannedAccessControlList.PublicRead);
         String url=awsStorageService.getFileUrl(path);
-        book.setPhotoLink(url);
-        update(book);
+        return url;
     }
 
     public void save(Book book){

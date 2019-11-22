@@ -106,6 +106,8 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
+        userService.update(user);
+
         return Response.status(Response.Status.OK).entity(user).build();
     }
 
@@ -146,9 +148,9 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
-        userService.save(user);
-
         tryAddImageToUser(user,imageStream,imageDisposition);
+
+        userService.save(user);
 
         return Response.status(Response.Status.CREATED).entity(user).build();
     }
@@ -198,9 +200,9 @@ public class UserResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
-        userService.update(user);
-
         tryAddImageToUser(user,imageStream,imageDisposition);
+
+        userService.update(user);
 
         return Response.ok(userService.findById(user.getId())).build();
     }
@@ -417,7 +419,8 @@ public class UserResource {
                                       FormDataContentDisposition fileDisposition){
         try {
             if(fileStream!=null) {
-                userService.setUserImage(user, new StoredFile(fileStream, fileDisposition.getFileName()));
+                String url=userService.setUserImage(new StoredFile(fileStream, fileDisposition.getFileName()));
+                user.setAvatarLink(url);
                 return true;
             }
         }  catch (IOException e) {

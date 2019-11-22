@@ -75,6 +75,8 @@ public class BookResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
+        bookService.update(book);
+
         return Response.status(Response.Status.OK).entity(book).build();
     }
 
@@ -99,6 +101,8 @@ public class BookResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
 
+        bookService.update(book);
+
         return Response.status(Response.Status.OK).entity(book).build();
 
     }
@@ -120,11 +124,11 @@ public class BookResource {
             return Response.status(HttpStatus.UNPROCESSABLE_ENTITY_422).entity(error).build();
         }
 
-        bookService.save(book);
-
         tryAddFileToBook(book,fileStream,fileDisposition);
 
         tryAddImageToBook(book,imageStream,imageDisposition);
+
+        bookService.save(book);
 
         return Response.status(Response.Status.OK).entity(book).build();
     }
@@ -152,11 +156,11 @@ public class BookResource {
             return Response.status(Response.Status.NOT_FOUND).entity(error).build();
         }
 
-        bookService.update(book);
-
         tryAddFileToBook(book,fileStream,fileDisposition);
 
         tryAddImageToBook(book,imageStream,imageDisposition);
+
+        bookService.update(book);
 
         return Response.status(Response.Status.OK).entity(book).build();
     }
@@ -196,7 +200,8 @@ public class BookResource {
                                   FormDataContentDisposition fileDisposition){
         try {
             if(fileStream!=null) {
-                bookService.addFileToBook(book, new StoredFile(fileStream, fileDisposition.getFileName()));
+                String path=bookService.addFile(new StoredFile(fileStream, fileDisposition.getFileName()));
+                book.setFilePath(path);
                 return true;
             }
         }  catch (IOException e) {
@@ -214,7 +219,8 @@ public class BookResource {
                                    FormDataContentDisposition fileDisposition){
         try {
             if(fileStream!=null) {
-                bookService.addImageToBook(book, new StoredFile(fileStream, fileDisposition.getFileName()));
+                String url=bookService.addImage(new StoredFile(fileStream, fileDisposition.getFileName()));
+                book.setPhotoLink(url);
                 return true;
             }
         }  catch (IOException e) {
