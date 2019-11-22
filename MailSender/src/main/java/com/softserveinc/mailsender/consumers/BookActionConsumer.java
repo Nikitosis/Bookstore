@@ -78,9 +78,9 @@ public class BookActionConsumer {
 
             //create message
             message.setFrom(new InternetAddress(mainConfig.getMailConfig().getFromAddress()));
-            //set subscribers as recipients
+            //set subscribers with verified emails as recipients
             for(User user:userDao.findAllNewsSubscribers()){
-                message.addRecipients(Message.RecipientType.TO,user.getEmail());
+                message.addRecipients(Message.RecipientType.TO, user.getEmail());
             }
 
             message.setSubject("Bookstore news");

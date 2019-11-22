@@ -58,6 +58,8 @@ public class User {
 
     private Boolean isEmailVerified;
 
+    private Boolean isSubscribedToNews;
+
     @JsonIgnore
     private String verificationToken;
 
@@ -188,6 +190,14 @@ public class User {
         this.roles = roles;
     }
 
+    public Boolean getSubscribedToNews() {
+        return isSubscribedToNews;
+    }
+
+    public void setSubscribedToNews(Boolean subscribedToNews) {
+        isSubscribedToNews = subscribedToNews;
+    }
+
     @Override
     public boolean equals(Object obj)
     {
@@ -211,6 +221,7 @@ public class User {
                 Objects.equals(user.avatarLink,this.avatarLink) &&
                 Objects.equals(user.password,this.password)&&
                 Objects.equals(user.isEmailVerified,this.isEmailVerified) &&
+                Objects.equals(user.isSubscribedToNews,this.isSubscribedToNews) &&
                 Objects.equals(user.verificationToken,this.verificationToken) &&
                 Objects.deepEquals(user.roles,this.roles)&&
                 Objects.equals(user.gender,this.gender);
