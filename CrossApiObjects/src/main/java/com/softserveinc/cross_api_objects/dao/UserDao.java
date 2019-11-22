@@ -113,6 +113,26 @@ public interface UserDao {
     })
     User findByEmail(@Param("email") String email);
 
+    @Select("SELECT * FROM users WHERE is_email_verified")
+    @Results(value = {
+            @Result(property = "id", column = "id"),
+            @Result(property = "username",column = "username"),
+            @Result(property = "password",column = "password"),
+            @Result(property = "fName",column = "first_name"),
+            @Result(property = "lName",column = "last_name"),
+            @Result(property = "country",column = "country"),
+            @Result(property = "city",column = "city"),
+            @Result(property = "gender",column = "gender"),
+            @Result(property = "email",column = "email"),
+            @Result(property = "phone",column = "phone"),
+            @Result(property = "avatarLink",column = "avatar_link"),
+            @Result(property = "money",column = "money"),
+            @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
+    })
+    List<User> findAllNewsSubscribers();
+
     @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
