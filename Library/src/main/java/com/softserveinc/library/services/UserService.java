@@ -71,6 +71,8 @@ public class UserService {
         if(!StringUtils.isNullOrEmpty(user.getEmail()))
             resetVerification(user);
 
+        if(user.getSubscribedToNews()==null)
+            user.setSubscribedToNews(true);
         //saving entity
         Long res=userDao.save(user);
 

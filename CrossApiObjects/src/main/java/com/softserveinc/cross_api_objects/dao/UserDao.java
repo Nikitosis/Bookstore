@@ -22,6 +22,7 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
@@ -42,6 +43,7 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
@@ -62,6 +64,7 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
@@ -88,6 +91,7 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
@@ -108,12 +112,13 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByEmail(@Param("email") String email);
 
-    @Select("SELECT * FROM users WHERE is_email_verified")
+    @Select("SELECT * FROM users WHERE is_email_verified AND is_subscribed_to_news")
     @Results(value = {
             @Result(property = "id", column = "id"),
             @Result(property = "username",column = "username"),
@@ -128,6 +133,7 @@ public interface UserDao {
             @Result(property = "avatarLink",column = "avatar_link"),
             @Result(property = "money",column = "money"),
             @Result(property = "isEmailVerified",column = "is_email_verified"),
+            @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
@@ -152,6 +158,7 @@ public interface UserDao {
             "<if test='avatarLink != null'>avatar_link = #{avatarLink},</if>",
             "<if test='money != null'>money = #{money},</if>",
             "<if test='isEmailVerified != null'>is_email_verified = #{isEmailVerified},</if>",
+            "<if test='isSubscribedToNews != null'>is_subscribed_to_news = #{isSubscribedToNews},</if>",
             "<if test='verificationToken != null'>verification_token = #{verificationToken},</if>",
             "</set>",
             "WHERE id=#{id}",
