@@ -1,5 +1,6 @@
 package com.softserveinc.authorizer;
 
+import com.softserveinc.authorizer.configurations.OAuthConfig;
 import com.softserveinc.cross_api_objects.configuration.SecurityConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -13,6 +14,8 @@ public class MainConfig extends Configuration {
     private Long tokenExpirationTime;
 
     private String authenticationUrl;
+
+    private OAuthConfig googleOauth;
 
     public SecurityConfig getSecurity() {
         return security;
@@ -44,5 +47,13 @@ public class MainConfig extends Configuration {
 
     public void setAuthenticationUrl(String authenticationUrl) {
         this.authenticationUrl = authenticationUrl;
+    }
+
+    public OAuthConfig getGoogleOauth() {
+        return googleOauth;
+    }
+
+    public void setGoogleOauth(OAuthConfig googleOauth) {
+        this.googleOauth = googleOauth;
     }
 }

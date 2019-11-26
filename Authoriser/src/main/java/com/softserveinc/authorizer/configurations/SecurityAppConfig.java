@@ -43,7 +43,9 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao))
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .oauth2Login();
     }
 
     @Override
