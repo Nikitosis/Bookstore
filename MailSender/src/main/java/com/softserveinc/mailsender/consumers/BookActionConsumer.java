@@ -71,6 +71,9 @@ public class BookActionConsumer {
                     "<p>"+
                     "Check out: "+
                     "<b>"+bookDao.findById(record.value().getBookId()).getName()+"</b>"+
+                    "</p>"+
+                    "<p>"+
+                    "Description: "+bookDao.findById(record.value().getBookId()).getDescription()+
                     "</p>";
             textBodyPart.setText(html,"UTF-8","html");
 
