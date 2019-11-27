@@ -42,7 +42,8 @@ public class OAuthAppConfig {
         return CommonOAuth2Provider.GOOGLE.getBuilder("google")
                 .clientId(mainConfig.getGoogleOauth().getClientId())
                 .clientSecret(mainConfig.getGoogleOauth().getClientSecret())
-                .redirectUriTemplate("{baseUrl}/oauth2/code/{registrationId}")
+                //OAuth2LoginAuthenticationFilter handles this url and calls successHandler of oauthLogin
+                .redirectUriTemplate("{baseUrl}/login/oauth2/code/{registrationId}")
                 .build();
     }
 }

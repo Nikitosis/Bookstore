@@ -2,6 +2,7 @@ package com.softserveinc.authorizer.configurations;
 
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.security.JwtAuthenticationFilter;
+import com.softserveinc.authorizer.security.OAuth2AuthenticationSuccessHandler;
 import com.softserveinc.cross_api_objects.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,9 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -51,7 +55,8 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                     .disable()
                 .oauth2Login()
                     //specify loginPage to disable default oauth login Page
-                    .loginPage("/someUrl");
+                    .loginPage("/someUrl")
+                    .successHandler(oAuth2AuthenticationSuccessHandler);
 
     }
 

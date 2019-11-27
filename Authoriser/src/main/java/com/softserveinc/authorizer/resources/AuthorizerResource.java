@@ -6,7 +6,9 @@ import com.softserveinc.authorizer.models.OAuth2AccessTokenResponse;
 import com.softserveinc.authorizer.models.OAuth2UserInfo;
 import com.softserveinc.authorizer.services.AuthorizerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.*;
@@ -55,7 +57,7 @@ public class AuthorizerResource {
     }
 
     @GET
-    @Path("/oauth2/code/google")
+    @Path("/login/oauth2/code/google")
     public Response handleAccessCode(@QueryParam("code") String code) throws IOException {
         //get access token
         Form form = new Form();
@@ -84,6 +86,13 @@ public class AuthorizerResource {
         String userInfoResponseStr=userInfoResponse.readEntity(String.class);
         OAuth2UserInfo oAuth2UserInfoEntity=new ObjectMapper().readValue(userInfoResponseStr,OAuth2UserInfo.class);
 
-        return Response.ok().entity(oAuth2UserInfoEntity).build();
+        return Response.ok().entity(oAuth2UserInfoEntity)
+                .build();
+    }
+
+    @GET
+    @Path("/loginSuccess")
+    public Response loginSuccess(OAuth2AuthenticationToken authentication){
+        return Response.ok().build();
     }
 }
