@@ -2,18 +2,10 @@ package com.softserveinc.authorizer.security;
 
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.dao.UserDao;
-import com.softserveinc.authorizer.models.OAuth2UserInfo;
 import com.softserveinc.cross_api_objects.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
