@@ -1,4 +1,4 @@
-package com.softserveinc.authorizer.security;
+package com.softserveinc.authorizer.services;
 
 import com.softserveinc.cross_api_objects.dao.RoleDao;
 import com.softserveinc.cross_api_objects.dao.UserDao;

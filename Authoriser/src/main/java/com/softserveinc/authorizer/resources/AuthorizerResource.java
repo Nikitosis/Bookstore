@@ -1,5 +1,6 @@
 package com.softserveinc.authorizer.resources;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.models.OAuth2AccessTokenResponse;
 import com.softserveinc.authorizer.models.OAuth2UserInfo;
@@ -14,6 +15,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 
 @Service
 @Path("/")
@@ -53,8 +55,8 @@ public class AuthorizerResource {
     }
 
     @GET
-    @Path("/login/oauth2/code/google")
-    public Response handleAccessCode(@QueryParam("code") String code){
+    @Path("/oauth2/code/google")
+    public Response handleAccessCode(@QueryParam("code") String code) throws IOException {
         //get access token
         Form form = new Form();
         form
@@ -69,8 +71,8 @@ public class AuthorizerResource {
                 .request(MediaType.APPLICATION_FORM_URLENCODED)
                 .post(Entity.form(form));
 
-       // OAuth2AccessTokenResponse accessTokenResponse=response.readEntity(OAuth2AccessTokenResponse.class);
-        OAuth2AccessTokenResponse accessTokenResponseEntity=accessTokenResponse.readEntity(OAuth2AccessTokenResponse.class);
+        String accessTokenResponseStr=accessTokenResponse.readEntity(String.class);
+        OAuth2AccessTokenResponse accessTokenResponseEntity=new ObjectMapper().readValue(accessTokenResponseStr,OAuth2AccessTokenResponse.class);
 
         //get user info
         Response userInfoResponse =ClientBuilder.newClient()
@@ -79,8 +81,8 @@ public class AuthorizerResource {
                 .request()
                 .get();
 
-        //String str=userInfoResponse.readEntity(String.class);
-        OAuth2UserInfo oAuth2UserInfoEntity=userInfoResponse.readEntity(OAuth2UserInfo.class);
+        String userInfoResponseStr=userInfoResponse.readEntity(String.class);
+        OAuth2UserInfo oAuth2UserInfoEntity=new ObjectMapper().readValue(userInfoResponseStr,OAuth2UserInfo.class);
 
         return Response.ok().entity(oAuth2UserInfoEntity).build();
     }

@@ -39,13 +39,20 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                .and()
                //.csrf().disable()
                 .authorizeRequests()
-                .anyRequest().permitAll()
+                .antMatchers("/**").permitAll()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .oauth2Login();
+                .formLogin()
+                    .disable()
+                .httpBasic()
+                    .disable()
+                .oauth2Login()
+                    //specify loginPage to disable default oauth login Page
+                    .loginPage("/someUrl");
+
     }
 
     @Override

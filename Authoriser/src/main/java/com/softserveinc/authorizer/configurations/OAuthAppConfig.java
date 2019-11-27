@@ -42,6 +42,7 @@ public class OAuthAppConfig {
         return CommonOAuth2Provider.GOOGLE.getBuilder("google")
                 .clientId(mainConfig.getGoogleOauth().getClientId())
                 .clientSecret(mainConfig.getGoogleOauth().getClientSecret())
+                .redirectUriTemplate("{baseUrl}/oauth2/code/{registrationId}")
                 .build();
     }
 }

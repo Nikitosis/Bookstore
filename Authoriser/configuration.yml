@@ -22,11 +22,11 @@ security:
   tokenType: "JWT"
 
 googleOauth:
-  clientId: 69732596772-isg28an0nd3d121fjtofhcood1n4sdbj.apps.googleusercontent.com
-  clientSecret: KF4jXZqyNIm3Oepu5vCTZL_F
+  clientId: 216227526446-v8cvofejk8thpjon3ro855ef29r5jkpq.apps.googleusercontent.com
+  clientSecret: aSUEBFrgLGj9BmY6RvN-ZUj6
   authorisationUri: https://accounts.google.com/o/oauth2/v2/auth
   tokenUri: https://www.googleapis.com/oauth2/v4/token
   userInfoUri: https://www.googleapis.com/oauth2/v1/userinfo
   scope: https://www.googleapis.com/auth/userinfo.profile
   #change localhost:9004 to another address
-  redirectUri: http://localhost:9004/login/oauth2/code/google
+  redirectUri: http://localhost:9004/oauth2/code/google
