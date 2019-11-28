@@ -3,6 +3,7 @@ package com.softserveinc.authorizer.security;
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.dao.UserDao;
 import com.softserveinc.cross_api_objects.models.User;
+import com.softserveinc.cross_api_objects.security.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Component
@@ -33,6 +35,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         user.setAvatarLink((String)userAttributes.get("picture"));
         user.setEmail((String)userAttributes.get("email"));
         user.setEmailVerified(true);
+        user.setUsername((String)userAttributes.get("email"));
+        user.setMoney(new BigDecimal("0"));
+        user.setAuthProvider(AuthProvider.google);
 
         if(userDao.findByEmail(user.getEmail())==null){
             userDao.save(user);

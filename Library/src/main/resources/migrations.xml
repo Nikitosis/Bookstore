@@ -35,5 +35,6 @@
     <include file="db/2019-11-21-added-countries-table.xml"/>
     <include file="db/2019-11-22-01-added-isSubscribedToNews-user-column.xml"/>
     <include file="db/2019-11-27-01-made-username-password-nullable.xml"/>
+    <include file="db/2019-11-28-01-made-username-not-null-added-provider.xml"/>
 
 </databaseChangeLog>
