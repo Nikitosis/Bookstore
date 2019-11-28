@@ -26,6 +26,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Autowired
     private UserDao userDao;
 
+    public OAuth2AuthenticationSuccessHandler(){
+        super();
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2AuthenticationToken authenticationToken=(OAuth2AuthenticationToken)authentication;
@@ -46,6 +50,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String token=oAuth2TokenProvider.createToken(user);
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
                 mainConfig.getSecurity().getTokenPrefix()+token);
+        response.sendRedirect("http://localhost:3000/oauthLogin/"+token);
         //SecurityContextHolder.getContext().setAuthentication(authentication);
         //String token= OAuth2TokenProvider.createToken(authentication);
 /*

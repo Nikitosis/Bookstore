@@ -43,7 +43,7 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                .and()
                //.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .anyRequest().permitAll()
                 .and()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao))
                 .sessionManagement()
@@ -56,6 +56,18 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login()
                     //specify loginPage to disable default oauth login Page
                     .loginPage("/someUrl")
+                    //.redirectionEndpoint()
+                      //  .baseUri(mainConfig.getGoogleOauth().getRedirectUriTemplate())
+                    //.and()
+                    //.loginProcessingUrl(mainConfig.getGoogleOauth().getRedirectUriTemplate())
+                    .authorizationEndpoint()
+                    //endpoint which triggers oauth.
+                    .baseUri("/oauth2/authorization/")
+                    .and()
+                    .redirectionEndpoint()
+                    //if code url is equal to this baseUri, then successHandler is called
+                    .baseUri("/login/oauth2/code/**")
+                    .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler);
 
     }

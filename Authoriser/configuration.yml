@@ -29,4 +29,4 @@ googleOauth:
   userInfoUri: https://www.googleapis.com/oauth2/v1/userinfo
   scope: https://www.googleapis.com/auth/userinfo.profile
   #change localhost:9004 to another address
-  redirectUri: http://localhost:9004/oauth2/code/google
+  redirectUriTemplate: "{baseUrl}/login/oauth2/code/{registrationId}"

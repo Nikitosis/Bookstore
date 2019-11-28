@@ -7,7 +7,7 @@ public class OAuthConfig {
     private String tokenUri;
     private String userInfoUri;
     private String scope;
-    private String redirectUri;
+    private String redirectUriTemplate;
 
     public String getClientId() {
         return clientId;
@@ -57,11 +57,11 @@ public class OAuthConfig {
         this.scope = scope;
     }
 
-    public String getRedirectUri() {
-        return redirectUri;
+    public String getRedirectUriTemplate() {
+        return redirectUriTemplate;
     }
 
-    public void setRedirectUri(String redirectUri) {
-        this.redirectUri = redirectUri;
+    public void setRedirectUriTemplate(String redirectUriTemplate) {
+        this.redirectUriTemplate = redirectUriTemplate;
     }
 }
