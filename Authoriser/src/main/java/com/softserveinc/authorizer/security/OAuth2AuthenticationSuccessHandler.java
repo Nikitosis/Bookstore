@@ -1,6 +1,7 @@
 package com.softserveinc.authorizer.security;
 
 import com.softserveinc.authorizer.MainConfig;
+import com.softserveinc.authorizer.dao.RoleDao;
 import com.softserveinc.authorizer.dao.UserDao;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.security.AuthProvider;
@@ -25,6 +26,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private MainConfig mainConfig;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private RoleDao roleDao;
 
     public OAuth2AuthenticationSuccessHandler(){
         super();
@@ -45,12 +48,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         if(userDao.findByEmail(user.getEmail())==null){
             userDao.save(user);
+            //setting role
+            roleDao.addUserRole(user.getId(),"USER");
         }
 
         String token=oAuth2TokenProvider.createToken(user);
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
                 mainConfig.getSecurity().getTokenPrefix()+token);
-        response.sendRedirect("http://localhost:3000/oauthLogin/"+token);
+        response.sendRedirect("http://localhost:3000/oauthLogin/"+"Bearer "+token);
         //SecurityContextHolder.getContext().setAuthentication(authentication);
         //String token= OAuth2TokenProvider.createToken(authentication);
 /*
