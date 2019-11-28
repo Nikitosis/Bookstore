@@ -79,6 +79,14 @@ public class UserResource {
         return Response.ok(user).build();
     }
 
+    @GET
+    @Path("/me")
+    public Response getMe(){
+        User principalUser=getAuthenticatedUser();
+        
+        return Response.status(Response.Status.OK).entity(principalUser).build();
+    }
+
     @PUT
     @Path("/{userId}/image")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
