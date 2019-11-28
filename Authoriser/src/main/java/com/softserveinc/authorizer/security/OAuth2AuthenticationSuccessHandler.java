@@ -45,6 +45,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         user.setUsername((String)userAttributes.get("email"));
         user.setMoney(new BigDecimal("0"));
         user.setAuthProvider(AuthProvider.google);
+        user.setSubscribedToNews(true);
 
         if(userDao.findByEmail(user.getEmail())==null){
             userDao.save(user);
