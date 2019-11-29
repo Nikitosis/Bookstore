@@ -1,5 +1,6 @@
 package com.softserveinc.authorizer.security.oauth2;
 
+import com.softserveinc.authorizer.dao.RoleDao;
 import com.softserveinc.authorizer.dao.UserDao;
 import com.softserveinc.authorizer.security.oauth2.exceptions.OAuth2AuthenticationProcessingException;
 import com.softserveinc.authorizer.security.oauth2.users.OAuth2UserInfo;
@@ -25,6 +26,9 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private RoleDao roleDao;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -81,6 +85,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         user.setSubscribedToNews(true);
 
         userDao.save(user);
+
+        roleDao.addUserRole(user.getId(),"USER");
 
         return user;
     }

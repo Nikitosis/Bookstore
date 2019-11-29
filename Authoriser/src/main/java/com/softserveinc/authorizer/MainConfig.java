@@ -4,7 +4,6 @@ import com.softserveinc.authorizer.configurations.OAuthConfig;
 import com.softserveinc.cross_api_objects.configuration.SecurityConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 
 public class MainConfig extends Configuration {
 
@@ -16,7 +15,9 @@ public class MainConfig extends Configuration {
 
     private String authenticationUrl;
 
-    private OAuthConfig googleOauth;
+    private OAuthConfig googleOAuth;
+
+    private OAuthConfig facebookOAuth;
 
     public SecurityConfig getSecurity() {
         return security;
@@ -50,11 +51,19 @@ public class MainConfig extends Configuration {
         this.authenticationUrl = authenticationUrl;
     }
 
-    public OAuthConfig getGoogleOauth() {
-        return googleOauth;
+    public OAuthConfig getGoogleOAuth() {
+        return googleOAuth;
     }
 
-    public void setGoogleOauth(OAuthConfig googleOauth) {
-        this.googleOauth = googleOauth;
+    public void setGoogleOAuth(OAuthConfig googleOAuth) {
+        this.googleOAuth = googleOAuth;
+    }
+
+    public OAuthConfig getFacebookOAuth() {
+        return facebookOAuth;
+    }
+
+    public void setFacebookOAuth(OAuthConfig facebookOAuth) {
+        this.facebookOAuth = facebookOAuth;
     }
 }
