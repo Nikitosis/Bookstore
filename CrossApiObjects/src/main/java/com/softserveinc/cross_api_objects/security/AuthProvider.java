@@ -6,5 +6,7 @@ public enum AuthProvider {
     @JsonProperty("local")
     local,
     @JsonProperty("google")
-    google
+    google,
+    @JsonProperty("facebook")
+    facebook
 }

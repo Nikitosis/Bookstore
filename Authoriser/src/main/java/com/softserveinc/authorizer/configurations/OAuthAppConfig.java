@@ -1,6 +1,7 @@
 package com.softserveinc.authorizer.configurations;
 
 import com.softserveinc.authorizer.MainConfig;
+import com.softserveinc.cross_api_objects.security.AuthProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,7 +40,7 @@ public class OAuthAppConfig {
     }
 
     private ClientRegistration googleClientRegistration(){
-        return CommonOAuth2Provider.GOOGLE.getBuilder("google")
+        return CommonOAuth2Provider.GOOGLE.getBuilder(AuthProvider.google.toString())
                 .clientId(mainConfig.getGoogleOauth().getClientId())
                 .clientSecret(mainConfig.getGoogleOauth().getClientSecret())
                 //OAuth2LoginAuthenticationFilter handles this url and calls successHandler of oauthLogin
