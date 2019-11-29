@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,10 +36,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private UserDao userDao;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,MainConfig mainConfig,UserDao userDao) {
+    private TokenProvider tokenProvider;
+
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,MainConfig mainConfig,UserDao userDao,TokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.mainConfig=mainConfig;
         this.userDao=userDao;
+        this.tokenProvider=tokenProvider;
 
         setFilterProcessesUrl(mainConfig.getAuthenticationUrl());
     }
@@ -63,30 +67,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        User user=(User)authResult.getPrincipal();
+        User authUser=(User)authResult.getPrincipal();
+        com.softserveinc.cross_api_objects.models.User user=userDao.findByUsername(authUser.getUsername());
 
-        List<String> roles=user.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        Long userId=userDao.findByUsername(user.getUsername()).getId();
-
-        byte[] signingKey=mainConfig.getSecurity().getJwtSecret().getBytes();
-
-        String token=Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
-                .setHeaderParam("typ",mainConfig.getSecurity().getTokenType())
-                .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis()+mainConfig.getTokenExpirationTime()))
-                .claim("roles",roles)
-                .claim("userId",userId)
-                .compact();
+        String token=tokenProvider.createToken(user);
 
         response.addHeader(mainConfig.getSecurity().getTokenHeader(),
                 mainConfig.getSecurity().getTokenPrefix()+token);
 
-        writeUserToResponse(userId,response);
+        writeUserToResponse(user.getId(),response);
 
         log.info("User successfully authenticated");
     }

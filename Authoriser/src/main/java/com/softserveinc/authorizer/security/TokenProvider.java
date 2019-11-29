@@ -1,4 +1,4 @@
-package com.softserveinc.authorizer.security.oauth2;
+package com.softserveinc.authorizer.security;
 
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.dao.UserDao;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class OAuth2TokenProvider {
+public class TokenProvider {
     @Autowired
     private UserDao userDao;
     @Autowired
