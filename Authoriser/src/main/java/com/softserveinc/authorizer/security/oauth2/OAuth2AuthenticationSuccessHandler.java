@@ -3,6 +3,8 @@ package com.softserveinc.authorizer.security.oauth2;
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.dao.RoleDao;
 import com.softserveinc.authorizer.dao.UserDao;
+import com.softserveinc.authorizer.security.oauth2.users.OAuth2UserInfo;
+import com.softserveinc.authorizer.security.oauth2.users.OAuth2UserInfoFactory;
 import com.softserveinc.cross_api_objects.models.User;
 import com.softserveinc.cross_api_objects.security.AuthProvider;
 import com.softserveinc.cross_api_objects.utils.CookieUtils;
@@ -44,25 +46,10 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        OAuth2AuthenticationToken authenticationToken=(OAuth2AuthenticationToken)authentication;
-        Map<String,Object> userAttributes=(Map<String,Object>)authenticationToken.getPrincipal().getAttributes();
 
-        if(userDao.findByEmail((String)userAttributes.get("email"))==null){
-            User user=new User();
-            user.setfName((String)userAttributes.get("given_name"));
-            user.setAvatarLink((String)userAttributes.get("picture"));
-            user.setEmail((String)userAttributes.get("email"));
-            user.setEmailVerified(true);
-            user.setUsername((String)userAttributes.get("email"));
-            user.setMoney(new BigDecimal("0"));
-            user.setAuthProvider(AuthProvider.google);
-            user.setSubscribedToNews(true);
+        OAuth2UserInfo oAuth2UserInfo=getOAuth2UserInfo(authentication);
 
-            userDao.save(user);
-            //setting role
-            roleDao.addUserRole(user.getId(),"USER");
-        }
-        User curUser=userDao.findByEmail((String)userAttributes.get("email"));
+        User curUser=userDao.findByEmail(oAuth2UserInfo.getEmail());
 
         String targetUrl= getTargetUrl(request,response,curUser);
 
@@ -82,5 +69,15 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token",token)
                 .build().toUriString();
+    }
+
+    private OAuth2UserInfo getOAuth2UserInfo(Authentication authentication){
+        OAuth2AuthenticationToken authenticationToken=(OAuth2AuthenticationToken)authentication;
+        String registrationId=((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
+        Map<String,Object> userAttributes=(Map<String,Object>)authenticationToken.getPrincipal().getAttributes();
+        return OAuth2UserInfoFactory.getOAuth2UserInfo(
+                registrationId,
+                userAttributes
+        );
     }
 }

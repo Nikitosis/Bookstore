@@ -4,6 +4,7 @@ import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.security.JwtAuthenticationFilter;
 import com.softserveinc.authorizer.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.softserveinc.authorizer.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.softserveinc.authorizer.security.oauth2.OAuth2UserService;
 import com.softserveinc.cross_api_objects.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,9 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
+    @Autowired
+    private OAuth2UserService oAuth2UserService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -68,6 +72,9 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                     .redirectionEndpoint()
                     //if code url is equal to this baseUri, then successHandler is called
                         .baseUri("/login/oauth2/code/**")
+                    .and()
+                    .userInfoEndpoint()
+                        .userService(oAuth2UserService)
                     .and()
                     .successHandler(oAuth2AuthenticationSuccessHandler);
 
