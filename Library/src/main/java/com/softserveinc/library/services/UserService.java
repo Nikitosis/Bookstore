@@ -107,6 +107,11 @@ public class UserService {
         if(user.getPassword()!=null && !originalUser.getPassword().equals(user.getPassword()))
             user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        //if user is logged by oauth, he cannot change his mail
+        if(originalUser.getAuthProvider()!=AuthProvider.local){
+            user.setEmail(originalUser.getEmail());
+        }
+
         if(!Objects.equals(originalUser.getEmail(),user.getEmail()) && !StringUtils.isNullOrEmpty(user.getEmail())){
            resetVerification(user);
         }
