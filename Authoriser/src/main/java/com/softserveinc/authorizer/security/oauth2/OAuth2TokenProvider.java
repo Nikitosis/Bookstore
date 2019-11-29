@@ -1,4 +1,4 @@
-package com.softserveinc.authorizer.security;
+package com.softserveinc.authorizer.security.oauth2;
 
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.dao.UserDao;
