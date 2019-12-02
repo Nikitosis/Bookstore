@@ -26,7 +26,7 @@ public class TokenProvider {
 
     public String createToken(User user){
 
-        Long userId=userDao.findByEmail(user.getEmail()).getId();
+        Long userId=userDao.findByUsername(user.getUsername()).getId();
         List<String> roles=userDao.findRolesByUser(userId)
                 .stream()
                 .map(role -> "ROLE_"+role.getName())

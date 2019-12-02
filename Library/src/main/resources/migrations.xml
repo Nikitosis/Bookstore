@@ -37,5 +37,6 @@
     <include file="db/2019-11-27-01-made-username-password-nullable.xml"/>
     <include file="db/2019-11-28-01-made-username-not-null-added-provider.xml"/>
     <include file="db/2019-11-29-01-added-facebook-auth-provider.xml"/>
+    <include file="db/2019-12-02-01-changed-procedures.xml"/>
 
 </databaseChangeLog>
