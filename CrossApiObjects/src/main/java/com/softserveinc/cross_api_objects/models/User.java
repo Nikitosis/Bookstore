@@ -2,6 +2,7 @@ package com.softserveinc.cross_api_objects.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.softserveinc.cross_api_objects.security.AuthProvider;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -62,6 +63,9 @@ public class User {
 
     @JsonIgnore
     private String verificationToken;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private AuthProvider authProvider;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<Role> roles;
@@ -196,6 +200,14 @@ public class User {
 
     public void setSubscribedToNews(Boolean subscribedToNews) {
         isSubscribedToNews = subscribedToNews;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
     }
 
     @Override

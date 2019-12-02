@@ -28,8 +28,8 @@ awsS3Config:
 invoiceGeneratorLambdaUrl: https://qerhbbqfd2.execute-api.us-east-2.amazonaws.com/default/InvoicePDFGenerator
 
 kafkaConfig:
-  brokerUrl: http://192.168.99.100:9092
-  schemaRegistryUrl: http://192.168.99.100:8081
+  brokerUrl: ${BROKER_URL:-http://192.168.99.100:9092}
+  schemaRegistryUrl: ${SCHEMA_REGISTRY_URL:-http://192.168.99.100:8081}
 
 invoicerConfig:
   generateInvoicePeriod: 1

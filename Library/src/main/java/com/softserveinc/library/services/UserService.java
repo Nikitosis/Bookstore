@@ -1,5 +1,6 @@
 package com.softserveinc.library.services;
 
+import com.softserveinc.cross_api_objects.security.AuthProvider;
 import com.softserveinc.library.MainConfig;
 import com.amazonaws.services.codecommit.model.FileTooLargeException;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -73,6 +74,10 @@ public class UserService {
 
         if(user.getSubscribedToNews()==null)
             user.setSubscribedToNews(true);
+
+        //set auth provider to local
+        user.setAuthProvider(AuthProvider.local);
+
         //saving entity
         Long res=userDao.save(user);
 
@@ -101,6 +106,11 @@ public class UserService {
         User originalUser=userDao.findById(user.getId());
         if(user.getPassword()!=null && !originalUser.getPassword().equals(user.getPassword()))
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        //if user is logged by oauth, he cannot change his mail
+        if(originalUser.getAuthProvider()!=AuthProvider.local){
+            user.setEmail(originalUser.getEmail());
+        }
 
         if(!Objects.equals(originalUser.getEmail(),user.getEmail()) && !StringUtils.isNullOrEmpty(user.getEmail())){
            resetVerification(user);

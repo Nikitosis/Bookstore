@@ -20,3 +20,11 @@ security:
   tokenHeader: "Authorization"
   tokenPrefix: "Bearer "
   tokenType: "JWT"
+
+googleOAuth:
+  clientId: ${GOOGLE_OAUTH_CLIENT_ID:-216227526446-v8cvofejk8thpjon3ro855ef29r5jkpq.apps.googleusercontent.com}
+  clientSecret: ${GOOGLE_OAUTH_CLIENT_SECRET:-aSUEBFrgLGj9BmY6RvN-ZUj6}
+
+facebookOAuth:
+  clientId: ${FACEBOOK_OAUTH_CLIENT_ID:-425153921767208}
+  clientSecret: ${FACEBOOK_OAUTH_CLIENT_SECRET:-96782f82c5977f4337b52606698a7c7a}
