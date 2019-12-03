@@ -1,19 +1,23 @@
 package com.softserveinc.authorizer.resources;
 
+import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.services.AuthorizerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Service
 @Path("/")
+@Produces(MediaType.APPLICATION_JSON)
 public class AuthorizerResource {
     private AuthorizerService authorizerService;
+
+   @Autowired
+   private MainConfig mainConfig;
 
     @Autowired
     public AuthorizerResource(AuthorizerService authorizerService) {

@@ -2,6 +2,10 @@ package com.softserveinc.authorizer.configurations;
 
 import com.softserveinc.authorizer.MainConfig;
 import com.softserveinc.authorizer.security.JwtAuthenticationFilter;
+import com.softserveinc.authorizer.security.TokenProvider;
+import com.softserveinc.authorizer.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.softserveinc.authorizer.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.softserveinc.authorizer.security.oauth2.OAuth2UserService;
 import com.softserveinc.cross_api_objects.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +36,18 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
+    @Autowired
+    private OAuth2UserService oAuth2UserService;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -41,9 +57,31 @@ public class SecurityAppConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().permitAll()
                 .and()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(),mainConfig,userDao,tokenProvider))
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .formLogin()
+                    .disable()
+                .httpBasic()
+                    .disable()
+                .oauth2Login()
+                    //specify loginPage to disable default oauth login Page
+                    .loginPage("/someUrl")
+                    .authorizationEndpoint()
+                    //endpoint which triggers oauth.
+                        .baseUri("/oauth2/authorization/")
+                        .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository)
+                    .and()
+                    .redirectionEndpoint()
+                    //if code url is equal to this baseUri, then successHandler is called
+                        .baseUri("/login/oauth2/code/**")
+                    .and()
+                    .userInfoEndpoint()
+                        .userService(oAuth2UserService)
+                    .and()
+                    .successHandler(oAuth2AuthenticationSuccessHandler);
+
     }
 
     @Override

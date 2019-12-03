@@ -24,6 +24,7 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     List<User> findAll();
@@ -45,6 +46,7 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByUsername(@Param("username") String username);
@@ -66,6 +68,7 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findById(@Param("userId") Long userId);
@@ -93,6 +96,7 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByVerificationToken(@Param("verificationToken") String verificationToken);
@@ -114,6 +118,7 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     User findByEmail(@Param("email") String email);
@@ -135,11 +140,12 @@ public interface UserDao {
             @Result(property = "isEmailVerified",column = "is_email_verified"),
             @Result(property="isSubscribedToNews",column = "is_subscribed_to_news"),
             @Result(property = "verificationToken",column = "verification_token"),
+            @Result(property = "authProvider",column = "auth_provider"),
             @Result(property="roles",javaType = List.class,column = "id",many = @Many(select = "findRolesByUser"))
     })
     List<User> findAllNewsSubscribers();
 
-    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken})")
+    @Insert("INSERT INTO users VALUES(NULL,#{username},#{password},#{fName},#{lName},#{country},#{city},#{gender},#{email},#{phone},#{avatarLink},#{money},#{isEmailVerified},#{verificationToken},#{isSubscribedToNews},#{authProvider})")
     @Options(useGeneratedKeys = true,keyProperty = "id")
     Long save(User user);
 
@@ -160,6 +166,7 @@ public interface UserDao {
             "<if test='isEmailVerified != null'>is_email_verified = #{isEmailVerified},</if>",
             "<if test='isSubscribedToNews != null'>is_subscribed_to_news = #{isSubscribedToNews},</if>",
             "<if test='verificationToken != null'>verification_token = #{verificationToken},</if>",
+            "<if test='authProvider !=null'>auth_provider=#{authProvider},</if>",
             "</set>",
             "WHERE id=#{id}",
             "</script>"
